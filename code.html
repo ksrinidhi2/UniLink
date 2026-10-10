@@ -1,0 +1,2766 @@
+<!DOCTYPE html><html class="h-full" lang="en" style=""><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>UniLink — Campus Community Marketplace &amp; Utilities</title>
+<!-- Tailwind CSS CDN with Forms & Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              200: '#a7f3d0',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              800: '#065f46',
+              900: '#0F5B46',
+              950: '#064e3b'
+            },
+            campus: {
+              bg: '#f8fafc',
+              card: '#ffffff',
+              darkbg: '#0f172a',
+              darkcard: '#1e293b'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- BEGIN: Custom CSS Blocks -->
+<style data-purpose="base-scroll-and-transitions">
+    html, body {
+      height: 100%;
+      scroll-behavior: smooth;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(0,0,0,0.04);
+    }
+    .dark .custom-scrollbar::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(16, 185, 129, 0.4);
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(16, 185, 129, 0.7);
+    }
+    .tab-active {
+      background-color: #0F5B46 !important;
+      color: #ffffff !important;
+    }
+    .dark .tab-active {
+      background-color: #10B981 !important;
+      color: #042f2e !important;
+    }
+  </style>
+<style data-purpose="chat-speech-bubbles">
+    .chat-bubble-out {
+      background-color: #d1fae5;
+      color: #064e3b;
+      border-top-right-radius: 4px;
+    }
+    .dark .chat-bubble-out {
+      background-color: #064e3b;
+      color: #ecfdf5;
+    }
+    .chat-bubble-in {
+      background-color: #ffffff;
+      color: #1e293b;
+      border-top-left-radius: 4px;
+    }
+    .dark .chat-bubble-in {
+      background-color: #1e293b;
+      color: #f1f5f9;
+    }
+  </style>
+<!-- END: Custom CSS Blocks -->
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 flex flex-col font-sans transition-colors duration-200 min-h-screen">
+<!-- BEGIN: Storyboard Quick-Switcher Top Navigation Bar -->
+
+<!-- END: Storyboard Quick-Switcher Top Navigation Bar -->
+<!-- Toast Notification Box -->
+<div class="fixed bottom-6 right-6 z-50 transform translate-y-24 opacity-0 transition-all duration-300 bg-brand-900 text-white px-5 py-3 rounded-xl shadow-xl flex items-center space-x-3 pointer-events-none" id="toast-notification">
+<div class="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></div>
+<span class="text-sm font-medium" id="toast-message">Notification triggered!</span>
+</div>
+<!-- BEGIN: Application Container Root -->
+<div class="flex-1 flex flex-col relative w-full overflow-x-hidden">
+<!-- ========================================== -->
+<!-- SCREEN 1: LANDING PAGE -->
+<!-- ========================================== -->
+<!-- BEGIN: Screen 1 - Landing Page -->
+<section class="screen-view min-h-[calc(100vh-41px)] flex flex-col justify-between bg-[#F8FAF9] dark:bg-slate-900 transition-all" id="screen-1-landing">
+<!-- Landing Header -->
+<header class="w-full max-w-7xl mx-auto px-6 py-5 flex items-center justify-between">
+<div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('screen-1-landing')">
+<!-- UniLink Handshake Heart Logo -->
+<div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-sm overflow-hidden p-1"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyOOmzSxlDkpp3a0jh17R7E1BsS4gQkQFEb0xaEOdjkx8kJoMR04aD4jqrRhyj8MkalRX4Hrmkoyo8Fg7jWeoTN199q_eOO9nwgR2vTQSJ131pmKSFp9ZOjpl8OVXCBnfdxuMTXOWY_wbvCLYskvNIZsNo0fS5Qx6n_GbT0Ya-Cmk-e3g7jP-D6uJKQttS_CVH7Z9FMMxmXEAZ9mX21rrAuatqOUqw27JlfLxiTYXTCvtRJXIa2W5MPA" class="w-8 h-8 object-contain" alt="UniLink Logo"></div>
+<span class="text-2xl font-black tracking-tight text-slate-900 dark:text-white">UniLink</span>
+</div>
+<nav class="hidden md:flex items-center space-x-2 bg-white/70 dark:bg-slate-800/70 backdrop-blur px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-700 shadow-sm text-sm font-medium">
+<button class="px-4 py-1.5 rounded-full bg-emerald-100 text-brand-900 dark:bg-emerald-950 dark:text-emerald-300" onclick="navigateTo('screen-1-landing')">Home</button>
+<button class="px-4 py-1.5 text-slate-600 dark:text-slate-300 hover:text-brand-900 dark:hover:text-white" onclick="navigateTo('screen-8-lostfound')">Lost &amp; Found</button>
+<button class="px-4 py-1.5 text-slate-600 dark:text-slate-300 hover:text-brand-900 dark:hover:text-white" onclick="navigateTo('screen-4-marketplace')">Marketplace</button>
+<button class="px-4 py-1.5 text-slate-600 dark:text-slate-300 hover:text-brand-900 dark:hover:text-white" onclick="navigateTo('screen-9-borrow')">Borrow</button>
+</nav>
+<div class="flex items-center space-x-4">
+<button aria-label="Theme mode" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full" onclick="toggleDarkMode()">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<button class="px-6 py-2 rounded-full font-semibold bg-brand-900 hover:bg-brand-800 text-white shadow transition-all hover:scale-105" onclick="navigateTo('screen-2-auth')">
+            Login
+          </button>
+</div>
+</header>
+<!-- Hero Section with Campus Background Image -->
+<main class="flex-1 max-w-7xl mx-auto px-6 py-4 w-full flex flex-col justify-center">
+<!-- Hero Banner Container with https://lh3.googleusercontent.com/aida-public/AB6AXuA1JYlRZk7SP_qZdjckYxbcTQmU70SNc2QzuB03F7OhNutWJ9EU8PvkcryJ5pXdchE2cR9ljfOJmcMCxO2o1XdhNRE8nAKB3CspZtXwED0TjswLCEYH7kLjiRkI2BKTUseWpX_mYpaFw_5JPLdqxWZwrAcszbqqZ8Fs8ugGT1RrIg4Xp64DhLHGSfiC5XDRbz59gqSLMz3BgUsEla-yWaSXyx7Sn3J6mYr0uQQTQkn5ypcBwj0Pf59-5cqqJlCt89rLPGQ Background -->
+<div class="relative overflow-hidden rounded-3xl bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700/80 shadow-xl min-h-[460px] flex items-center">
+<!-- Background image layer with soft left white gradient overlay -->
+<div class="absolute inset-0 z-0">
+<img alt="Campus View" class="w-full h-full object-cover object-right md:object-center" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSpkyAxd9rKZb42eErPPpmmu6SbUMZmyVNBv4znvOkv9RdwisdwDRd7CHqq34FPqdL5R1EEnacNv0ZtznL7fU5ZJSD-_xVZr-V1PRXxdwLLeI62li9O_fpFUQpR_eKz5uPGpyhT0AYPGTphaqSWrjO0g6h3oHWTE7ElfxbZp8wPN77zlx7R-IhdkDI0ENjyPWuxvmBaDpgHTIdoVu1GOp7FB-oxKO4CjcBXRQcLuX6zJvqSAN33XFkAA">
+<div class="absolute inset-0 bg-gradient-to-r from-white via-white/85 to-transparent dark:from-slate-900 dark:via-slate-900/90 dark:to-transparent w-full md:w-3/4"></div>
+</div>
+<!-- Content overlay -->
+<div class="relative z-10 p-8 sm:p-14 max-w-xl">
+<h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 dark:text-white leading-[1.1] tracking-tight">
+              Everything you need,<br>
+<span class="text-brand-900 dark:text-emerald-400">right on campus.</span>
+</h1>
+<p class="mt-4 text-slate-600 dark:text-slate-300 text-base sm:text-lg">
+              Find lost belongings, buy, sell, borrow and connect with your campus community — all in one place.
+            </p>
+<div class="mt-8 flex items-center space-x-4">
+<button class="inline-flex items-center px-7 py-3.5 rounded-full bg-brand-900 hover:bg-brand-800 text-white font-semibold text-base shadow-lg transition-all hover:translate-x-1" onclick="navigateTo('screen-2-auth')">
+<span class="">Get Started</span>
+<svg class="ml-2 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+</div>
+</div>
+<!-- 4 Exact Landing Feature Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mt-6 mb-8">
+<!-- Card 1: Lost & Found -->
+<div class="cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-emerald-500/50 transition duration-200 group" onclick="navigateTo('screen-8-lostfound')">
+<div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h2 class="font-bold text-lg text-slate-900 dark:text-white">Lost &amp; Found</h2>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">Report, search and recover lost items quickly on campus.</p>
+</div>
+<!-- Card 2: Buy & Sell -->
+<div class="cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-emerald-500/50 transition duration-200 group" onclick="navigateTo('screen-4-marketplace')">
+<div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h2 class="font-bold text-lg text-slate-900 dark:text-white">Buy &amp; Sell</h2>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">Find useful items or sell what you no longer need to peers.</p>
+</div>
+<!-- Card 3: Borrow -->
+<div class="cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-emerald-500/50 transition duration-200 group" onclick="navigateTo('screen-9-borrow')">
+<div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h2 class="font-bold text-lg text-slate-900 dark:text-white">Borrow</h2>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">Lend or borrow items easily from your trustworthy peers.</p>
+</div>
+<!-- Card 4: Report an Item -->
+<div class="cursor-pointer bg-white dark:bg-slate-800 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-700/80 shadow-sm hover:shadow-md hover:border-emerald-500/50 transition duration-200 group" onclick="navigateTo('screen-8-lostfound')">
+<div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h2 class="font-bold text-lg text-slate-900 dark:text-white">Report an Item</h2>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1.5 leading-relaxed">Help someone in campus find what they have misplaced.</p>
+</div>
+</div>
+</main>
+<footer class="max-w-7xl mx-auto px-6 py-4 text-center text-xs text-slate-400">
+        UniLink © VIT-AP University Student Community Platform
+      </footer>
+</section>
+<!-- END: Screen 1 - Landing Page -->
+<!-- ========================================== -->
+<!-- SCREEN 2: SIGN UP / LOGIN -->
+<!-- ========================================== -->
+<!-- BEGIN: Screen 2 - Auth Screen -->
+<section class="screen-view hidden min-h-[calc(100vh-41px)] flex items-center justify-center p-4 bg-slate-100 dark:bg-slate-950" id="screen-2-auth">
+<div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative">
+<button class="absolute top-6 left-6 text-slate-400 hover:text-slate-700 dark:hover:text-white" onclick="navigateTo('screen-1-landing')">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<!-- Brand Icon -->
+<div class="text-center mt-2">
+<div class="mx-auto w-12 h-12 rounded-2xl bg-white flex items-center justify-center shadow-md overflow-hidden p-1.5"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpzsGKeGaqrFDuV-KF56sfaSKB04T1-jCWaVxLXd1uk7k4chNCmExuXQw7_23EbUzS0xKpOR5tuYXhdUhfEyOMbmUN7x1FoBb9iMpPUwGkWZiCFWVnw6SMnK0FtxU_kiwv_0zSagZ4prei7ZbizksQvWLInQbihqceOSzMFwP0PcRnNyZY9fXKsMd4i_DqCKo2BC8lseDiPDSLqOwdsP24RC8sxNV8WuvhoH1SI7n_l88alHu1I8trOw" class="w-8 h-8 object-contain" alt="UniLink Logo"></div>
+<h2 class="mt-3 text-2xl font-black text-slate-900 dark:text-white tracking-tight">UniLink</h2>
+</div>
+<!-- Auth Tabs Toggle -->
+<div class="flex mt-6 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl">
+<button class="w-1/2 py-2 text-sm font-semibold rounded-lg bg-white dark:bg-slate-700 text-brand-900 dark:text-white shadow-sm transition" id="auth-tab-login" onclick="switchAuthTab('login')">Login</button>
+<button class="w-1/2 py-2 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 transition" id="auth-tab-signup" onclick="switchAuthTab('signup')">Sign Up</button>
+</div>
+<!-- Auth Form -->
+<form class="mt-6 space-y-4" onsubmit="handleAuthSubmit(event)">
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">College Email</label>
+<input class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-900 text-sm outline-none" id="auth-email-input" required="" type="email" value="varshitha.25bca1234@vitapstudent.ac.in">
+</div>
+<div>
+<div class="flex items-center justify-between mb-1">
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Password</label>
+<a class="text-xs text-brand-900 dark:text-emerald-400 hover:underline" href="#">Forgot password?</a>
+</div>
+<div class="relative">
+<input class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-900 text-sm outline-none" required="" type="password" value="••••••••••••">
+<span class="absolute right-3.5 top-3 text-slate-400 cursor-pointer">👁</span>
+</div>
+</div>
+<button class="w-full py-3.5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-sm shadow-md transition duration-150" id="auth-submit-btn" type="submit">
+            Login
+          </button>
+</form>
+<div class="my-6 flex items-center justify-center space-x-3 text-xs text-slate-400">
+<div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+<span class="">or</span>
+<div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
+</div>
+<button class="w-full py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-200 text-sm font-medium flex items-center justify-center space-x-3 transition" onclick="handleGoogleLogin()">
+<svg class="w-4 h-4" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path></svg>
+<span class="">Continue with Google</span>
+</button>
+</div>
+</section>
+<!-- END: Screen 2 - Auth Screen -->
+<!-- ========================================== -->
+<!-- AVATAR SELECTION MODAL (Screens 2/3 Flow) -->
+<!-- ========================================== -->
+<!-- BEGIN: Avatar Selection Modal -->
+<div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="avatar-modal">
+<div class="w-full max-w-3xl bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl relative max-h-[90vh] flex flex-col">
+<!-- Close / Back Button -->
+<button class="absolute top-6 left-6 text-slate-400 hover:text-slate-700 dark:hover:text-white" onclick="closeAvatarModal()">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 19l-7-7 7-7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<div class="text-center pt-2">
+<div class="mx-auto w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow overflow-hidden p-1"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuCk2IZMAh6NIEcXzPNEFkciD_5KkxgoYMZl-tv3hg7XOoezBXFoCyIuCMcQzXXfIc7MAf7VcEZgRvqiiqG_QLDYfA4Mz8n1-7ahrLJazNj4B_w6NGLS6zCjvZEhHs7yLagDG2UatoqUJWmx5HELUfbtNvlqo-rI43y65d5zug9QrDsIjLb3rIVMRzqu_O2mw4dwlXqMphzGiJngnitKH2hGXjvzzGxlBmuAlpE17HcbnDNOBGVEAEinaQ" class="w-8 h-8 object-contain" alt="UniLink Logo"></div>
+<span class="block text-xs font-semibold text-slate-400 mt-1">UniLink</span>
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white mt-1">Choose your profile avatar</h2>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pick a character that represents you. You can change this later.</p>
+</div>
+<!-- 20 Non-Human Mascot Grid (Interactive) -->
+<div class="grid grid-cols-4 sm:grid-cols-5 gap-3 sm:gap-4 my-5 overflow-y-auto p-3 max-h-[60vh] custom-scrollbar rounded-2xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200/80 dark:border-slate-800" id="avatar-grid">
+<!-- Avatars dynamically generated via JS with 20 distinct mascot illustrations -->
+</div>
+<div class="pt-2 border-t border-slate-200 dark:border-slate-800">
+<button class="w-full py-3.5 rounded-2xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-sm shadow-md flex items-center justify-center space-x-2 transition" onclick="confirmAvatarSelection()">
+<span class="">Continue</span>
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+</div>
+</div>
+<!-- END: Avatar Selection Modal -->
+<!-- ======================================================== -->
+<!-- DESKTOP APP SHELL (Shared for Screens 3 through 12) -->
+<!-- ======================================================== -->
+<!-- BEGIN: Desktop App Layout Shell -->
+<div class="screen-view flex-1 flex flex-col md:flex-row min-h-[calc(100vh-41px)] bg-[#F8FAF9] dark:bg-slate-950" id="app-shell">
+<!-- LEFT SIDEBAR -->
+<aside class="w-full md:w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 p-4">
+<div>
+<!-- Brand Logo -->
+<div class="flex items-center space-x-3 px-3 py-2 cursor-pointer mb-6" onclick="navigateTo('screen-3-dashboard')">
+<div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-sm overflow-hidden p-1"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD16KCi4sDehMUh6qJ3T66N5kJ3rjkDC0oRjt_zQ-_FuHk2QAMPv-IbD8FP_z78F6nEZifSDHQToPbpcEtuiHgBRpLnajefkVQXdgWY3SygXLO9ykt45jvBfwK7OwaNE4b7FqoEbAPCSdY89XhUJO2jXnSR3AuE8M1HjkYJozP72cum-ZNxW23qog77-kFbEQEgjVq28m9qLEqOF25UNV42N7Sd-rlIQAmyinm9QdWO8qTo2L-OyQ2Sjg" class="w-8 h-8 object-contain" alt="UniLink Logo"></div>
+<span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">UniLink</span>
+</div>
+<!-- Navigation Links -->
+<nav class="space-y-1 text-sm font-medium" id="sidebar-nav">
+<!-- Home -->
+<button class="w-full flex items-center px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" id="nav-btn-home" onclick="navigateTo('screen-3-dashboard')">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">Home</span>
+</button>
+<!-- Lost & Found -->
+<button class="w-full flex items-center px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" id="nav-btn-lostfound" onclick="navigateTo('screen-8-lostfound')">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">Lost &amp; Found</span>
+</button>
+<!-- Marketplace -->
+<button class="w-full flex items-center px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition tab-active" id="nav-btn-marketplace" onclick="navigateTo('screen-4-marketplace')">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">Marketplace</span>
+</button>
+<!-- Borrow -->
+<button class="w-full flex items-center px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" id="nav-btn-borrow" onclick="navigateTo('screen-9-borrow')">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">Borrow</span>
+</button>
+<!-- Messages (with badge) -->
+<button class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" id="nav-btn-messages" onclick="navigateTo('screen-7-messages')">
+<div class="flex items-center">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">Messages</span>
+</div>
+<span class="w-5 h-5 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center font-bold">2</span>
+</button>
+<!-- Notifications (with badge) -->
+<button class="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" id="nav-btn-notifications" onclick="navigateTo('screen-11-notifications')">
+<div class="flex items-center">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">Notifications</span>
+</div>
+<span class="w-5 h-5 rounded-full bg-emerald-500 text-white text-xs flex items-center justify-center font-bold">3</span>
+</button>
+<!-- My Listings -->
+<button class="w-full flex items-center px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" id="nav-btn-listings" onclick="navigateTo('screen-my-listings')">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">My Listings</span>
+</button>
+<!-- Profile -->
+<button class="w-full flex items-center px-3.5 py-2.5 rounded-xl text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition" id="nav-btn-profile" onclick="navigateTo('screen-12-profile')">
+<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">Profile</span>
+</button>
+</nav>
+</div>
+<!-- Sidebar Bottom: User Card and Logout -->
+<div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center justify-between">
+<div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('screen-12-profile')">
+<div class="w-10 h-10 rounded-full border-2 border-emerald-500 overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-800 p-0.5 shadow-sm" id="sidebar-avatar-thumb"></div>
+<div class="leading-tight">
+<span class="block text-sm font-bold text-slate-900 dark:text-white" id="user-display-name">Varshitha</span>
+<span class="text-xs text-slate-400">VIT-AP Verified</span>
+</div>
+</div>
+<button class="text-slate-400 hover:text-red-500 transition p-1.5" onclick="logoutToLanding()" title="Logout">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+</div>
+</aside>
+<!-- MAIN APP CONTENT VIEWPORT -->
+<div class="flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar">
+<!-- Universal App Header Inside Shell -->
+<header class="h-16 px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
+<!-- Dynamic Campus Global Search Input -->
+<div class="relative w-full max-w-md">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</span>
+<input class="w-full pl-9 pr-4 py-2 rounded-xl text-sm border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-900" id="global-search-input" oninput="handleUniversalSearch(this.value)" placeholder="Search for items, people or categories..." type="text">
+</div>
+<!-- Header Right Utilities -->
+<div class="flex items-center space-x-3 ml-4">
+<button aria-label="Theme mode" class="p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition" id="header-theme-toggle" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode"><svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button><button class="relative p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" onclick="navigateTo('screen-11-notifications')">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500"></span>
+</button>
+<!-- User Initials / Avatar Small Button -->
+<div class="cursor-pointer flex items-center space-x-2 pl-2" onclick="navigateTo('screen-12-profile')">
+<div class="w-9 h-9 rounded-full border-2 border-emerald-500 text-white font-bold flex items-center justify-center text-sm shadow overflow-hidden p-0.5 bg-slate-100 dark:bg-slate-800" id="header-avatar-badge"></div>
+</div>
+</div>
+</header>
+<!-- VIEW CONTAINER FOR APP VIEWS -->
+<main class="flex-1 p-6 overflow-y-auto">
+<!-- ========================================== -->
+<!-- SCREEN 3: HOME DASHBOARD (AFTER LOGIN) -->
+<!-- ========================================== -->
+<div class="app-subview hidden" id="view-screen-3">
+<!-- Greeting -->
+<div class="mb-6">
+<h1 class="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white flex items-center">
+                Hi, <span class="ml-1" id="dashboard-name">Varshitha</span> 👋
+              </h1>
+<p class="text-slate-500 dark:text-slate-400 text-base mt-1">What are you looking for today?</p>
+</div>
+<!-- 4 Quick Action Cards (Screen 3 style) -->
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+<div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-8-lostfound')">
+<div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-3">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h3 class="font-bold text-sm text-slate-900 dark:text-white">Lost &amp; Found</h3>
+<p class="text-xs text-slate-400 mt-1">Report or search items</p>
+</div>
+<div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-4-marketplace')">
+<div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-3">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h3 class="font-bold text-sm text-slate-900 dark:text-white">Buy &amp; Sell</h3>
+<p class="text-xs text-slate-400 mt-1">Find or list items</p>
+</div>
+<div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-9-borrow')">
+<div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-3">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h3 class="font-bold text-sm text-slate-900 dark:text-white">Borrow</h3>
+<p class="text-xs text-slate-400 mt-1">Lend or borrow items</p>
+</div>
+<div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-8-lostfound')">
+<div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-3">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</div>
+<h3 class="font-bold text-sm text-slate-900 dark:text-white">Report an Item</h3>
+<p class="text-xs text-slate-400 mt-1">Help someone find</p>
+</div>
+</div>
+<!-- Recently Listed Items Header -->
+<div class="flex items-center justify-between mb-4">
+<h2 class="text-lg font-bold text-slate-900 dark:text-white">Recently Listed Items</h2>
+<button class="text-sm font-semibold text-brand-900 dark:text-emerald-400 hover:underline flex items-center" onclick="navigateTo('screen-4-marketplace')">
+<span class="">View all</span>
+<span class="ml-1">→</span>
+</button>
+</div>
+<!-- Recent Listings Grid -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" id="home-recent-grid"><div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 cursor-pointer transition">
+          <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+            📟
+          </div>
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">Scientific Calculator</h4>
+          </div>
+          <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹450</span>
+          <span class="block text-[11px] text-slate-400 mt-0.5">CB 303</span>
+        </div><div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 cursor-pointer transition">
+          <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+            📘
+          </div>
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">DSA Textbook</h4>
+          </div>
+          <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹300</span>
+          <span class="block text-[11px] text-slate-400 mt-0.5">Library, VIT-AP</span>
+        </div><div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 cursor-pointer transition">
+          <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+            🎧
+          </div>
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">Headphones</h4>
+          </div>
+          <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹800</span>
+          <span class="block text-[11px] text-slate-400 mt-0.5">MH6</span>
+        </div><div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 cursor-pointer transition">
+          <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+            💻
+          </div>
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">Laptop Stand</h4>
+          </div>
+          <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹500</span>
+          <span class="block text-[11px] text-slate-400 mt-0.5">LH3</span>
+        </div><div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 cursor-pointer transition">
+          <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+            👕
+          </div>
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">Hoodie (M)</h4>
+          </div>
+          <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹350</span>
+          <span class="block text-[11px] text-slate-400 mt-0.5">MH1</span>
+        </div></div>
+</div>
+<!-- ========================================== -->
+<!-- SCREEN 4: BROWSE MARKETPLACE -->
+<!-- ========================================== -->
+<div class="app-subview" id="view-screen-4">
+<!-- Header bar with category filter pills and "Sell an Item" CTA -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+<!-- Category Filter Pills -->
+<div class="flex items-center space-x-2 overflow-x-auto pb-2 custom-scrollbar">
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap" onclick="filterMarketplaceCategory('All', this)">All</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Electronics', this)">Electronics</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Books', this)">Books</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Clothing', this)">Clothing</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Accessories', this)">Accessories</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Sports', this)">Sports</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Others', this)">Others</button>
+</div>
+<!-- Sell Button -->
+<button class="shrink-0 px-5 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs sm:text-sm flex items-center shadow-sm" onclick="navigateTo('screen-6-add-item')">
+<span class="mr-1.5 text-base">+</span> Sell an Item
+              </button>
+</div>
+<!-- Items Cards Grid (Screen 4 exact cards) -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5" id="marketplace-cards-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between">
+          <div>
+            <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-5xl mb-3 overflow-hidden cursor-pointer" onclick="navigateTo('screen-5-details')">
+              <span class="group-hover:scale-110 transition-transform">📟</span>
+              <button onclick="event.stopPropagation(); toggleFavorite(this)" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center text-sm shadow text-red-500">❤️</button>
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer" onclick="navigateTo('screen-5-details')">Scientific Calculator</h3>
+            <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹450</span>
+            <div class="flex items-center text-[11px] text-slate-400 mt-1">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+              <span class="">CB 303</span>
+            </div>
+          </div>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between">
+          <div>
+            <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-5xl mb-3 overflow-hidden cursor-pointer" onclick="navigateTo('screen-5-details')">
+              <span class="group-hover:scale-110 transition-transform">📘</span>
+              <button onclick="event.stopPropagation(); toggleFavorite(this)" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center text-sm shadow text-slate-400 hover:text-red-500">♡</button>
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer" onclick="navigateTo('screen-5-details')">DSA Textbook</h3>
+            <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹300</span>
+            <div class="flex items-center text-[11px] text-slate-400 mt-1">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+              <span class="">Library, VIT-AP</span>
+            </div>
+          </div>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between">
+          <div>
+            <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-5xl mb-3 overflow-hidden cursor-pointer" onclick="navigateTo('screen-5-details')">
+              <span class="group-hover:scale-110 transition-transform">🎧</span>
+              <button onclick="event.stopPropagation(); toggleFavorite(this)" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center text-sm shadow text-slate-400 hover:text-red-500">♡</button>
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer" onclick="navigateTo('screen-5-details')">Headphones</h3>
+            <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹800</span>
+            <div class="flex items-center text-[11px] text-slate-400 mt-1">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+              <span class="">MH6</span>
+            </div>
+          </div>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between">
+          <div>
+            <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-5xl mb-3 overflow-hidden cursor-pointer" onclick="navigateTo('screen-5-details')">
+              <span class="group-hover:scale-110 transition-transform">💻</span>
+              <button onclick="event.stopPropagation(); toggleFavorite(this)" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center text-sm shadow text-red-500">❤️</button>
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer" onclick="navigateTo('screen-5-details')">Laptop Stand</h3>
+            <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹500</span>
+            <div class="flex items-center text-[11px] text-slate-400 mt-1">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+              <span class="">LH3</span>
+            </div>
+          </div>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between">
+          <div>
+            <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-5xl mb-3 overflow-hidden cursor-pointer" onclick="navigateTo('screen-5-details')">
+              <span class="group-hover:scale-110 transition-transform">👕</span>
+              <button onclick="event.stopPropagation(); toggleFavorite(this)" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center text-sm shadow text-slate-400 hover:text-red-500">♡</button>
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer" onclick="navigateTo('screen-5-details')">Hoodie (M)</h3>
+            <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹350</span>
+            <div class="flex items-center text-[11px] text-slate-400 mt-1">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+              <span class="">MH1</span>
+            </div>
+          </div>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between">
+          <div>
+            <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-5xl mb-3 overflow-hidden cursor-pointer" onclick="navigateTo('screen-5-details')">
+              <span class="group-hover:scale-110 transition-transform">🏀</span>
+              <button onclick="event.stopPropagation(); toggleFavorite(this)" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center text-sm shadow text-slate-400 hover:text-red-500">♡</button>
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer" onclick="navigateTo('screen-5-details')">Basketball</h3>
+            <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹400</span>
+            <div class="flex items-center text-[11px] text-slate-400 mt-1">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+              <span class="">Sports Complex</span>
+            </div>
+          </div>
+        </div></div>
+</div>
+<!-- ========================================== -->
+<!-- SCREEN 5: ITEM DETAILS -->
+<!-- ========================================== -->
+<div class="app-subview hidden" id="view-screen-5"><!-- Back button with dynamic label and origin -->
+<button id="item-details-back-btn" class="mb-5 inline-flex items-center text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-brand-900 dark:hover:text-emerald-400" onclick="handleItemDetailsBack()">
+<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span id="item-details-back-label" class="">Back to Marketplace</span>
+</button>
+<div id="item-details-container" class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Left: Item Photo / Graphic Display -->
+<div class="space-y-4">
+<div class="w-full aspect-square rounded-2xl bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700">
+<div class="w-full h-full flex items-center justify-center relative" id="item-details-photo-display">
+<img id="item-details-img" src="assets/items/calc -new.webp" alt="Item photo" class="w-full h-full object-cover">
+<span class="text-7xl select-none hidden" id="item-details-icon">📟</span>
+</div>
+</div>
+<!-- Thumbnails -->
+<div class="flex space-x-3" id="item-details-thumbnails">
+<div class="w-16 h-16 rounded-xl border-2 border-emerald-500 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center shadow-sm">
+<img id="item-details-thumb-1" src="assets/items/calc -new.webp" alt="Thumbnail" class="w-full h-full object-cover">
+</div>
+<div class="w-16 h-16 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-xs font-bold text-slate-400">+1</div>
+</div>
+</div>
+<!-- Right: Specifications and Action -->
+<div class="flex flex-col justify-between">
+<div>
+<div class="flex items-start justify-between">
+<div>
+<div class="flex items-center space-x-2">
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white" id="item-details-title">Scientific Calculator</h2>
+<span class="hidden px-2.5 py-0.5 rounded-full text-xs font-bold" id="item-details-badge"></span>
+</div>
+<div class="text-2xl font-black text-brand-900 dark:text-emerald-400 mt-2" id="item-details-price">₹450</div>
+</div>
+<button id="item-details-fav-btn" class="p-2.5 rounded-full border border-slate-200 dark:border-slate-700 hover:text-red-500 text-slate-400" onclick="toggleItemDetailsFavorite()">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+<!-- Campus Location -->
+<div class="flex items-center text-sm text-slate-500 dark:text-slate-400 mt-3">
+<svg class="w-4 h-4 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span id="item-details-location" class="">CB 303</span>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-300 mt-4 leading-relaxed" id="item-details-description">
+Casio scientific calculator in good condition. Barely used. Perfect for first year B.Tech courses.
+</p>
+<!-- Specs Grid -->
+<div class="grid grid-cols-3 gap-3 mt-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80" id="item-details-specs-grid">
+<div>
+<span class="block text-[11px] uppercase tracking-wider text-slate-400" id="spec-label-1">Condition</span>
+<span class="font-bold text-sm text-slate-800 dark:text-white" id="spec-val-1">Good</span>
+</div>
+<div>
+<span class="block text-[11px] uppercase tracking-wider text-slate-400" id="spec-label-2">Category</span>
+<span class="font-bold text-sm text-slate-800 dark:text-white" id="spec-val-2">Electronics</span>
+</div>
+<div>
+<span class="block text-[11px] uppercase tracking-wider text-slate-400" id="spec-label-3">Posted on</span>
+<span class="font-bold text-sm text-slate-800 dark:text-white" id="spec-val-3">Oct 2, 2024</span>
+</div>
+</div>
+<!-- Person Card -->
+<div class="mt-6 flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700" id="item-details-person-card">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-emerald-700 text-white font-bold flex items-center justify-center" id="item-details-person-avatar">R</div>
+<div>
+<span class="block text-xs text-slate-400" id="item-details-person-sub">Posted by</span>
+<span class="font-bold text-sm text-slate-900 dark:text-white" id="item-details-person-name">Rahul</span>
+<span class="text-xs text-slate-400 ml-1">· VIT-AP</span>
+</div>
+</div>
+<span class="text-xs text-emerald-500 font-semibold" id="item-details-person-status">Online now</span>
+</div>
+</div>
+<!-- CTAs -->
+<div class="mt-8 space-y-3" id="item-details-actions">
+<button class="w-full py-3.5 rounded-2xl bg-brand-900 hover:bg-brand-800 text-white font-bold text-sm flex items-center justify-center space-x-2 shadow-md transition" id="item-details-primary-action">
+<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span class="">Message Seller</span>
+</button>
+<button class="w-full py-3 rounded-2xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-sm transition" id="item-details-secondary-action">
+♡ Save Item
+</button>
+</div>
+</div>
+</div></div>
+<!-- ========================================== -->
+<!-- SCREEN 6: ADD / LIST AN ITEM -->
+<!-- ========================================== -->
+<div class="app-subview hidden" id="view-screen-6">
+<div class="max-w-2xl mx-auto bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">Add a New Item</h2>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="navigateTo('screen-4-marketplace')">✕</button>
+</div>
+<form class="space-y-4" onsubmit="handleCreateItemSubmit(event)">
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Select Category</label>
+<select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white text-sm outline-none" id="new-item-category">
+<option value="Electronics">Electronics</option>
+<option value="Books">Books</option>
+<option value="Clothing">Clothing</option>
+<option value="Accessories">Accessories</option>
+<option value="Sports">Sports</option>
+<option value="Others">Others</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Item Title</label>
+<input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white text-sm outline-none" id="new-item-title" placeholder="e.g. MacBook Charger 67W USB-C" required="" type="text">
+</div>
+<div>
+<div class="flex items-center justify-between mb-1">
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Price (₹)</label>
+<label class="inline-flex items-center text-xs text-slate-500 cursor-pointer">
+<input class="rounded text-brand-900 focus:ring-0 mr-1.5" id="new-item-free-checkbox" onchange="toggleFreePrice(this)" type="checkbox">
+<span class="">Free / Lending</span>
+</label>
+</div>
+<input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white text-sm outline-none" id="new-item-price" placeholder="1200" required="" type="number">
+</div>
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Description</label>
+<textarea class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-white text-sm outline-none" id="new-item-desc" placeholder="Original Apple charger. Good condition. Selling as I upgraded..." rows="3"></textarea>
+</div>
+<div>
+<label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">Upload Photos (Max 5)</label>
+<div class="flex items-center space-x-3">
+<div class="w-16 h-16 rounded-xl bg-slate-100 dark:bg-slate-800 border-2 border-emerald-500 overflow-hidden flex items-center justify-center shadow-sm">
+<img src="assets/items/macbook_charger.jpg" alt="Item preview" class="w-full h-full object-cover">
+</div>
+<div class="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-brand-900 transition">
+<span class="text-xl font-bold">+</span>
+</div>
+</div>
+</div>
+<div class="pt-4">
+<button class="w-full py-3.5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-bold text-sm shadow-md transition" type="submit">
+                    Post Item
+                  </button>
+</div>
+</form>
+</div>
+</div>
+<!-- ========================================== -->
+<!-- SCREEN 7: MESSAGES (WHATSAPP STYLE) -->
+<!-- ========================================== -->
+<div class="app-subview hidden" id="view-screen-7">
+<div class="h-[calc(100vh-140px)] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col md:flex-row">
+<!-- Left Conversations Column -->
+<div class="w-full md:w-80 border-r border-slate-200 dark:border-slate-800 flex flex-col h-full shrink-0">
+<!-- Header -->
+<div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+<h2 class="font-bold text-lg text-slate-900 dark:text-white">Messages</h2>
+<span class="p-1 rounded-full text-slate-400 hover:text-slate-600">💬</span>
+</div>
+<!-- Search conversations -->
+<div class="p-3 border-b border-slate-200 dark:border-slate-800">
+<div class="relative">
+<input class="w-full pl-8 pr-3 py-1.5 rounded-xl text-xs bg-slate-100 dark:bg-slate-800 border-0 text-slate-800 dark:text-white focus:ring-1 focus:ring-brand-900" placeholder="Search conversations..." type="text">
+<span class="absolute left-2.5 top-2 text-slate-400 text-xs">🔍</span>
+</div>
+</div>
+<!-- Chat list -->
+<div class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-slate-100 dark:divide-slate-800" id="chat-conversation-list">
+<!-- Rahul (Active) -->
+<div class="p-3.5 flex items-center space-x-3 bg-slate-100 dark:bg-slate-800/80 cursor-pointer border-l-4 border-emerald-500" onclick="selectConversation('Rahul', 'Scientific Calculator', '₹450 · CB 303')">
+<div class="relative">
+<div class="w-11 h-11 rounded-full bg-emerald-800 text-white font-bold flex items-center justify-center text-sm">R</div>
+<span class="absolute bottom-0 right-0 w-3 h-3 bg-emerald-500 rounded-full border-2 border-white dark:border-slate-900"></span>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white truncate">Rahul</h4>
+<span class="text-[10px] text-slate-400">2 min</span>
+</div>
+<p class="text-xs text-brand-900 dark:text-emerald-400 font-medium truncate">Scientific Calculator</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">Is this still available?</p>
+</div>
+</div>
+<!-- Sneha -->
+<div class="p-3.5 flex items-center space-x-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer" onclick="selectConversation('Sneha', 'AirPods Case', 'Free · AB1 G02')">
+<div class="w-11 h-11 rounded-full bg-purple-700 text-white font-bold flex items-center justify-center text-sm">S</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white truncate">Sneha</h4>
+<span class="text-[10px] text-slate-400">1 hr</span>
+</div>
+<p class="text-xs text-slate-400 truncate">AirPods Case</p>
+<p class="text-xs text-slate-500 truncate">Can you share more photos?</p>
+</div>
+</div>
+<!-- Arav -->
+<div class="p-3.5 flex items-center space-x-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer" onclick="selectConversation('Arav', 'Laptop Stand', 'Free · Library')">
+<div class="w-11 h-11 rounded-full bg-blue-700 text-white font-bold flex items-center justify-center text-sm">A</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white truncate">Arav</h4>
+<span class="text-[10px] text-slate-400">3 hrs</span>
+</div>
+<p class="text-xs text-slate-400 truncate">Laptop Stand</p>
+<p class="text-xs text-slate-500 truncate">Can I borrow it tomorrow?</p>
+</div>
+</div>
+<!-- Meera -->
+<div class="p-3.5 flex items-center space-x-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer" onclick="selectConversation('Meera', 'Brown Wallet', 'Found · Main Gate')">
+<div class="w-11 h-11 rounded-full bg-amber-700 text-white font-bold flex items-center justify-center text-sm">M</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white truncate">Meera</h4>
+<span class="text-[10px] text-slate-400">5 hrs</span>
+</div>
+<p class="text-xs text-slate-400 truncate">Found: Brown Wallet</p>
+<p class="text-xs text-slate-500 truncate">I think this is mine!</p>
+</div>
+</div>
+<!-- Karthik -->
+<div class="p-3.5 flex items-center space-x-3 hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer" onclick="selectConversation('Karthik', 'Hoodie (M)', '₹350 · Block B')">
+<div class="w-11 h-11 rounded-full bg-teal-700 text-white font-bold flex items-center justify-center text-sm">K</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white truncate">Karthik</h4>
+<span class="text-[10px] text-slate-400">1 day</span>
+</div>
+<p class="text-xs text-slate-400 truncate">Hoodie</p>
+<p class="text-xs text-slate-500 truncate">Is the price negotiable?</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Right WhatsApp Chat Area -->
+<div class="flex-1 flex flex-col h-full bg-[#f0f2f5] dark:bg-slate-950">
+<!-- Chat Header -->
+<div class="p-3 px-5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-emerald-800 text-white font-bold flex items-center justify-center text-sm" id="chat-active-avatar">
+                      R
+                    </div>
+<div>
+<h3 class="font-bold text-sm text-slate-900 dark:text-white" id="chat-active-name">Rahul</h3>
+<span class="text-xs text-emerald-500 font-medium">Online</span>
+</div>
+</div>
+<!-- Item Context Banner in header -->
+<div class="flex items-center space-x-3 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+<div class="w-8 h-8 rounded bg-slate-700 flex items-center justify-center text-xs text-white">📟</div>
+<div class="text-right">
+<span class="block text-xs font-bold text-slate-800 dark:text-white" id="chat-item-title">Scientific Calculator</span>
+<span class="text-[11px] text-brand-900 dark:text-emerald-400" id="chat-item-price">₹450 · CB 303</span>
+</div>
+<button class="text-xs px-2.5 py-1 bg-brand-900 text-white rounded-lg" onclick="navigateTo('screen-5-details')">View Item</button>
+</div>
+</div>
+<!-- Chat History Scrollable Area -->
+<div class="flex-1 p-4 overflow-y-auto space-y-3 custom-scrollbar" id="chat-messages-container">
+<!-- Incoming bubble -->
+<div class="flex justify-start">
+<div class="chat-bubble-in max-w-md p-3 rounded-2xl shadow-sm">
+<p class="text-sm">Hi, is this still available?</p>
+<span class="block text-[10px] text-slate-400 text-right mt-1">2:15 PM</span>
+</div>
+</div>
+<!-- Outgoing bubble -->
+<div class="flex justify-end">
+<div class="chat-bubble-out max-w-md p-3 rounded-2xl shadow-sm">
+<p class="text-sm">Yes, it is! Are you interested?</p>
+<div class="flex items-center justify-end space-x-1 mt-1">
+<span class="text-[10px] opacity-75">2:16 PM</span>
+<span class="text-[11px] text-blue-500 font-bold">✓✓</span>
+</div>
+</div>
+</div>
+<!-- Incoming bubble -->
+<div class="flex justify-start">
+<div class="chat-bubble-in max-w-md p-3 rounded-2xl shadow-sm">
+<p class="text-sm">Great! Can you share a few more photos?</p>
+<span class="block text-[10px] text-slate-400 text-right mt-1">2:17 PM</span>
+</div>
+</div>
+<!-- Outgoing photo preview bubble -->
+<div class="flex justify-end">
+<div class="chat-bubble-out max-w-md p-3 rounded-2xl shadow-sm space-y-2">
+<div class="grid grid-cols-2 gap-1.5 rounded-lg overflow-hidden bg-slate-900 p-1">
+<div class="aspect-video bg-slate-800 rounded flex items-center justify-center text-xs text-slate-300">Front Display</div>
+<div class="aspect-video bg-slate-800 rounded flex items-center justify-center text-xs text-slate-300">Back Cover</div>
+</div>
+<p class="text-sm">Here you go.</p>
+<div class="flex items-center justify-end space-x-1">
+<span class="text-[10px] opacity-75">2:18 PM</span>
+<span class="text-[11px] text-blue-500 font-bold">✓✓</span>
+</div>
+</div>
+</div>
+<!-- Incoming bubble -->
+<div class="flex justify-start">
+<div class="chat-bubble-in max-w-md p-3 rounded-2xl shadow-sm">
+<p class="text-sm">Can we meet near the library tomorrow?</p>
+<span class="block text-[10px] text-slate-400 text-right mt-1">2:20 PM</span>
+</div>
+</div>
+<!-- Outgoing bubble -->
+<div class="flex justify-end">
+<div class="chat-bubble-out max-w-md p-3 rounded-2xl shadow-sm">
+<p class="text-sm">Sure, 4 PM works for me.</p>
+<div class="flex items-center justify-end space-x-1 mt-1">
+<span class="text-[10px] opacity-75">2:21 PM</span>
+<span class="text-[11px] text-blue-500 font-bold">✓✓</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Chat Input Box -->
+<form class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-2" onsubmit="handleSendChatMessage(event)">
+<button class="p-2 text-slate-400 hover:text-slate-600" type="button">📎</button>
+<input autocomplete="off" class="flex-1 px-4 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none focus:ring-1 focus:ring-brand-900" id="chat-input-text" placeholder="Type a message..." type="text">
+<button class="w-10 h-10 rounded-full bg-brand-900 hover:bg-brand-800 text-white flex items-center justify-center shrink-0 shadow" type="submit">
+<svg class="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
+</button>
+</form>
+</div>
+</div>
+</div>
+<!-- ========================================== -->
+<!-- SCREEN 8: LOST & FOUND -->
+<!-- ========================================== -->
+<div class="app-subview hidden" id="view-screen-8">
+<!-- Header with Search, Toggle Pills and Report Item CTA -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+<div class="flex items-center space-x-2">
+<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white" onclick="toggleLostFoundFilter('all', this)">All</button>
+<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100" onclick="toggleLostFoundFilter('lost', this)">Lost Items</button>
+<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100" onclick="toggleLostFoundFilter('found', this)">Found Items</button>
+</div>
+<div class="flex items-center space-x-3">
+<div class="relative w-64">
+<input class="w-full pl-8 pr-3 py-1.5 rounded-xl text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white" id="lf-search-input" oninput="filterLostFoundCards(this.value)" placeholder="Search lost or found items..." type="text">
+<span class="absolute left-2.5 top-2 text-xs text-slate-400">🔍</span>
+</div>
+<button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs flex items-center shadow-sm whitespace-nowrap" onclick="openReportItemModal()">
+<span class="mr-1">+</span> Report an Item
+                </button>
+</div>
+</div>
+<!-- Lost & Found Cards Grid (Screen 8 items: Blue Water Bottle, Brown Wallet, Keychain, AirPods Case, iPhone 13, Spectacles) -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5" id="lostfound-cards-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              🍶
+            </div>
+            <h4 class="font-bold text-xs text-slate-900 dark:text-white truncate">Blue Water Bottle</h4>
+            <span class="block text-[11px] font-bold text-red-500 mt-1">
+              Lost · 2 days ago
+            </span>
+            <div class="flex items-center text-[10px] text-slate-400 mt-1 truncate">
+              <span class="">📍 Library</span>
+            </div>
+          </div>
+          <button onclick="claimItem('Blue Water Bottle')" class="mt-3 w-full py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-brand-900 dark:text-emerald-400">
+            Found This?
+          </button>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              👛
+            </div>
+            <h4 class="font-bold text-xs text-slate-900 dark:text-white truncate">Brown Wallet</h4>
+            <span class="block text-[11px] font-bold text-emerald-500 mt-1">
+              Found · 1 day ago
+            </span>
+            <div class="flex items-center text-[10px] text-slate-400 mt-1 truncate">
+              <span class="">📍 Main Gate</span>
+            </div>
+          </div>
+          <button onclick="claimItem('Brown Wallet')" class="mt-3 w-full py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-brand-900 dark:text-emerald-400">
+            Claim Item
+          </button>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              🔑
+            </div>
+            <h4 class="font-bold text-xs text-slate-900 dark:text-white truncate">Keychain</h4>
+            <span class="block text-[11px] font-bold text-emerald-500 mt-1">
+              Found · 3 days ago
+            </span>
+            <div class="flex items-center text-[10px] text-slate-400 mt-1 truncate">
+              <span class="">📍 Rock plaza</span>
+            </div>
+          </div>
+          <button onclick="claimItem('Keychain')" class="mt-3 w-full py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-brand-900 dark:text-emerald-400">
+            Claim Item
+          </button>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              🎧
+            </div>
+            <h4 class="font-bold text-xs text-slate-900 dark:text-white truncate">AirPods Case</h4>
+            <span class="block text-[11px] font-bold text-red-500 mt-1">
+              Lost · 4 days ago
+            </span>
+            <div class="flex items-center text-[10px] text-slate-400 mt-1 truncate">
+              <span class="">📍 AB1 G02</span>
+            </div>
+          </div>
+          <button onclick="claimItem('AirPods Case')" class="mt-3 w-full py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-brand-900 dark:text-emerald-400">
+            Found This?
+          </button>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              📱
+            </div>
+            <h4 class="font-bold text-xs text-slate-900 dark:text-white truncate">iPhone 13 (Black)</h4>
+            <span class="block text-[11px] font-bold text-emerald-500 mt-1">
+              Found · 5 days ago
+            </span>
+            <div class="flex items-center text-[10px] text-slate-400 mt-1 truncate">
+              <span class="">📍 Library</span>
+            </div>
+          </div>
+          <button onclick="claimItem('iPhone 13 (Black)')" class="mt-3 w-full py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-brand-900 dark:text-emerald-400">
+            Claim Item
+          </button>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              👓
+            </div>
+            <h4 class="font-bold text-xs text-slate-900 dark:text-white truncate">Spectacles</h4>
+            <span class="block text-[11px] font-bold text-emerald-500 mt-1">
+              Found · 5 days ago
+            </span>
+            <div class="flex items-center text-[10px] text-slate-400 mt-1 truncate">
+              <span class="">📍 AB1 302</span>
+            </div>
+          </div>
+          <button onclick="claimItem('Spectacles')" class="mt-3 w-full py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-brand-900 dark:text-emerald-400">
+            Claim Item
+          </button>
+        </div></div>
+</div>
+<!-- ========================================== -->
+<!-- SCREEN 9: BORROW (REQUEST AN ITEM) -->
+<!-- ========================================== -->
+<div class="app-subview hidden" id="view-screen-9">
+<!-- Header bar with categories and title -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Borrow Items</h2><p class="text-xs text-slate-400">Lend or borrow items freely within the campus community</p></div><div class="flex flex-wrap items-center gap-3"><div class="flex items-center space-x-2 overflow-x-auto pb-1"><button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap" onclick="filterBorrowCategory('All', this)">All</button><button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Books', this)">Books</button><button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Electronics', this)">Electronics</button><button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Sports', this)">Sports</button><button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Others', this)">Others</button></div><button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs flex items-center shadow-sm whitespace-nowrap" onclick="openBorrowModal()"><span class="mr-1 text-sm">+</span> List an Item to Borrow</button></div></div>
+<!-- Borrow Items Grid (Laptop Stand, DSA Textbook, Projector, DSLR Camera, Extension Board, Tennis Racket) -->
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5" id="borrow-cards-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              💻
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">Laptop Stand</h4>
+            <span class="block font-black text-xs text-brand-900 dark:text-emerald-400 mt-1">Free</span>
+            <span class="block text-[11px] text-slate-400 mt-0.5 truncate">📍 LH3</span>
+          </div>
+          <span class="block text-right text-[10px] text-slate-400 mt-3">by Sneha</span>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              📖
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">DSA Textbook</h4>
+            <span class="block font-black text-xs text-brand-900 dark:text-emerald-400 mt-1">Free</span>
+            <span class="block text-[11px] text-slate-400 mt-0.5 truncate">📍 Library</span>
+          </div>
+          <span class="block text-right text-[10px] text-slate-400 mt-3">by Rohan</span>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              📽️
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">Projector</h4>
+            <span class="block font-black text-xs text-brand-900 dark:text-emerald-400 mt-1">Free</span>
+            <span class="block text-[11px] text-slate-400 mt-0.5 truncate">📍 MH1</span>
+          </div>
+          <span class="block text-right text-[10px] text-slate-400 mt-3">by AV Club</span>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              📷
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">DSLR Camera</h4>
+            <span class="block font-black text-xs text-brand-900 dark:text-emerald-400 mt-1">Free</span>
+            <span class="block text-[11px] text-slate-400 mt-0.5 truncate">📍 LH1</span>
+          </div>
+          <span class="block text-right text-[10px] text-slate-400 mt-3">by Kunal</span>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              🔌
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">Extension Board</h4>
+            <span class="block font-black text-xs text-brand-900 dark:text-emerald-400 mt-1">Free</span>
+            <span class="block text-[11px] text-slate-400 mt-0.5 truncate">📍 LH3</span>
+          </div>
+          <span class="block text-right text-[10px] text-slate-400 mt-3">by Tanmay</span>
+        </div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+          <div>
+            <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
+              🎾
+            </div>
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">Tennis Racket</h4>
+            <span class="block font-black text-xs text-brand-900 dark:text-emerald-400 mt-1">Free</span>
+            <span class="block text-[11px] text-slate-400 mt-0.5 truncate">📍 MH3</span>
+          </div>
+          <span class="block text-right text-[10px] text-slate-400 mt-3">by Priya</span>
+        </div></div>
+</div>
+<!-- ========================================== -->
+<!-- SCREEN 10: BORROW REQUEST (ITEM PAGE) -->
+<!-- ========================================== -->
+<div class="app-subview hidden" id="view-screen-10">
+<!-- Back to Borrow -->
+<button class="mb-5 inline-flex items-center text-sm font-semibold text-slate-600 dark:text-slate-400 hover:text-brand-900 dark:hover:text-emerald-400" id="borrow-back-btn" onclick="handleBorrowDetailsBack()">
+<svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span id="borrow-back-label" class="">Back to Borrow</span>
+</button>
+<div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8">
+<!-- Left Item Preview -->
+<div class="w-full aspect-square rounded-2xl bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700" id="borrow-details-preview-container">
+<div class="w-full h-full flex items-center justify-center relative" id="borrow-details-preview-content">
+<img id="borrow-details-img" src="assets/items/laptop_stand - neww.jpg" alt="Item preview" class="w-full h-full object-cover">
+<div id="borrow-details-icon-wrapper" class="hidden text-center p-8">
+<div class="text-7xl mb-2" id="borrow-details-icon">💻</div>
+<div class="mt-4 text-xs font-semibold text-slate-400" id="borrow-details-subtitle">Adjustable Ergonomic Stand</div>
+</div>
+</div>
+</div>
+<!-- Right Request Details -->
+<div class="flex flex-col justify-between">
+<div>
+<div class="flex items-start justify-between">
+<div>
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white" id="borrow-details-title">Laptop Stand</h2>
+<span class="inline-block mt-2 px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-brand-900 dark:text-emerald-300 font-bold text-sm rounded-full" id="borrow-details-fee">
+                        Free to Borrow
+                      </span>
+</div>
+<button class="p-2.5 rounded-full border border-slate-200 dark:border-slate-700 text-slate-400 transition" id="borrow-details-fav-btn" onclick="toggleBorrowDetailsFavorite()">♡</button>
+</div>
+<div class="flex items-center text-sm text-slate-500 dark:text-slate-400 mt-3">
+<svg class="w-4 h-4 mr-1 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<span id="borrow-details-location" class="">LH3</span>
+</div>
+<p class="text-sm text-slate-600 dark:text-slate-300 mt-4 leading-relaxed" id="borrow-details-desc">
+                    Adjustable laptop stand. Sturdy build, good condition. Available for short-term peer borrow during exam prep week. Please return in good condition.
+                  </p>
+<div class="grid grid-cols-3 gap-3 mt-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+<div>
+<span class="block text-[11px] uppercase tracking-wider text-slate-400">Condition</span>
+<span class="font-bold text-sm text-slate-800 dark:text-white" id="borrow-details-condition">Good</span>
+</div>
+<div>
+<span class="block text-[11px] uppercase tracking-wider text-slate-400">Category</span>
+<span class="font-bold text-sm text-slate-800 dark:text-white" id="borrow-details-category">Electronics</span>
+</div>
+<div>
+<span class="block text-[11px] uppercase tracking-wider text-slate-400">Available till</span>
+<span class="font-bold text-sm text-slate-800 dark:text-white" id="borrow-details-available">Oct 15, 2024</span>
+</div>
+</div>
+<!-- Owner Card -->
+<div class="mt-6 flex items-center justify-between p-3.5 rounded-2xl border border-slate-200 dark:border-slate-700">
+<div class="flex items-center space-x-3">
+<div class="w-10 h-10 rounded-full bg-purple-700 text-white font-bold flex items-center justify-center" id="borrow-details-lender-avatar">S</div>
+<div>
+<span class="block text-xs text-slate-400">Posted by</span>
+<span class="font-bold text-sm text-slate-900 dark:text-white" id="borrow-details-lender-name">Sneha</span>
+<span class="text-xs text-slate-400 ml-1">· VIT-AP</span>
+</div>
+</div>
+<span class="text-xs text-emerald-500 font-semibold">Active Lender</span>
+</div>
+</div>
+<!-- Borrow Request Buttons -->
+<div class="mt-8 space-y-3">
+<button class="w-full py-3.5 rounded-2xl bg-brand-900 hover:bg-brand-800 text-white font-bold text-sm shadow-md transition" id="request-borrow-btn" onclick="submitBorrowRequest(this)">
+                    Request to Borrow
+                  </button>
+<button class="w-full py-3 rounded-2xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-sm transition" id="borrow-details-msg-btn" onclick="startChatWithSeller('Sneha', 'Laptop Stand', 'Free · LH3')">
+                    💬 Message Owner
+                  </button>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================== -->
+<!-- SCREEN 11: NOTIFICATIONS -->
+<!-- ========================================== -->
+<div class="app-subview hidden" id="view-screen-11">
+<div class="max-w-3xl mx-auto bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex items-center justify-between mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+<h2 class="text-xl font-bold text-slate-900 dark:text-white">Notifications</h2>
+<!-- Filter Pills -->
+<div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-semibold">
+<button class="notif-tab px-3 py-1 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" onclick="filterNotificationTab('all', this)">All</button>
+<button class="notif-tab px-3 py-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white" onclick="filterNotificationTab('messages', this)">Messages</button>
+<button class="notif-tab px-3 py-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white" onclick="filterNotificationTab('items', this)">Item Updates</button>
+<button class="notif-tab px-3 py-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white" onclick="filterNotificationTab('system', this)">System</button>
+</div>
+</div>
+<!-- Notifications list (Exact list from Screen 11) -->
+<div class="space-y-3" id="notifications-list">
+<!-- 1: Message from Rahul -->
+<div class="notif-item p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 hover:bg-emerald-50 cursor-pointer flex items-start space-x-3 transition" data-type="messages" onclick="navigateTo('screen-7-messages')">
+<div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900 text-brand-900 dark:text-emerald-300 flex items-center justify-center font-bold shrink-0">R</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white">Rahul sent you a message</h4>
+<span class="text-xs text-slate-400">2 min ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-300 mt-1">"Is this still available?"</p>
+</div>
+</div>
+<!-- 2: Offer on Laptop Stand -->
+<div class="notif-item p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 cursor-pointer flex items-start space-x-3 transition" data-type="items" onclick="navigateTo('screen-10-borrow-request')">
+<div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold shrink-0">💻</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white">Your item received an offer</h4>
+<span class="text-xs text-slate-400">1 hr ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Laptop Stand</p>
+</div>
+</div>
+<!-- 3: Lost item found (Brown Wallet) -->
+<div class="notif-item p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 cursor-pointer flex items-start space-x-3 transition" data-type="items" onclick="navigateTo('screen-8-lostfound')">
+<div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold shrink-0">👛</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white">Item found match!</h4>
+<span class="text-xs text-slate-400">3 hrs ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Someone reported your lost item (Brown Wallet).</p>
+</div>
+</div>
+<!-- 4: Message from Sneha -->
+<div class="notif-item p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 cursor-pointer flex items-start space-x-3 transition" data-type="messages" onclick="navigateTo('screen-7-messages')">
+<div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 flex items-center justify-center font-bold shrink-0">S</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white">New message from Sneha</h4>
+<span class="text-xs text-slate-400">5 hrs ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Can you share more photos?</p>
+</div>
+</div>
+<!-- 5: Item marked as sold -->
+<div class="notif-item p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 cursor-pointer flex items-start space-x-3 transition" data-type="items" onclick="navigateTo('screen-12-profile')">
+<div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center font-bold shrink-0">🏷️</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white">Your item has been marked as sold</h4>
+<span class="text-xs text-slate-400">1 day ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Hoodie (M)</p>
+</div>
+</div>
+<!-- 6: System update -->
+<div class="notif-item p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-start space-x-3" data-type="system">
+<div class="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-950 text-brand-900 dark:text-emerald-300 flex items-center justify-center font-bold shrink-0">⚙️</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h4 class="font-bold text-sm text-slate-900 dark:text-white">System update</h4>
+<span class="text-xs text-slate-400">2 days ago</span>
+</div>
+<p class="text-xs text-slate-600 dark:text-slate-300 mt-1">New features added to UniLink platform v2.4!</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ========================================== -->
+<!-- SCREEN 12: PROFILE (MANAGE LISTINGS) -->
+<!-- ========================================== -->
+<div class="app-subview hidden" id="view-screen-my-listings"><div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800"><div class="flex items-center space-x-3"><h2 class="text-xl font-bold text-slate-900 dark:text-white">My Listings</h2><div class="flex items-center space-x-1.5 ml-2"><button class="px-3.5 py-1.5 rounded-xl bg-brand-900 text-white text-xs font-bold">Active (3)</button><button class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-200">Sold (5)</button><button class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-200">Expired (0)</button></div></div><div class="flex items-center space-x-3"><button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-xs font-bold shadow flex items-center" onclick="navigateTo('screen-6-add-item')"><span class="mr-1 text-sm">+</span> Add New Listing</button></div></div><div class="space-y-4" id="manage-listings-container"><div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div class="flex items-center space-x-4"><div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0"><img src="assets/items/calc -new.webp" alt="Scientific Calculator" class="w-full h-full object-cover"></div><div><h4 class="font-bold text-sm text-slate-900 dark:text-white">Scientific Calculator</h4><span class="text-sm font-bold text-brand-900 dark:text-emerald-400">₹450</span><span class="text-xs text-slate-400 ml-2">Posted on Oct 2, 2024</span></div></div><div class="flex items-center space-x-2"><button class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800" onclick="navigateTo('screen-5-details')">Edit</button><button class="px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs font-semibold hover:bg-red-50 dark:hover:bg-red-950/30" onclick="deleteListing(this, 'Scientific Calculator')">Delete</button></div></div><div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div class="flex items-center space-x-4"><div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0"><img src="assets/items/hoodie - new.jpg" alt="Hoodie (M)" class="w-full h-full object-cover"></div><div><h4 class="font-bold text-sm text-slate-900 dark:text-white">Hoodie (M)</h4><span class="text-sm font-bold text-brand-900 dark:text-emerald-400">₹350</span><span class="text-xs text-slate-400 ml-2">Posted on Sep 28, 2024</span></div></div><div class="flex items-center space-x-2"><button class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800" onclick="showToast('Edit item dialog opened')">Edit</button><button class="px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs font-semibold hover:bg-red-50 dark:hover:bg-red-950/30" onclick="deleteListing(this, 'Hoodie (M)')">Delete</button></div></div><div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4"><div class="flex items-center space-x-4"><div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0"><img src="assets/items/macbook_charger.jpg" alt="MacBook Charger" class="w-full h-full object-cover"></div><div><h4 class="font-bold text-sm text-slate-900 dark:text-white">MacBook Charger</h4><span class="text-sm font-bold text-brand-900 dark:text-emerald-400">₹1,200</span><span class="text-xs text-slate-400 ml-2">Posted on Sep 20, 2024</span></div></div><div class="flex items-center space-x-2"><button class="px-3 py-1.5 rounded-lg border border-slate-300 dark:border-slate-700 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800" onclick="showToast('Edit item dialog opened')">Edit</button><button class="px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs font-semibold hover:bg-red-50 dark:hover:bg-red-950/30" onclick="deleteListing(this, 'MacBook Charger')">Delete</button></div></div></div></div></div><div class="app-subview hidden" id="view-screen-12">
+<!-- User Profile Header Card -->
+<div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm mb-6 flex flex-col sm:flex-row items-center justify-between gap-6">
+<div class="flex items-center space-x-4">
+<!-- Mascot avatar display with quick avatar modal trigger -->
+<div class="relative cursor-pointer group" onclick="openAvatarModal()" title="Click to Change Avatar">
+<div class="w-20 h-20 rounded-full border-4 border-emerald-500 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center p-1 shadow-md" id="profile-avatar-large"></div>
+<span class="absolute bottom-0 right-0 p-1.5 bg-brand-900 text-white rounded-full text-xs shadow group-hover:scale-110 transition">✎</span>
+</div>
+<div>
+<h2 class="text-2xl font-black text-slate-900 dark:text-white" id="profile-card-name">Varshitha</h2>
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" id="profile-card-email">varshitha.25bca1234@vitapstudent.ac.in</p>
+<div class="flex items-center space-x-2 mt-2">
+<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950 text-brand-900 dark:text-emerald-300">VIT-AP Verified Student</span>
+<span class="text-xs text-slate-400">Member since Aug 2024</span>
+</div>
+</div>
+</div>
+<!-- Profile Quick Actions -->
+<div class="flex items-center space-x-2">
+<button class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition" onclick="openAvatarModal()">
+                  Change Mascot
+                </button>
+<button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-xs font-semibold transition" onclick="openEditProfileModal()">
+                  Edit Profile
+                </button>
+</div>
+</div>
+<!-- Manage Listings Section -->
+
+<div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm mb-6"><div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4 mb-4"><div class="flex items-center space-x-2 overflow-x-auto pb-1" id="profile-tab-buttons"><button class="px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-900 text-white" id="tab-btn-student-info" onclick="switchProfileSection('info', this)">Overview</button><button class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200" id="tab-btn-saved-items" onclick="switchProfileSection('saved', this)">Saved Items (<span id="profile-saved-count" class="">2</span>)</button><button class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200" onclick="navigateTo('screen-my-listings')">My Listings</button></div></div><div class="hidden" id="profile-saved-section"><div class="flex items-center justify-between mb-4"><h3 class="text-sm font-bold text-slate-900 dark:text-white">Saved Items</h3><p class="text-xs text-slate-400">Items you bookmarked for quick access</p></div><div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5" id="profile-saved-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between"><div><div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 overflow-hidden cursor-pointer"><img src="assets/items/calc -new.webp" alt="Scientific Calculator" class="w-full h-full object-cover"><button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 text-red-500 flex items-center justify-center text-sm shadow" title="Unsave item">❤️</button></div><h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer">Scientific Calculator</h3><span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹450</span><div class="flex items-center text-[11px] text-slate-400 mt-1"><span class="truncate">📍 CB 303</span></div></div></div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between"><div><div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 overflow-hidden cursor-pointer"><img src="assets/items/laptop_stand - neww.jpg" alt="Laptop Stand" class="w-full h-full object-cover"><button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 text-red-500 flex items-center justify-center text-sm shadow" title="Unsave item">❤️</button></div><h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer">Laptop Stand</h3><span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹500</span><div class="flex items-center text-[11px] text-slate-400 mt-1"><span class="truncate">📍 LH3</span></div></div></div></div></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="profile-overview-section"><div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm md:col-span-2 space-y-4"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Student Information</h3><div class="grid grid-cols-2 gap-4 text-sm"><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Full Name</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-name">Varshitha</span></div><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Registration No.</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-reg">25bca1234</span></div><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Year of Study</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-year">2nd Year</span></div><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Program</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-prog">B.Tech</span></div></div><div class="pt-2"><h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Campus Trust &amp; Verification</h4><div class="flex items-center space-x-3 text-xs text-emerald-600 dark:text-emerald-400 font-semibold bg-emerald-50 dark:bg-emerald-950/40 p-3 rounded-xl border border-emerald-200 dark:border-emerald-800/40"><span class="">✓ Official VIT-AP Student Email Verified</span><span class="">·</span><span class="">✓ Campus ID Linked</span><span class="">·</span><span class="">★ 4.9 (18 Reviews)</span></div></div></div><div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between"><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-3">Activity Stats</h3><div class="space-y-3"><div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><span class="text-xs text-slate-500 dark:text-slate-400">Active Listings</span><span class="font-bold text-brand-900 dark:text-emerald-400">3</span></div><div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><span class="text-xs text-slate-500 dark:text-slate-400">Items Borrowed / Lent</span><span class="font-bold text-brand-900 dark:text-emerald-400">7</span></div><div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><span class="text-xs text-slate-500 dark:text-slate-400">Items Recovered</span><span class="font-bold text-brand-900 dark:text-emerald-400">2</span></div></div><button class="mt-4 w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 transition" onclick="navigateTo('screen-my-listings')">View My Listings →</button></div></div></div>
+</main>
+</div>
+</div>
+<!-- END: Desktop App Layout Shell -->
+</div>
+<!-- END: Application Container Root -->
+<!-- BEGIN: Report Item Modal (Lost & Found feature) -->
+<div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="report-item-modal">
+<div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl">
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-xl font-bold text-slate-900 dark:text-white">Report Lost / Found Item</h3>
+<button class="text-slate-400 hover:text-slate-600" onclick="closeReportItemModal()">✕</button>
+</div>
+<form class="space-y-4" onsubmit="handleReportItemSubmit(event)"><div class="flex space-x-3"><label id="lf-radio-btn-found" onclick="selectReportRadioType('Found')" class="flex-1 flex items-center justify-center p-3 rounded-xl border border-emerald-700 bg-emerald-700 text-white text-xs font-semibold cursor-pointer lf-radio-label transition-all"><input checked="" class="mr-2 text-brand-900 focus:ring-0" name="report_type" type="radio" value="Found"> Found Something</label><label id="lf-radio-btn-lost" onclick="selectReportRadioType('Lost')" class="flex-1 flex items-center justify-center p-3 rounded-xl border border-transparent bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold cursor-pointer lf-radio-label transition-all"><input class="mr-2 text-brand-900 focus:ring-0" name="report_type" type="radio" value="Lost"> Lost Something</label></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Item Name</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="report-item-name" placeholder="e.g. Blue Water Bottle, Casio Calculator" required="" type="text"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Campus Location</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="report-item-location" placeholder="e.g. Central Library 2nd Floor, Academic Block C" required="" type="text"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Description / Distinguishing Marks</label><textarea class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="report-item-details" placeholder="Brand, color, stickers, key marks..." rows="2"></textarea></div><div><label class="block text-xs font-semibold text-slate-500 mb-1.5">Attach Item Photo (Optional)</label><div class="flex items-center space-x-3"><div class="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-brand-900 transition" onclick="document.getElementById('report-photo-input').click()"><span class="text-lg">📷</span><span class="text-[9px]">Upload</span></div><input accept="image/*" class="hidden" id="report-photo-input" onchange="document.getElementById('photo-uploaded-badge').classList.remove('hidden')" type="file"><div class="hidden text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center space-x-1" id="photo-uploaded-badge"><span class="">✓ Photo selected</span></div></div></div><button class="w-full py-3.5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-bold text-sm shadow transition" type="submit">Submit Report</button></form>
+</div>
+</div><div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="borrow-item-modal"><div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl"><div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-slate-900 dark:text-white">List an Item to Borrow</h3><button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="closeBorrowModal()">✕</button></div><form class="space-y-4" onsubmit="handleCreateBorrowSubmit(event)"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Item Name</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="borrow-modal-title" placeholder="e.g. Scientific Calculator, Badminton Racket" required="" type="text"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Campus Location</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="borrow-modal-location" placeholder="e.g. Block C, Central Library" required="" type="text"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Lending Terms / Description</label><textarea class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="borrow-modal-desc" placeholder="Available for 3 days, return safely..." rows="2"></textarea></div><div class="pt-2 flex space-x-3"><button class="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold transition" onclick="closeBorrowModal()" type="button">Cancel</button><button class="flex-1 py-3 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-sm font-bold shadow transition" type="submit">List for Borrowing</button></div></form></div></div><div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="edit-profile-modal"><div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl"><div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-slate-900 dark:text-white">Edit Student Profile</h3><button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="closeEditProfileModal()">✕</button></div><form class="space-y-4" onsubmit="saveProfileChanges(event)"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Student Name</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-student-name" required="" type="text" value="Varshitha"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Registration Number</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-reg-no" required="" type="text" value="25bca1234"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">College Email</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-college-email" required="" type="email" value="varshitha.25bca1234@vitapstudent.ac.in"></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Year of Study</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-year-study"><option value="1st Year">1st Year</option><option selected="" value="2nd Year">2nd Year</option><option value="3rd Year">3rd Year</option><option value="4th Year">4th Year</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Program</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-program"><option selected="" value="B.Tech">B.Tech</option><option value="BBA">BBA</option><option value="B.Sc">B.Sc</option><option value="M.Tech">M.Tech</option><option value="MBA">MBA</option></select></div></div><div class="pt-2 flex space-x-3"><button class="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold transition" onclick="closeEditProfileModal()" type="button">Cancel</button><button class="flex-1 py-3 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-sm font-bold shadow transition" type="submit">Save Changes</button></div></form></div></div>
+<!-- END: Report Item Modal -->
+<!-- BEGIN: JavaScript Logic and State Management -->
+<script data-purpose="app-state-and-navigation">
+    // --- Global State ---
+    const appState = {
+      currentScreen: 'screen-1-landing',
+      currentUser: {
+        name: 'Varshitha',
+        email: 'varshitha.25mis7084@vitapstudent.ac.in',
+        avatarIndex: 0,
+        isLoggedIn: false
+      },
+      // 20 Mascot Definitions corresponding to References 2 & 3
+      mascots: [
+        { id: 0, name: 'Cyber Cat Headset' },
+        { id: 1, name: 'White Hoodie Cat' },
+        { id: 2, name: 'Cool Shades Cat' },
+        { id: 3, name: 'Companion Bot' },
+        { id: 4, name: 'Ninja Shadow Cat' },
+        { id: 5, name: 'Orange Scarf Fox' },
+        { id: 6, name: 'Headphone Panda' },
+        { id: 7, name: 'Baseball Penguin' },
+        { id: 8, name: 'Backpack Dino' },
+        { id: 9, name: 'Dark Cyber Dragon' },
+        { id: 10, name: 'Grey Wolf Hoodie' },
+        { id: 11, name: 'Kitsune Mask Fox' },
+        { id: 12, name: 'Scowling White Bunny' },
+        { id: 13, name: 'Hoodie Frog' },
+        { id: 14, name: 'Glowing Night Frog' },
+        { id: 15, name: 'Coffee Red Panda' },
+        { id: 16, name: 'Yellow Scarf Chick' },
+        { id: 17, name: 'Cap Raccoon' },
+        { id: 18, name: 'Laptop Headphone Bunny' },
+        { id: 19, name: 'Sleepy Purple Dino' }
+      ],
+      // Marketplace Items (Reference 4 and Reference 2)
+      marketplaceItems: [
+        { id: 1, title: 'Scientific Calculator', price: '₹450', category: 'Electronics', location: 'CB 303', icon: '📟', image: 'assets/items/calc -new.webp', badge: null, desc: 'Casio scientific calculator in good condition. Barely used.' },
+        { id: 2, title: 'DSA Textbook', price: '₹300', category: 'Books', location: 'Library, VIT-AP', icon: '📘', image: 'assets/items/dsa_book - new.jpg', badge: null, desc: 'Data Structures and Algorithms in C++ by Cormen.' },
+        { id: 3, title: 'Headphones', price: '₹800', category: 'Electronics', location: 'MH6', icon: '🎧', image: 'assets/items/headphones.jpg', badge: null, desc: 'Noise cancelling over-ear Bluetooth headphones.' },
+        { id: 4, title: 'Laptop Stand', price: '₹500', category: 'Electronics', location: 'LH3', icon: '💻', image: 'assets/items/laptop_stand - neww.jpg', badge: null, desc: 'Foldable ergonomic aluminum laptop stand.' },
+        { id: 5, title: 'Hoodie (M)', price: '₹350', category: 'Clothing', location: 'MH1', icon: '👕', image: 'assets/items/hoodie - new.jpg', badge: null, desc: 'Clean, gently used grey campus pullover hoodie.' },
+        { id: 6, title: 'Basketball', price: '₹400', category: 'Sports', location: 'Sports Complex', icon: '🏀', image: 'assets/items/basketball.jpg', badge: null, desc: 'Spalding official outdoor rubber basketball.' }
+      ],
+      // Lost & Found Items (Screen 8)
+      lostFoundItems: [
+        { id: 1, type: 'Lost', title: 'Blue Water Bottle', when: 'Lost · 2 days ago', place: 'Library', icon: '🍶', image: 'assets/items/water_bottle.jpg', color: 'text-blue-500' },
+        { id: 2, type: 'Found', title: 'Brown Wallet', when: 'Found · 1 day ago', place: 'Main Gate', icon: '👛', image: 'assets/items/wallet.jpg', color: 'text-amber-600' },
+        { id: 3, type: 'Found', title: 'Keychain', when: 'Found · 3 days ago', place: 'Rock plaza', icon: '🔑', image: 'assets/items/keychain - new.jpg', color: 'text-yellow-500' },
+        { id: 4, type: 'Lost', title: 'AirPods Case', when: 'Lost · 4 days ago', place: 'AB1 G02', icon: '🎧', image: 'assets/items/airpods_case.jpg', color: 'text-slate-400' },
+        { id: 5, type: 'Found', title: 'iPhone 13 (Black)', when: 'Found · 5 days ago', place: 'Library', icon: '📱', image: 'assets/items/iphone.jpg', color: 'text-indigo-500' },
+        { id: 6, type: 'Found', title: 'Spectacles', when: 'Found · 5 days ago', place: 'AB1 302', icon: '👓', image: 'assets/items/spectacles.jpg', color: 'text-teal-500' }
+      ],
+      // Borrow Items (Screen 9)
+      borrowItems: [
+        { id: 'borrow-1', title: 'Laptop Stand', fee: 'Free', category: 'Electronics', location: 'LH3', icon: '💻', image: 'assets/items/laptop_stand - neww.jpg', lender: 'Sneha', desc: 'Adjustable laptop stand. Sturdy build, good condition. Available for short-term peer borrow during exam prep week. Please return in good condition.', condition: 'Good', availableTill: 'Oct 15, 2024' },
+        { id: 'borrow-2', title: 'DSA Textbook', fee: 'Free', category: 'Books', location: 'Library', icon: '📖', image: 'assets/items/dsa_book - new.jpg', lender: 'Rohan', desc: 'Data Structures and Algorithms textbook by Cormen. Clean pages, no markings.', condition: 'Like New', availableTill: 'Oct 20, 2024' },
+        { id: 'borrow-3', title: 'Projector', fee: 'Free', category: 'Electronics', location: 'MH1', icon: '📽️', image: 'assets/items/projector-new.jpg', lender: 'AV Club', desc: 'Portable HDMI LED projector for campus presentations and club events.', condition: 'Good', availableTill: 'Oct 18, 2024' },
+        { id: 'borrow-4', title: 'DSLR Camera', fee: 'Free', category: 'Electronics', location: 'LH1', icon: '📷', image: 'assets/items/camera.jpg', lender: 'Kunal', desc: 'Canon EOS DSLR with 18-55mm lens. Memory card included.', condition: 'Excellent', availableTill: 'Oct 22, 2024' },
+        { id: 'borrow-5', title: 'Extension Board', fee: 'Free', category: 'Electronics', location: 'LH3', icon: '🔌', image: 'assets/items/extension_board.jpg', lender: 'Tanmay', desc: '4-socket surge protected extension board with 3-meter cord.', condition: 'Good', availableTill: 'Oct 30, 2024' },
+        { id: 'borrow-6', title: 'Tennis Racket', fee: 'Free', category: 'Sports', location: 'MH3', icon: '🎾', image: 'assets/items/tennis_racket-new.jpg', lender: 'Priya', desc: 'Wilson standard adult tennis racket with cover and 2 practice balls.', condition: 'Good', availableTill: 'Oct 25, 2024' }
+      ]
+    };
+    window.appState = appState;
+
+    // --- Master Navigation Controller ---
+    function navigateTo(targetScreenId) {
+      // Hide all main screens
+      document.querySelectorAll('.screen-view').forEach(el => el.classList.add('hidden'));
+
+      // Also reset any active state inside shell subviews
+      document.querySelectorAll('.app-subview').forEach(el => el.classList.add('hidden'));
+
+      if (targetScreenId === 'screen-1-landing') {
+        document.getElementById('screen-1-landing').classList.remove('hidden');
+      } else if (targetScreenId === 'screen-2-auth') {
+        document.getElementById('screen-2-auth').classList.remove('hidden');
+      } else {
+        // Screens 3 to 12 exist inside the main Desktop App Shell
+        document.getElementById('app-shell').classList.remove('hidden');
+
+        // Map targets to their respective subview inside app shell
+        const subviewMap = {
+          'screen-3-dashboard': 'view-screen-3',
+          'screen-4-marketplace': 'view-screen-4',
+          'screen-5-details': 'view-screen-5',
+          'screen-6-add-item': 'view-screen-6',
+          'screen-7-messages': 'view-screen-7',
+          'screen-8-lostfound': 'view-screen-8',
+          'screen-9-borrow': 'view-screen-9',
+          'screen-10-borrow-request': 'view-screen-10',
+          'screen-11-notifications': 'view-screen-11',
+          'screen-12-profile': 'view-screen-12',
+          'screen-my-listings': 'view-screen-my-listings'
+        };
+
+        const activeSub = subviewMap[targetScreenId] || 'view-screen-3';
+        const targetElement = document.getElementById(activeSub);
+        if (targetElement) {
+          targetElement.classList.remove('hidden');
+        }
+
+        // Update active class on left sidebar buttons
+        updateSidebarActiveStyle(targetScreenId);
+      }
+
+      appState.currentScreen = targetScreenId;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    window.navigateTo = navigateTo;
+
+    // Update active highlight on sidebar items
+    function updateSidebarActiveStyle(activeId) {
+      const navButtons = document.querySelectorAll('#sidebar-nav button');
+      navButtons.forEach(btn => {
+        btn.classList.remove('tab-active');
+      });
+
+      const map = {
+        'screen-3-dashboard': 'nav-btn-home',
+        'screen-8-lostfound': 'nav-btn-lostfound',
+        'screen-4-marketplace': 'nav-btn-marketplace',
+        'screen-5-details': 'nav-btn-marketplace',
+        'screen-6-add-item': 'nav-btn-marketplace',
+        'screen-9-borrow': 'nav-btn-borrow',
+        'screen-10-borrow-request': 'nav-btn-borrow',
+        'screen-7-messages': 'nav-btn-messages',
+        'screen-11-notifications': 'nav-btn-notifications',
+        'screen-12-profile': 'nav-btn-profile',
+        'screen-my-listings': 'nav-btn-listings'
+      };
+
+      const btnId = map[activeId];
+      if (btnId) {
+        const btn = document.getElementById(btnId);
+        if (btn) btn.classList.add('tab-active');
+      }
+    }
+    window.updateSidebarActiveStyle = updateSidebarActiveStyle;
+
+    // Toggle Dark Theme
+    function toggleDarkMode() {
+      document.documentElement.classList.toggle('dark');
+      if (typeof applyUserAvatarEverywhere === 'function') applyUserAvatarEverywhere();
+      const avatarModal = document.getElementById('avatar-modal');
+      if (avatarModal && !avatarModal.classList.contains('hidden') && typeof renderAvatarGrid === 'function') {
+        renderAvatarGrid();
+      }
+      showToast(document.documentElement.classList.contains('dark') ? 'Dark theme enabled' : 'Light theme enabled');
+    }
+
+    // Toast message helper
+    function showToast(message) {
+      const toast = document.getElementById('toast-notification');
+      const msg = document.getElementById('toast-message');
+      msg.textContent = message;
+      toast.classList.remove('translate-y-24', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-24', 'opacity-0');
+      }, 2500);
+    }
+  </script>
+<script data-purpose="avatar-generator-and-modal">
+    // Helper to generate Avatar Image markup matching active theme
+    function getAvatarMarkup(index, sizeClass = 'w-full h-full') {
+      const isDark = document.documentElement.classList.contains('dark');
+      const theme = isDark ? 'dark' : 'light';
+      const idx = (typeof index === 'number' && index >= 0 && index < 20) ? index : 0;
+      const mascot = (appState && appState.mascots && appState.mascots[idx]) ? appState.mascots[idx] : { name: 'Mascot ' + idx };
+      return `<img src="assets/avatars/${theme}/avatar_${idx}.png" alt="${mascot.name}" class="${sizeClass} object-cover rounded-full select-none pointer-events-none" />`;
+    }
+    window.getAvatarMarkup = getAvatarMarkup;
+
+    // Helper for backward compatibility
+    function getAvatarSVG(mascotOrIndex, size = 48) {
+      let idx = 0;
+      if (typeof mascotOrIndex === 'number') {
+        idx = mascotOrIndex;
+      } else if (mascotOrIndex && typeof mascotOrIndex.id === 'number') {
+        idx = mascotOrIndex.id;
+      }
+      return getAvatarMarkup(idx);
+    }
+    window.getAvatarSVG = getAvatarSVG;
+
+    // Render Avatar Selection Modal Grid with 20 non-human mascots
+    function renderAvatarGrid() {
+      const grid = document.getElementById('avatar-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+      const isDark = document.documentElement.classList.contains('dark');
+      const activeIdx = (appState && appState.currentUser && typeof appState.currentUser.avatarIndex === 'number')
+        ? appState.currentUser.avatarIndex
+        : 0;
+
+      appState.mascots.forEach((mascot, index) => {
+        const isSelected = index === activeIdx;
+        const item = document.createElement('div');
+        item.className = `relative cursor-pointer aspect-square rounded-full p-1 transition-all duration-150 transform hover:scale-105 ${isSelected ? 'ring-4 ring-emerald-500 ring-offset-2 dark:ring-offset-slate-900' : 'ring-1 ring-slate-200 dark:ring-slate-700'}`;
+        item.onclick = () => selectMascotAvatar(index);
+        item.title = mascot.name;
+
+        item.innerHTML = `
+          <div class="w-full h-full rounded-full overflow-hidden shadow-inner flex items-center justify-center bg-slate-100 dark:bg-slate-800">
+            ${getAvatarMarkup(index)}
+          </div>
+          ${isSelected ? `
+            <div class="absolute -top-1 -right-1 w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold shadow">
+              ✓
+            </div>
+          ` : ''}
+        `;
+        grid.appendChild(item);
+      });
+    }
+    window.renderAvatarGrid = renderAvatarGrid;
+
+    function selectMascotAvatar(index) {
+      appState.currentUser.avatarIndex = index;
+      renderAvatarGrid();
+    }
+    window.selectMascotAvatar = selectMascotAvatar;
+
+    function openAvatarModal() {
+      renderAvatarGrid();
+      document.getElementById('avatar-modal').classList.remove('hidden');
+    }
+    window.openAvatarModal = openAvatarModal;
+
+    function closeAvatarModal() {
+      document.getElementById('avatar-modal').classList.add('hidden');
+    }
+    window.closeAvatarModal = closeAvatarModal;
+
+    function confirmAvatarSelection() {
+      closeAvatarModal();
+      applyUserAvatarEverywhere();
+      showToast('Profile avatar updated successfully!');
+      if (appState.currentScreen === 'screen-2-auth') {
+        navigateTo('screen-3-dashboard');
+      }
+    }
+    window.confirmAvatarSelection = confirmAvatarSelection;
+
+    function applyUserAvatarEverywhere() {
+      const idx = (appState && appState.currentUser && typeof appState.currentUser.avatarIndex === 'number')
+        ? appState.currentUser.avatarIndex
+        : 0;
+      const markup = getAvatarMarkup(idx);
+
+      const sideThumb = document.getElementById('sidebar-avatar-thumb');
+      if (sideThumb) {
+        sideThumb.className = 'w-10 h-10 rounded-full border-2 border-emerald-500 overflow-hidden flex items-center justify-center p-0.5 bg-slate-100 dark:bg-slate-800 shadow-sm';
+        sideThumb.innerHTML = markup;
+      }
+
+      const profileLarge = document.getElementById('profile-avatar-large');
+      if (profileLarge) {
+        profileLarge.className = 'w-20 h-20 rounded-full border-4 border-emerald-500 overflow-hidden flex items-center justify-center p-1 bg-slate-100 dark:bg-slate-800 shadow-md';
+        profileLarge.innerHTML = markup;
+      }
+
+      const headerBadge = document.getElementById('header-avatar-badge');
+      if (headerBadge) {
+        headerBadge.className = 'w-9 h-9 rounded-full border-2 border-emerald-500 overflow-hidden flex items-center justify-center p-0.5 bg-slate-100 dark:bg-slate-800 shadow';
+        headerBadge.innerHTML = markup;
+      }
+    }
+    window.applyUserAvatarEverywhere = applyUserAvatarEverywhere;
+  </script>
+<script data-purpose="auth-and-dashboard-handlers">
+    // Auth Tab Switching
+    function switchAuthTab(type) {
+      const loginBtn = document.getElementById('auth-tab-login');
+      const signupBtn = document.getElementById('auth-tab-signup');
+      const submitBtn = document.getElementById('auth-submit-btn');
+
+      if (type === 'signup') {
+        signupBtn.className = 'w-1/2 py-2 text-sm font-semibold rounded-lg bg-white dark:bg-slate-700 text-brand-900 dark:text-white shadow-sm transition';
+        loginBtn.className = 'w-1/2 py-2 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 transition';
+        submitBtn.textContent = 'Create Student Account';
+      } else {
+        loginBtn.className = 'w-1/2 py-2 text-sm font-semibold rounded-lg bg-white dark:bg-slate-700 text-brand-900 dark:text-white shadow-sm transition';
+        signupBtn.className = 'w-1/2 py-2 text-sm font-semibold rounded-lg text-slate-500 dark:text-slate-400 transition';
+        submitBtn.textContent = 'Login';
+      }
+    }
+
+    // Submit handler for login / signup
+    function handleAuthSubmit(e) {
+      e.preventDefault();
+      const email = document.getElementById('auth-email-input').value;
+      const isSignup = document.getElementById('auth-submit-btn').textContent.includes('Create');
+
+      appState.currentUser.isLoggedIn = true;
+      if (email.includes('@')) {
+        const username = email.split('@')[0].split('.')[0];
+        appState.currentUser.name = username.charAt(0).toUpperCase() + username.slice(1);
+      }
+
+      document.getElementById('dashboard-name').textContent = appState.currentUser.name;
+      document.getElementById('user-display-name').textContent = appState.currentUser.name;
+      document.getElementById('profile-card-name').textContent = appState.currentUser.name;
+
+      if (isSignup) {
+        openAvatarModal();
+      } else {
+        showToast('Logged in successfully!');
+        navigateTo('screen-3-dashboard');
+      }
+    }
+
+    function handleGoogleLogin() {
+      appState.currentUser.isLoggedIn = true;
+      showToast('Logged in with VIT Google Account');
+      navigateTo('screen-3-dashboard');
+    }
+
+    function logoutToLanding() {
+      appState.currentUser.isLoggedIn = false;
+      showToast('Logged out of UniLink');
+      navigateTo('screen-1-landing');
+    }
+    window.handleGoogleLogin = handleGoogleLogin;
+    window.logoutToLanding = logoutToLanding;
+  </script>
+<script data-purpose="marketplace-and-items-rendering">
+    // Master Item Details Context Controller
+    function showItemDetails(item, origin = 'screen-4-marketplace') {
+      if (!item) return;
+      appState.selectedItem = item;
+      appState.itemDetailsOrigin = origin;
+
+      const isLostFound = item.type === 'Lost' || item.type === 'Found' || origin === 'screen-8-lostfound';
+      const isLost = item.type === 'Lost';
+      const isFound = item.type === 'Found';
+
+      // Dynamic Back button label
+      const backLabel = document.getElementById('item-details-back-label');
+      if (backLabel) {
+        if (origin === 'screen-3-dashboard') {
+          backLabel.textContent = 'Back to Home';
+        } else if (origin === 'screen-my-listings') {
+          backLabel.textContent = 'Back to My Listings';
+        } else if (origin === 'screen-12-profile') {
+          backLabel.textContent = 'Back to Profile';
+        } else if (origin === 'screen-8-lostfound') {
+          backLabel.textContent = 'Back to Lost & Found';
+        } else if (origin === 'screen-9-borrow' || origin === 'screen-10-borrow-request') {
+          backLabel.textContent = 'Back to Borrow';
+        } else {
+          backLabel.textContent = 'Back to Marketplace';
+        }
+      }
+
+      // Populate Item Details fields
+      const titleEl = document.getElementById('item-details-title');
+      if (titleEl) titleEl.textContent = item.title || 'Item Details';
+
+      // Badge
+      const badgeEl = document.getElementById('item-details-badge');
+      if (badgeEl) {
+        if (isLost) {
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400';
+          badgeEl.textContent = 'Lost Item';
+          badgeEl.classList.remove('hidden');
+        } else if (isFound) {
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-brand-900 dark:text-emerald-300';
+          badgeEl.textContent = 'Found Item';
+          badgeEl.classList.remove('hidden');
+        } else if (item.fee) {
+          badgeEl.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-950 text-brand-900 dark:text-emerald-300';
+          badgeEl.textContent = 'Free to Borrow';
+          badgeEl.classList.remove('hidden');
+        } else {
+          badgeEl.classList.add('hidden');
+        }
+      }
+
+      // Price / Status line
+      const priceEl = document.getElementById('item-details-price');
+      if (priceEl) {
+        if (isLost) {
+          priceEl.className = 'text-2xl font-black text-red-500 mt-2';
+          priceEl.textContent = item.when || 'Lost on Campus';
+        } else if (isFound) {
+          priceEl.className = 'text-2xl font-black text-emerald-600 dark:text-emerald-400 mt-2';
+          priceEl.textContent = item.when || 'Found on Campus';
+        } else if (item.fee) {
+          priceEl.className = 'text-2xl font-black text-brand-900 dark:text-emerald-400 mt-2';
+          priceEl.textContent = item.fee;
+        } else {
+          priceEl.className = 'text-2xl font-black text-brand-900 dark:text-emerald-400 mt-2';
+          priceEl.textContent = item.price || 'Free';
+        }
+      }
+
+      // Image and Icon
+      const imgEl = document.getElementById('item-details-img');
+      const iconEl = document.getElementById('item-details-icon');
+      if (imgEl) {
+        if (item.image) {
+          imgEl.src = item.image;
+          imgEl.alt = item.title || 'Item photo';
+          imgEl.classList.remove('hidden');
+          if (iconEl) iconEl.classList.add('hidden');
+        } else {
+          imgEl.classList.add('hidden');
+          if (iconEl) {
+            iconEl.textContent = item.icon || '📦';
+            iconEl.classList.remove('hidden');
+          }
+        }
+      } else if (iconEl) {
+        iconEl.textContent = item.icon || '📦';
+      }
+
+      const thumb1 = document.getElementById('item-details-thumb-1');
+      if (thumb1 && item.image) {
+        thumb1.src = item.image;
+      }
+
+      // Location
+      const locEl = document.getElementById('item-details-location');
+      if (locEl) {
+        locEl.textContent = item.place || item.location || 'VIT-AP Campus';
+      }
+
+      // Description
+      const descEl = document.getElementById('item-details-description');
+      if (descEl) {
+        if (item.desc) {
+          descEl.textContent = item.desc;
+        } else if (isLost) {
+          descEl.textContent = `Reported lost near ${item.place || 'campus'}. If you have found or seen this item, please submit a claim report or notify the campus coordinator.`;
+        } else if (isFound) {
+          descEl.textContent = `Found item securely reported near ${item.place || 'campus'}. Please claim with proof of ownership or contact the finder.`;
+        } else if (item.fee) {
+          descEl.textContent = `${item.title} available for short-term borrow on campus. Return safely after use.`;
+        } else {
+          descEl.textContent = `${item.title} in good condition. Available on campus.`;
+        }
+      }
+
+      // Specs Grid
+      const specLabel1 = document.getElementById('spec-label-1');
+      const specVal1 = document.getElementById('spec-val-1');
+      if (specLabel1) specLabel1.textContent = isLostFound ? 'Status' : 'Condition';
+      if (specVal1) specVal1.textContent = isLostFound ? (item.type || 'Reported') : (item.condition || 'Good');
+
+      const specLabel2 = document.getElementById('spec-label-2');
+      const specVal2 = document.getElementById('spec-val-2');
+      if (specLabel2) specLabel2.textContent = 'Category';
+      if (specVal2) specVal2.textContent = item.category || (isLostFound ? `${item.type || 'Campus'} Item` : 'General');
+
+      const specLabel3 = document.getElementById('spec-label-3');
+      const specVal3 = document.getElementById('spec-val-3');
+      if (specLabel3) specLabel3.textContent = isLostFound ? 'Reported' : 'Posted on';
+      if (specVal3) specVal3.textContent = item.when || item.posted || 'Recently';
+
+      // Person Card
+      const personSub = document.getElementById('item-details-person-sub');
+      if (personSub) {
+        personSub.textContent = isLost ? 'Reported by' : isFound ? 'Found by' : item.lender ? 'Lender' : 'Posted by';
+      }
+
+      const personName = item.reporter || item.finder || item.lender || item.seller || (isLost ? 'Student Member' : isFound ? 'Campus Finder' : 'Rahul');
+      const personNameEl = document.getElementById('item-details-person-name');
+      if (personNameEl) personNameEl.textContent = personName;
+
+      const personAvatar = document.getElementById('item-details-person-avatar');
+      if (personAvatar) personAvatar.textContent = personName.charAt(0);
+
+      const personStatus = document.getElementById('item-details-person-status');
+      if (personStatus) {
+        personStatus.textContent = isLostFound ? 'Campus Verified' : 'Online now';
+      }
+
+      // CTAs
+      const primaryAction = document.getElementById('item-details-primary-action');
+      const secondaryAction = document.getElementById('item-details-secondary-action');
+
+      if (isLostFound) {
+        if (primaryAction) {
+          const btnText = isLost ? 'Found This? Report Match' : 'Claim Item';
+          primaryAction.innerHTML = `
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <span>${btnText}</span>
+          `;
+          primaryAction.onclick = () => claimItem(item.title);
+        }
+        if (secondaryAction) {
+          secondaryAction.innerHTML = '💬 Message Coordinator';
+          secondaryAction.onclick = () => startChatWithSeller(personName, item.title, `${item.type || 'Lost & Found'} Item`);
+        }
+      } else {
+        if (primaryAction) {
+          primaryAction.innerHTML = `
+            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+            <span>Message Seller</span>
+          `;
+          primaryAction.onclick = () => startChatWithSeller(personName, item.title, item.price || 'Free');
+        }
+        if (secondaryAction) {
+          updateItemDetailsFavoriteUI();
+        }
+      }
+
+      if (!isLostFound) {
+        updateItemDetailsFavoriteUI();
+      }
+      navigateTo('screen-5-details');
+    }
+    window.showItemDetails = showItemDetails;
+
+    function handleItemDetailsBack() {
+      const origin = appState.itemDetailsOrigin || 'screen-4-marketplace';
+      navigateTo(origin);
+    }
+    window.handleItemDetailsBack = handleItemDetailsBack;
+
+    function toggleItemDetailsFavorite() {
+      if (appState.selectedItem && appState.selectedItem.id) {
+        if (typeof window.toggleSavedItem === 'function') {
+          window.toggleSavedItem(appState.selectedItem.id);
+          updateItemDetailsFavoriteUI();
+          return;
+        }
+      }
+      const favBtn = document.getElementById('item-details-fav-btn');
+      const secBtn = document.getElementById('item-details-secondary-action');
+      if (favBtn) {
+        const isFav = favBtn.classList.contains('text-red-500');
+        if (isFav) {
+          favBtn.classList.remove('text-red-500');
+          favBtn.classList.add('text-slate-400');
+          if (secBtn) secBtn.textContent = '♡ Save Item';
+          showToast('Removed from saved items');
+        } else {
+          favBtn.classList.remove('text-slate-400');
+          favBtn.classList.add('text-red-500');
+          if (secBtn) secBtn.textContent = '❤️ Saved Item';
+          showToast('Saved to your favorites!');
+        }
+      }
+    }
+    window.toggleItemDetailsFavorite = toggleItemDetailsFavorite;
+
+    function updateItemDetailsFavoriteUI() {
+      const favBtn = document.getElementById('item-details-fav-btn');
+      const secBtn = document.getElementById('item-details-secondary-action');
+      const isSaved = appState.selectedItem && window.savedItemIds && window.savedItemIds.indexOf(appState.selectedItem.id) > -1;
+      if (favBtn) {
+        if (isSaved) {
+          favBtn.classList.remove('text-slate-400');
+          favBtn.classList.add('text-red-500');
+          favBtn.innerHTML = '<svg class="w-5 h-5 fill-current text-red-500" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>';
+        } else {
+          favBtn.classList.remove('text-red-500');
+          favBtn.classList.add('text-slate-400');
+          favBtn.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>';
+        }
+      }
+      if (secBtn) {
+        secBtn.textContent = isSaved ? '❤️ Saved Item' : '♡ Save Item';
+        secBtn.onclick = toggleItemDetailsFavorite;
+      }
+    }
+    window.updateItemDetailsFavoriteUI = updateItemDetailsFavoriteUI;
+
+    // Universal item photo helper with graceful icon fallback
+    function getItemPhotoHTML(item, extraClasses) {
+      extraClasses = extraClasses || 'w-full h-full object-cover';
+      if (item && item.image) {
+        return `<img src="${item.image}" alt="${item.title || 'Item'}" class="${extraClasses}" onerror="this.onerror=null;this.parentElement.innerHTML='<span class=\\'text-4xl\\'>${item.icon || '📦'}</span>';" />`;
+      }
+      return `<span class="text-4xl">${(item && item.icon) || '📦'}</span>`;
+    }
+    window.getItemPhotoHTML = getItemPhotoHTML;
+
+    // Render Recently Listed on Screen 3
+    function renderHomeRecentListings() {
+      const container = document.getElementById('home-recent-grid');
+      if (!container) return;
+      container.innerHTML = '';
+
+      appState.marketplaceItems.slice(0, 5).forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 cursor-pointer transition group';
+        card.onclick = () => showItemDetails(item, 'screen-3-dashboard');
+        card.innerHTML = `
+          <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl mb-3 shadow-inner overflow-hidden flex items-center justify-center">
+            ${getItemPhotoHTML(item, 'w-full h-full object-cover group-hover:scale-105 transition-transform')}
+          </div>
+          <div class="flex items-center justify-between">
+            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">${item.title}</h4>
+          </div>
+          <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">${item.price}</span>
+          <span class="block text-[11px] text-slate-400 mt-0.5">${item.location}</span>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    // Render Marketplace Screen 4 Cards
+    function renderMarketplaceCards(itemsToRender = appState.marketplaceItems) {
+      const grid = document.getElementById('marketplace-cards-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      itemsToRender.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between';
+        card.innerHTML = `
+          <div>
+            <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 overflow-hidden cursor-pointer item-card-img">
+              ${getItemPhotoHTML(item, 'w-full h-full object-cover group-hover:scale-105 transition-transform')}
+              <button onclick="event.stopPropagation(); toggleFavorite(this)" class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 text-slate-400 hover:text-red-500 flex items-center justify-center text-sm shadow">
+                ♡
+              </button>
+            </div>
+            <h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer item-card-title">${item.title}</h3>
+            <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">${item.price}</span>
+            <div class="flex items-center text-[11px] text-slate-400 mt-1">
+              <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/></svg>
+              <span>${item.location}</span>
+            </div>
+          </div>
+        `;
+        const imgEl = card.querySelector('.item-card-img');
+        const titleEl = card.querySelector('.item-card-title');
+        const openDetail = () => showItemDetails(item, 'screen-4-marketplace');
+        if (imgEl) imgEl.onclick = openDetail;
+        if (titleEl) titleEl.onclick = openDetail;
+        grid.appendChild(card);
+      });
+    }
+
+    // Filter Marketplace by Category Pill
+    function filterMarketplaceCategory(category, buttonEl) {
+      document.querySelectorAll('.market-pill').forEach(btn => {
+        btn.className = 'market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100';
+      });
+      buttonEl.className = 'market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap';
+
+      if (category === 'All') {
+        renderMarketplaceCards(appState.marketplaceItems);
+      } else {
+        const filtered = appState.marketplaceItems.filter(i => i.category.toLowerCase() === category.toLowerCase());
+        renderMarketplaceCards(filtered);
+      }
+    }
+
+    // Universal Global Search
+    function handleUniversalSearch(query) {
+      const q = query.toLowerCase().trim();
+      const filtered = appState.marketplaceItems.filter(item =>
+        item.title.toLowerCase().includes(q) ||
+        item.category.toLowerCase().includes(q) ||
+        item.location.toLowerCase().includes(q)
+      );
+
+      // Auto switch or update marketplace if searching
+      renderMarketplaceCards(filtered);
+    }
+
+    // Add New Item Submission
+    function handleCreateItemSubmit(e) {
+      e.preventDefault();
+      const title = document.getElementById('new-item-title').value;
+      const category = document.getElementById('new-item-category').value;
+      const price = document.getElementById('new-item-price').value;
+      const desc = document.getElementById('new-item-desc').value;
+
+      let itemImage = 'assets/items/calc -new.webp';
+      if (category === 'Books') itemImage = 'assets/items/dsa_book - new.jpg';
+      else if (category === 'Clothing') itemImage = 'assets/items/hoodie - new.jpg';
+      else if (category === 'Sports') itemImage = 'assets/items/basketball.jpg';
+      else if (category === 'Electronics') {
+        const tLower = title.toLowerCase();
+        if (tLower.includes('charger') || tLower.includes('macbook')) itemImage = 'assets/items/macbook_charger.jpg';
+        else if (tLower.includes('headphone') || tLower.includes('earphone')) itemImage = 'assets/items/headphones.jpg';
+        else if (tLower.includes('laptop') || tLower.includes('stand')) itemImage = 'assets/items/laptop_stand - neww.jpg';
+        else itemImage = 'assets/items/calc -new.webp';
+      } else if (category === 'Accessories') {
+        itemImage = 'assets/items/wallet.jpg';
+      }
+
+      const newItem = {
+        id: Date.now(),
+        title: title,
+        price: '₹' + price,
+        category: category,
+        location: 'VIT-AP Campus',
+        icon: category === 'Books' ? '📚' : category === 'Clothing' ? '🧥' : '🔌',
+        image: itemImage,
+        desc: desc
+      };
+
+      appState.marketplaceItems.unshift(newItem);
+      renderMarketplaceCards();
+      renderHomeRecentListings();
+
+      showToast(`Success! "${title}" has been listed.`);
+      navigateTo('screen-4-marketplace');
+    }
+
+    function toggleFreePrice(checkbox) {
+      const priceInput = document.getElementById('new-item-price');
+      if (checkbox.checked) {
+        priceInput.value = '0';
+        priceInput.disabled = true;
+      } else {
+        priceInput.value = '';
+        priceInput.disabled = false;
+      }
+    }
+
+    function toggleFavorite(btn) {
+      if (btn.classList.contains('text-red-500')) {
+        btn.classList.remove('text-red-500');
+        btn.textContent = '♡';
+        showToast('Removed from saved items');
+      } else {
+        btn.classList.add('text-red-500');
+        btn.textContent = '❤️';
+        showToast('Saved to your favorites!');
+      }
+    }
+
+    function deleteListing(btn, title) {
+      const row = btn.closest('div.flex.flex-col');
+      if (row) {
+        row.remove();
+        showToast(`Listing "${title}" deleted`);
+      }
+    }
+  </script>
+<script data-purpose="chat-logic-and-messages">
+    // Switch Active WhatsApp Chat Conversation
+    function selectConversation(name, itemTitle, itemPrice) {
+      document.getElementById('chat-active-name').textContent = name;
+      document.getElementById('chat-active-avatar').textContent = name.charAt(0);
+      document.getElementById('chat-item-title').textContent = itemTitle;
+      document.getElementById('chat-item-price').textContent = itemPrice;
+
+      showToast(`Loaded conversation with ${name}`);
+    }
+
+    // Jump from Item Detail to Messages with context
+    function startChatWithSeller(sellerName, itemTitle, itemPrice) {
+      navigateTo('screen-7-messages');
+      selectConversation(sellerName, itemTitle, itemPrice);
+    }
+
+    // Send new message
+    function handleSendChatMessage(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input-text');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const container = document.getElementById('chat-messages-container');
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      const bubble = document.createElement('div');
+      bubble.className = 'flex justify-end';
+      bubble.innerHTML = `
+        <div class="chat-bubble-out max-w-md p-3 rounded-2xl shadow-sm">
+          <p class="text-sm">${escapeHTML(text)}</p>
+          <div class="flex items-center justify-end space-x-1 mt-1">
+            <span class="text-[10px] opacity-75">${timeStr}</span>
+            <span class="text-[11px] text-blue-500 font-bold">✓</span>
+          </div>
+        </div>
+      `;
+      container.appendChild(bubble);
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function escapeHTML(str) {
+      return str.replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag));
+    }
+  </script>
+<script data-purpose="lost-found-and-borrow-scripts">
+    // Render Lost & Found Cards
+    function renderLostFoundCards(items = appState.lostFoundItems) {
+      const grid = document.getElementById('lostfound-cards-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      items.forEach(item => {
+        const isLost = item.type === 'Lost';
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition group';
+        card.innerHTML = `
+          <div>
+            <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 shadow-inner overflow-hidden cursor-pointer lf-card-img">
+              ${getItemPhotoHTML(item, 'w-full h-full object-cover group-hover:scale-105 transition-transform')}
+            </div>
+            <h4 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer lf-card-title">${item.title}</h4>
+            <span class="block text-xs font-bold ${isLost ? 'text-red-500' : 'text-emerald-500'} mt-1">
+              ${item.when}
+            </span>
+            <div class="flex items-center text-[11px] text-slate-400 mt-1 truncate">
+              <span>📍 ${item.place}</span>
+            </div>
+          </div>
+          <button onclick="event.stopPropagation(); claimItem('${item.title}')" class="mt-3 w-full py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-brand-900 dark:text-emerald-400 transition">
+            ${isLost ? 'Found This?' : 'Claim Item'}
+          </button>
+        `;
+        const openDetail = () => showItemDetails(item, 'screen-8-lostfound');
+        const imgEl = card.querySelector('.lf-card-img');
+        const titleEl = card.querySelector('.lf-card-title');
+        if (imgEl) imgEl.onclick = (e) => { e.stopPropagation(); openDetail(); };
+        if (titleEl) titleEl.onclick = (e) => { e.stopPropagation(); openDetail(); };
+        card.onclick = openDetail;
+        grid.appendChild(card);
+      });
+    }
+
+    function toggleLostFoundFilter(type, btn) {
+      document.querySelectorAll('.lf-filter-btn').forEach(b => {
+        b.className = 'lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100';
+      });
+      btn.className = 'lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white';
+
+      if (type === 'all') {
+        renderLostFoundCards(appState.lostFoundItems);
+      } else {
+        const filtered = appState.lostFoundItems.filter(i => i.type.toLowerCase() === type.toLowerCase());
+        renderLostFoundCards(filtered);
+      }
+    }
+
+    function filterLostFoundCards(query) {
+      const q = query.toLowerCase();
+      const filtered = appState.lostFoundItems.filter(i =>
+        i.title.toLowerCase().includes(q) ||
+        i.place.toLowerCase().includes(q)
+      );
+      renderLostFoundCards(filtered);
+    }
+
+    function claimItem(title) {
+      showToast(`Claim request submitted for "${title}". Student coordinator notified.`);
+    }
+    window.claimItem = claimItem;
+
+    // Report Item Modal Handling
+    function openReportItemModal() {
+      document.getElementById('report-item-modal').classList.remove('hidden');
+    }
+
+    function closeReportItemModal() {
+      document.getElementById('report-item-modal').classList.add('hidden');
+    }
+
+    function handleReportItemSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('report-item-name').value;
+      const location = document.getElementById('report-item-location').value;
+
+      const nLower = (name || '').toLowerCase();
+      let photo = 'assets/items/water_bottle.jpg';
+      if (nLower.includes('wallet')) photo = 'assets/items/wallet.jpg';
+      else if (nLower.includes('key')) photo = 'assets/items/keychain - new.jpg';
+      else if (nLower.includes('airpod') || nLower.includes('headphone')) photo = 'assets/items/airpods_case.jpg';
+      else if (nLower.includes('phone') || nLower.includes('iphone')) photo = 'assets/items/iphone.jpg';
+      else if (nLower.includes('glass') || nLower.includes('spectacle')) photo = 'assets/items/spectacles.jpg';
+      else if (nLower.includes('calc')) photo = 'assets/items/calc -new.webp';
+
+      appState.lostFoundItems.unshift({
+        id: Date.now(),
+        type: 'Found',
+        title: name,
+        when: 'Found · Just now',
+        place: location,
+        icon: '📦',
+        image: photo,
+        color: 'text-emerald-600'
+      });
+
+      renderLostFoundCards();
+      closeReportItemModal();
+      showToast(`Report for "${name}" published to campus feed!`);
+    }
+
+    // Render Borrow Grid (Screen 9)
+    function renderBorrowGrid(itemsToRender = appState.borrowItems) {
+      const grid = document.getElementById('borrow-cards-grid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      itemsToRender.forEach(item => {
+        const isSaved = window.savedItemIds && window.savedItemIds.indexOf(item.id) > -1;
+        const card = document.createElement('div');
+        card.className = 'bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition group relative';
+        card.onclick = () => {
+          if (typeof showBorrowDetails === 'function') {
+            showBorrowDetails(item, 'screen-9-borrow');
+          } else {
+            navigateTo('screen-10-borrow-request');
+          }
+        };
+        card.innerHTML = `
+          <div>
+            <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 shadow-inner overflow-hidden">
+              ${getItemPhotoHTML(item, 'w-full h-full object-cover group-hover:scale-105 transition-transform')}
+              <button class="borrow-card-heart absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center text-sm shadow ${isSaved ? 'text-red-500' : 'text-slate-400 hover:text-red-500'}" title="${isSaved ? 'Unsave item' : 'Save item'}">
+                ${isSaved ? '❤️' : '♡'}
+              </button>
+            </div>
+            <h4 class="font-bold text-sm text-slate-900 dark:text-white truncate">${item.title}</h4>
+            <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">${item.fee || 'Free to Borrow'}</span>
+            <div class="flex items-center text-[11px] text-slate-400 mt-1 truncate">
+              <span>📍 ${item.location}</span>
+            </div>
+          </div>
+          <span class="block text-right text-xs text-slate-400 mt-3">by ${item.lender}</span>
+        `;
+        const heartBtn = card.querySelector('.borrow-card-heart');
+        if (heartBtn) {
+          heartBtn.onclick = (e) => {
+            e.stopPropagation();
+            if (typeof toggleSavedItem === 'function') toggleSavedItem(item.id);
+          };
+        }
+        grid.appendChild(card);
+      });
+    }
+    window.renderBorrowGrid = renderBorrowGrid;
+
+    // Filter Borrow by Category Pill
+    function filterBorrowCategory(category, buttonEl) {
+      document.querySelectorAll('.borrow-pill').forEach(btn => {
+        btn.className = 'borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100';
+      });
+      if (buttonEl) {
+        buttonEl.className = 'borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap';
+      }
+
+      if (category === 'All') {
+        renderBorrowGrid(appState.borrowItems);
+      } else {
+        const filtered = appState.borrowItems.filter(i => (i.category || 'Others').toLowerCase() === category.toLowerCase());
+        renderBorrowGrid(filtered);
+      }
+    }
+    window.filterBorrowCategory = filterBorrowCategory;
+
+    function submitBorrowRequest(btn) {
+      btn.textContent = 'Requested ✓';
+      btn.classList.remove('bg-brand-900', 'hover:bg-brand-800');
+      btn.classList.add('bg-slate-700', 'cursor-not-allowed');
+      showToast('Borrow request sent to Sneha! You will receive a notification when accepted.');
+    }
+
+    // Filter Notifications Tab (Screen 11)
+    function filterNotificationTab(category, btn) {
+      document.querySelectorAll('.notif-tab').forEach(b => {
+        b.className = 'notif-tab px-3 py-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white';
+      });
+      btn.className = 'notif-tab px-3 py-1 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm';
+
+      const items = document.querySelectorAll('.notif-item');
+      items.forEach(el => {
+        if (category === 'all') {
+          el.classList.remove('hidden');
+        } else {
+          if (el.getAttribute('data-type') === category) {
+            el.classList.remove('hidden');
+          } else {
+            el.classList.add('hidden');
+          }
+        }
+      });
+    }
+
+    // --- Onload Initialization ---
+    window.addEventListener('DOMContentLoaded', () => {
+      renderHomeRecentListings();
+      renderMarketplaceCards();
+      renderLostFoundCards();
+      renderBorrowGrid();
+      applyUserAvatarEverywhere();
+      navigateTo('screen-1-landing');
+    });
+  </script>
+<!-- END: JavaScript Logic and State Management -->
+
+
+
+
+<script data-purpose="patch-fixes">
+function openBorrowModal() {
+  document.getElementById('borrow-item-modal').classList.remove('hidden');
+}
+function closeBorrowModal() {
+  document.getElementById('borrow-item-modal').classList.add('hidden');
+}
+function handleCreateBorrowSubmit(e) {
+  e.preventDefault();
+  const title = document.getElementById('borrow-modal-title').value.trim();
+  const location = document.getElementById('borrow-modal-location').value.trim() || 'Campus';
+  if (!title) return;
+
+  const tLower = title.toLowerCase();
+  let itemImage = 'assets/items/extension_board.jpg';
+  if (tLower.includes('laptop') || tLower.includes('stand')) itemImage = 'assets/items/laptop_stand - neww.jpg';
+  else if (tLower.includes('book') || tLower.includes('dsa') || tLower.includes('notes')) itemImage = 'assets/items/dsa_book - new.jpg';
+  else if (tLower.includes('projector')) itemImage = 'assets/items/projector-new.jpg';
+  else if (tLower.includes('camera') || tLower.includes('dslr')) itemImage = 'assets/items/camera.jpg';
+  else if (tLower.includes('racket') || tLower.includes('tennis') || tLower.includes('badminton')) itemImage = 'assets/items/tennis_racket-new.jpg';
+  else if (tLower.includes('headphone') || tLower.includes('earphone')) itemImage = 'assets/items/headphones.jpg';
+  else if (tLower.includes('calc')) itemImage = 'assets/items/calc -new.webp';
+
+  const newBorrowItem = {
+    id: Date.now(),
+    title: title,
+    fee: 'Free',
+    location: location,
+    icon: '📦',
+    image: itemImage,
+    lender: appState.currentUser.name
+  };
+  appState.borrowItems.unshift(newBorrowItem);
+  renderBorrowGrid();
+  const listingsContainer = document.getElementById('manage-listings-container');
+  if (listingsContainer) {
+    const newRow = document.createElement('div');
+    newRow.className = 'p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4';
+    newRow.innerHTML = `<div class="flex items-center space-x-4"><div class="w-14 h-14 rounded-xl overflow-hidden bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shrink-0"><img src="${itemImage}" alt="${title}" class="w-full h-full object-cover"></div><div><h4 class="font-bold text-sm text-slate-900 dark:text-white">${title}</h4><span class="text-sm font-bold text-brand-900 dark:text-emerald-400">Free to Borrow</span><span class="text-xs text-slate-400 ml-2">Just now</span></div></div><div class="flex items-center space-x-2"><button class="px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs font-semibold hover:bg-red-50 dark:hover:bg-red-950/30" onclick="deleteListing(this, '${title}')">Delete</button></div>`;
+    listingsContainer.prepend(newRow);
+  }
+  closeBorrowModal();
+  showToast(`Successfully listed "${title}" for campus borrowing!`);
+  navigateTo('screen-9-borrow');
+}
+function openEditProfileModal() {
+  const input = document.getElementById('edit-profile-name-input');
+  if (input) input.value = appState.currentUser.name;
+  document.getElementById('edit-profile-modal').classList.remove('hidden');
+}
+function closeEditProfileModal() {
+  document.getElementById('edit-profile-modal').classList.add('hidden');
+}
+function saveProfileChanges(e) {
+  e.preventDefault();
+  const newName = document.getElementById('edit-profile-name-input').value.trim();
+  const newBlock = document.getElementById('edit-profile-block-input').value.trim();
+  if (newName) {
+    appState.currentUser.name = newName;
+    const el1 = document.getElementById('user-display-name');
+    if (el1) el1.textContent = newName;
+    const el2 = document.getElementById('dashboard-name');
+    if (el2) el2.textContent = newName;
+    const el3 = document.getElementById('profile-card-name');
+    if (el3) el3.textContent = newName;
+    const el4 = document.getElementById('profile-info-name');
+    if (el4) el4.textContent = newName;
+  }
+  if (newBlock) {
+    const elBlock = document.getElementById('profile-info-block');
+    if (elBlock) elBlock.textContent = newBlock;
+  }
+  closeEditProfileModal();
+  showToast('Profile updated successfully!');
+}
+</script>
+
+
+
+<script data-purpose="avatar-sync-and-radio-fixes">
+window.selectReportRadioType = function(type) {
+  const foundBtn = document.getElementById('lf-radio-btn-found');
+  const lostBtn = document.getElementById('lf-radio-btn-lost');
+  if (!foundBtn || !lostBtn) return;
+  const foundInput = foundBtn.querySelector('input');
+  const lostInput = lostBtn.querySelector('input');
+  if (type === 'Found') {
+    if (foundInput) foundInput.checked = true;
+    foundBtn.className = 'flex-1 flex items-center justify-center p-3 rounded-xl border border-emerald-700 bg-emerald-700 text-white text-xs font-semibold cursor-pointer lf-radio-label transition-all';
+    lostBtn.className = 'flex-1 flex items-center justify-center p-3 rounded-xl border border-transparent bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold cursor-pointer lf-radio-label transition-all';
+  } else {
+    if (lostInput) lostInput.checked = true;
+    lostBtn.className = 'flex-1 flex items-center justify-center p-3 rounded-xl border border-emerald-700 bg-emerald-700 text-white text-xs font-semibold cursor-pointer lf-radio-label transition-all';
+    foundBtn.className = 'flex-1 flex items-center justify-center p-3 rounded-xl border border-transparent bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold cursor-pointer lf-radio-label transition-all';
+  }
+};
+
+if (window.appState) {
+  appState.currentUser.name = 'Varshitha';
+  appState.currentUser.email = 'varshitha.25bca1234@vitapstudent.ac.in';
+  appState.currentUser.regNo = '25bca1234';
+  appState.currentUser.year = '2nd Year';
+  appState.currentUser.program = 'B.Tech';
+
+  if (typeof renderAvatarGrid === 'function') {
+    renderAvatarGrid();
+  }
+  if (typeof applyUserAvatarEverywhere === 'function') {
+    applyUserAvatarEverywhere();
+  }
+}
+</script>
+
+<script data-purpose="saved-items-and-expanded-profile-edit">
+(function() {
+  var savedKey = 'unilink_saved_items';
+  var stored = null;
+  try { stored = JSON.parse(localStorage.getItem(savedKey)); } catch(e) {}
+  if (!Array.isArray(stored)) {
+    stored = [1, 4];
+    try { localStorage.setItem(savedKey, JSON.stringify(stored)); } catch(e) {}
+  }
+  window.savedItemIds = stored;
+
+  window.openEditProfileModal = function() {
+    var sName = document.getElementById('edit-student-name');
+    var sReg = document.getElementById('edit-reg-no');
+    var sEmail = document.getElementById('edit-college-email');
+    var sYear = document.getElementById('edit-year-study');
+    var sProg = document.getElementById('edit-program');
+    if (sName) sName.value = appState.currentUser.name || 'Varshitha';
+    if (sReg) sReg.value = appState.currentUser.regNo || '25bca1234';
+    if (sEmail) sEmail.value = appState.currentUser.email || 'varshitha.25bca1234@vitapstudent.ac.in';
+    if (sYear && appState.currentUser.year) sYear.value = appState.currentUser.year;
+    if (sProg && appState.currentUser.program) sProg.value = appState.currentUser.program;
+    var modal = document.getElementById('edit-profile-modal');
+    if (modal) modal.classList.remove('hidden');
+  };
+
+  window.saveProfileChanges = function(e) {
+    if (e) e.preventDefault();
+    var sName = document.getElementById('edit-student-name');
+    var sReg = document.getElementById('edit-reg-no');
+    var sEmail = document.getElementById('edit-college-email');
+    var sYear = document.getElementById('edit-year-study');
+    var sProg = document.getElementById('edit-program');
+    var nameVal = sName ? sName.value.trim() : '';
+    var regVal = sReg ? sReg.value.trim() : '';
+    var emailVal = sEmail ? sEmail.value.trim() : '';
+    var yearVal = sYear ? sYear.value : '2nd Year';
+    var progVal = sProg ? sProg.value : 'B.Tech';
+    if (nameVal) {
+      appState.currentUser.name = nameVal;
+      ['user-display-name', 'dashboard-name', 'profile-card-name', 'profile-info-name'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = nameVal;
+      });
+    }
+    if (regVal) {
+      appState.currentUser.regNo = regVal;
+      var elReg = document.getElementById('profile-info-reg');
+      if (elReg) elReg.textContent = regVal;
+    }
+    if (emailVal) {
+      appState.currentUser.email = emailVal;
+      var elEm = document.getElementById('profile-card-email');
+      if (elEm) elEm.textContent = emailVal;
+    }
+    if (yearVal) {
+      appState.currentUser.year = yearVal;
+      var elYr = document.getElementById('profile-info-year');
+      if (elYr) elYr.textContent = yearVal;
+    }
+    if (progVal) {
+      appState.currentUser.program = progVal;
+      var elProg = document.getElementById('profile-info-prog');
+      if (elProg) elProg.textContent = progVal;
+    }
+    closeEditProfileModal();
+    if (typeof showToast === 'function') showToast('Student profile updated successfully!');
+  };
+
+  window.toggleSavedItem = function(itemId) {
+    var idx = window.savedItemIds.indexOf(itemId);
+    var isSavedNow = false;
+    if (idx > -1) {
+      window.savedItemIds.splice(idx, 1);
+      isSavedNow = false;
+      if (typeof showToast === 'function') showToast('Item removed from saved');
+    } else {
+      window.savedItemIds.push(itemId);
+      isSavedNow = true;
+      if (typeof showToast === 'function') showToast('Item saved to your profile!');
+    }
+    try { localStorage.setItem('unilink_saved_items', JSON.stringify(window.savedItemIds)); } catch(e) {}
+    window.updateSavedCountBadges();
+    window.renderSavedItems();
+    window.updateAllMarketplaceHeartIcons();
+  };
+
+  window.updateSavedCountBadges = function() {
+    var countEl = document.getElementById('profile-saved-count');
+    if (countEl) countEl.textContent = window.savedItemIds.length;
+  };
+
+  window.showBorrowDetails = function(item, origin) {
+    if (!item) return;
+    origin = origin || 'screen-9-borrow';
+    appState.selectedBorrowItem = item;
+    appState.borrowDetailsOrigin = origin;
+
+    var backLabel = document.getElementById('borrow-back-label');
+    if (backLabel) {
+      backLabel.textContent = origin === 'screen-12-profile' ? 'Back to Saved Items' : 'Back to Borrow';
+    }
+
+    var bImgEl = document.getElementById('borrow-details-img');
+    var bIconWrap = document.getElementById('borrow-details-icon-wrapper');
+    var iconEl = document.getElementById('borrow-details-icon');
+    if (bImgEl && bIconWrap) {
+      if (item.image) {
+        bImgEl.src = item.image;
+        bImgEl.alt = item.title || 'Item preview';
+        bImgEl.classList.remove('hidden');
+        bIconWrap.classList.add('hidden');
+      } else {
+        bImgEl.classList.add('hidden');
+        if (iconEl) iconEl.textContent = item.icon || '📦';
+        bIconWrap.classList.remove('hidden');
+      }
+    } else if (iconEl) {
+      iconEl.textContent = item.icon || '📦';
+    }
+    var subEl = document.getElementById('borrow-details-subtitle');
+    if (subEl) subEl.textContent = item.category ? (item.category + ' Item') : 'Campus Item';
+
+    var titleEl = document.getElementById('borrow-details-title');
+    if (titleEl) titleEl.textContent = item.title;
+    var feeEl = document.getElementById('borrow-details-fee');
+    if (feeEl) feeEl.textContent = item.fee ? (item.fee === 'Free' ? 'Free to Borrow' : item.fee) : 'Free to Borrow';
+    var locEl = document.getElementById('borrow-details-location');
+    if (locEl) locEl.textContent = item.location || 'Campus';
+    var descEl = document.getElementById('borrow-details-desc');
+    if (descEl) descEl.textContent = item.desc || (item.title + ' available for short-term peer borrow during exam prep week. Please return in good condition.');
+    var condEl = document.getElementById('borrow-details-condition');
+    if (condEl) condEl.textContent = item.condition || 'Good';
+    var catEl = document.getElementById('borrow-details-category');
+    if (catEl) catEl.textContent = item.category || 'General';
+    var availEl = document.getElementById('borrow-details-available');
+    if (availEl) availEl.textContent = item.availableTill || 'Oct 25, 2024';
+
+    var lenderName = item.lender || 'Student Lender';
+    var lenderEl = document.getElementById('borrow-details-lender-name');
+    if (lenderEl) lenderEl.textContent = lenderName;
+    var lenderAv = document.getElementById('borrow-details-lender-avatar');
+    if (lenderAv) lenderAv.textContent = lenderName.charAt(0).toUpperCase();
+
+    var msgBtn = document.getElementById('borrow-details-msg-btn');
+    if (msgBtn) {
+      msgBtn.onclick = function() {
+        if (typeof startChatWithSeller === 'function') {
+          startChatWithSeller(lenderName, item.title, (item.fee || 'Free') + ' · ' + (item.location || 'Campus'));
+        }
+      };
+    }
+
+    window.updateBorrowDetailsFavUI();
+    navigateTo('screen-10-borrow-request');
+  };
+
+  window.handleBorrowDetailsBack = function() {
+    var origin = appState.borrowDetailsOrigin || 'screen-9-borrow';
+    navigateTo(origin);
+  };
+
+  window.toggleBorrowDetailsFavorite = function() {
+    if (appState.selectedBorrowItem && appState.selectedBorrowItem.id) {
+      window.toggleSavedItem(appState.selectedBorrowItem.id);
+      window.updateBorrowDetailsFavUI();
+    }
+  };
+
+  window.updateBorrowDetailsFavUI = function() {
+    var favBtn = document.getElementById('borrow-details-fav-btn');
+    if (!favBtn || !appState.selectedBorrowItem) return;
+    var isSaved = window.savedItemIds && window.savedItemIds.indexOf(appState.selectedBorrowItem.id) > -1;
+    if (isSaved) {
+      favBtn.textContent = '❤️';
+      favBtn.className = 'p-2.5 rounded-full border border-red-200 dark:border-red-900/40 text-red-500 bg-red-50 dark:bg-red-950/20 transition';
+    } else {
+      favBtn.textContent = '♡';
+      favBtn.className = 'p-2.5 rounded-full border border-slate-200 dark:border-slate-700 text-slate-400 hover:text-red-500 transition';
+    }
+  };
+
+  window.updateAllMarketplaceHeartIcons = function() {
+    var grid = document.getElementById('marketplace-cards-grid');
+    if (grid) {
+      var cards = grid.children;
+      for (var i = 0; i < cards.length; i++) {
+        var item = appState.marketplaceItems[i];
+        if (!item) continue;
+        var btn = cards[i].querySelector('button');
+        if (btn) {
+          var isSaved = window.savedItemIds.indexOf(item.id) > -1;
+          btn.className = 'absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center text-sm shadow ' + (isSaved ? 'text-red-500' : 'text-slate-400 hover:text-red-500');
+          btn.textContent = isSaved ? '❤️' : '♡';
+          btn.onclick = (function(id) {
+            return function(ev) {
+              ev.stopPropagation();
+              toggleSavedItem(id);
+            };
+          })(item.id);
+        }
+      }
+    }
+
+    var bGrid = document.getElementById('borrow-cards-grid');
+    if (bGrid) {
+      var bCards = bGrid.children;
+      for (var j = 0; j < bCards.length; j++) {
+        var bItem = appState.borrowItems[j];
+        if (!bItem) continue;
+        var bBtn = bCards[j].querySelector('.borrow-card-heart');
+        if (bBtn) {
+          var bSaved = window.savedItemIds.indexOf(bItem.id) > -1;
+          bBtn.className = 'borrow-card-heart absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 flex items-center justify-center text-sm shadow ' + (bSaved ? 'text-red-500' : 'text-slate-400 hover:text-red-500');
+          bBtn.textContent = bSaved ? '❤️' : '♡';
+          bBtn.onclick = (function(id) {
+            return function(ev) {
+              ev.stopPropagation();
+              toggleSavedItem(id);
+            };
+          })(bItem.id);
+        }
+      }
+    }
+
+    if (typeof updateItemDetailsFavoriteUI === 'function') updateItemDetailsFavoriteUI();
+    if (typeof updateBorrowDetailsFavUI === 'function') updateBorrowDetailsFavUI();
+  };
+
+  window.renderSavedItems = function() {
+    var container = document.getElementById('profile-saved-grid');
+    if (!container) return;
+    container.innerHTML = '';
+
+    var savedMarketplace = (appState.marketplaceItems || []).filter(function(item) {
+      return window.savedItemIds.indexOf(item.id) > -1;
+    }).map(function(item) {
+      return Object.assign({}, item, { _savedType: 'marketplace' });
+    });
+
+    var savedBorrow = (appState.borrowItems || []).filter(function(item) {
+      return window.savedItemIds.indexOf(item.id) > -1;
+    }).map(function(item) {
+      return Object.assign({}, item, { _savedType: 'borrow' });
+    });
+
+    var savedList = savedMarketplace.concat(savedBorrow);
+
+    if (savedList.length === 0) {
+      container.innerHTML = '<div class="col-span-full py-8 text-center text-slate-400 text-xs">No saved items yet. Click the heart icon on any marketplace or borrow item to save it here!</div>';
+      return;
+    }
+
+    savedList.forEach(function(item) {
+      var card = document.createElement('div');
+      card.className = 'bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between cursor-pointer';
+
+      var isBorrow = item._savedType === 'borrow';
+      var priceBadge = isBorrow ? (item.fee || 'Free to Borrow') : item.price;
+      var subtitle = isBorrow ? ('📍 ' + item.location + (item.lender ? ' · by ' + item.lender : '')) : ('📍 ' + item.location);
+      var categoryBadge = isBorrow
+        ? '<span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-brand-900 dark:text-emerald-300">Borrow</span>'
+        : '<span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-300">Market</span>';
+
+      card.innerHTML = '<div>' +
+        '<div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 overflow-hidden">' +
+          getItemPhotoHTML(item, 'w-full h-full object-cover group-hover:scale-105 transition-transform') +
+          '<button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 text-red-500 flex items-center justify-center text-sm shadow hover:scale-110 transition" title="Unsave item">❤️</button>' +
+        '</div>' +
+        '<div class="flex items-center justify-between gap-2">' +
+          '<h3 class="font-bold text-sm text-slate-900 dark:text-white truncate flex-1">' + item.title + '</h3>' +
+          categoryBadge +
+        '</div>' +
+        '<span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">' + priceBadge + '</span>' +
+        '<div class="flex items-center text-[11px] text-slate-400 mt-1 truncate">' +
+          '<span>' + subtitle + '</span>' +
+        '</div>' +
+      '</div>';
+
+      var btn = card.querySelector('button');
+      if (btn) {
+        btn.onclick = function(e) {
+          e.stopPropagation();
+          toggleSavedItem(item.id);
+        };
+      }
+
+      card.onclick = function() {
+        if (isBorrow) {
+          showBorrowDetails(item, 'screen-12-profile');
+        } else {
+          showItemDetails(item, 'screen-12-profile');
+        }
+      };
+
+      container.appendChild(card);
+    });
+  };
+
+  window.switchProfileSection = function(section, btn) {
+    var infoBtn = document.getElementById('tab-btn-student-info');
+    var savedBtn = document.getElementById('tab-btn-saved-items');
+    var overviewSec = document.getElementById('profile-overview-section');
+    var savedSec = document.getElementById('profile-saved-section');
+    var inactiveClass = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200';
+    var activeClass = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-900 text-white';
+    if (section === 'saved') {
+      if (infoBtn) infoBtn.className = inactiveClass;
+      if (savedBtn) savedBtn.className = activeClass;
+      if (overviewSec) overviewSec.classList.add('hidden');
+      if (savedSec) savedSec.classList.remove('hidden');
+      renderSavedItems();
+    } else {
+      if (savedBtn) savedBtn.className = inactiveClass;
+      if (infoBtn) infoBtn.className = activeClass;
+      if (savedSec) savedSec.classList.add('hidden');
+      if (overviewSec) overviewSec.classList.remove('hidden');
+    }
+  };
+
+  var oldRenderMarketplaceCards = window.renderMarketplaceCards;
+  window.renderMarketplaceCards = function(itemsToRender) {
+    if (oldRenderMarketplaceCards) oldRenderMarketplaceCards(itemsToRender);
+    updateAllMarketplaceHeartIcons();
+  };
+
+  var oldRenderBorrowGrid = window.renderBorrowGrid;
+  window.renderBorrowGrid = function(itemsToRender) {
+    if (oldRenderBorrowGrid) oldRenderBorrowGrid(itemsToRender);
+    updateAllMarketplaceHeartIcons();
+  };
+
+  window.updateSavedCountBadges();
+  window.updateAllMarketplaceHeartIcons();
+  window.renderSavedItems();
+})();
+</script>
+
+
+
+</body></html>
