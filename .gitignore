@@ -14,10 +14,24 @@ $RECYCLE.BIN/
 *.swp
 *.swo
 
-# Environment and Secrets
+# Python Virtual Environments
+.venv/
+venv/
+ENV/
+env/
+backend/.venv/
+backend/venv/
+
+# Python Bytecode and Cache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environment and Secrets (Never commit database passwords or keys)
 .env
-.env.local
-.env.*.local
+.env.*
+backend/.env
 *.pem
 *.key
 *.cert
@@ -28,10 +42,13 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Node / Dependencies (for future expansion)
+# Node / Frontend Dependencies (for future expansion)
 node_modules/
 package-lock.json.bak
-dist/
-build/
-tmp/
-temp/
+# Uploaded User Files (Storage should be mounted persistent volume)
+backend/uploads/
+uploads/
+
+# Local Scratch / Test Scripts
+test_*.py
+scratch/
