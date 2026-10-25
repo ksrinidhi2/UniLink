@@ -20,6 +20,7 @@ try:
         GoogleLoginRequest,
         TokenResponse,
         StudentOut,
+        StudentUpdate,
     )
     from backend.security import (
         get_password_hash,
@@ -38,6 +39,7 @@ except ImportError:
         GoogleLoginRequest,
         TokenResponse,
         StudentOut,
+        StudentUpdate,
     )
     from security import (
         get_password_hash,
@@ -323,4 +325,45 @@ def google_sign_in(payload: GoogleLoginRequest, db: Session = Depends(get_db)):
 )
 def get_current_student_profile(current_student: Student = Depends(get_current_student)):
     return current_student
+
+
+# ==============================================================================
+# 5. UPDATE CURRENT STUDENT PROFILE (PROTECTED)
+# ==============================================================================
+@router.put(
+    "/me",
+    response_model=StudentOut,
+    status_code=status.HTTP_200_OK,
+    summary="Update current authenticated student profile",
+    description="Updates permitted profile fields (avatar_index, full_name, program, year_of_study, reg_no) for the currently authenticated student."
+)
+def update_current_student_profile(
+    payload: StudentUpdate,
+    current_student: Student = Depends(get_current_student),
+    db: Session = Depends(get_db)
+):
+    if payload.avatar_index is not None:
+        if not (0 <= payload.avatar_index <= 19):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="avatar_index must be between 0 and 19 (available non-human mascots)"
+            )
+        current_student.avatar_index = payload.avatar_index
+
+    if payload.full_name is not None and payload.full_name.strip():
+        current_student.full_name = payload.full_name.strip()
+
+    if payload.program is not None and payload.program.strip():
+        current_student.program = payload.program.strip()
+
+    if payload.year_of_study is not None and payload.year_of_study.strip():
+        current_student.year_of_study = payload.year_of_study.strip()
+
+    if payload.reg_no is not None and payload.reg_no.strip():
+        current_student.reg_no = payload.reg_no.strip()
+
+    db.commit()
+    db.refresh(current_student)
+    return current_student
+
 

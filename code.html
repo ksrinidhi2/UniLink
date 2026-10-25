@@ -1186,24 +1186,24 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <!-- SCREEN 11: NOTIFICATIONS -->
 <!-- ========================================== -->
 <div class="app-subview hidden" id="view-screen-11">
-<div class="max-w-3xl mx-auto bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
-<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
-<div class="flex items-center space-x-3">
-<h2 class="text-xl font-bold text-slate-900 dark:text-white">Notifications</h2>
+<div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800">
+<div class="flex flex-wrap items-center gap-3">
+<h2 class="text-xl font-bold text-slate-900 dark:text-white mr-1">Notifications</h2>
 <button onclick="markAllNotificationsAsRead()" class="text-xs text-brand-900 dark:text-emerald-400 font-semibold hover:underline" id="notif-mark-all-read-btn">Mark all as read</button>
 </div>
 <!-- Filter Pills -->
 <div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-semibold">
-<button class="notif-tab px-3 py-1 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm" onclick="filterNotificationTab('all', this)">All</button>
-<button class="notif-tab px-3 py-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white" onclick="filterNotificationTab('messages', this)">Messages</button>
-<button class="notif-tab px-3 py-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white" onclick="filterNotificationTab('items', this)">Item Updates</button>
-<button class="notif-tab px-3 py-1 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white" onclick="filterNotificationTab('system', this)">System</button>
+<button class="notif-tab px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition" onclick="filterNotificationTab('all', this)">All</button>
+<button class="notif-tab px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition" onclick="filterNotificationTab('messages', this)">Messages</button>
+<button class="notif-tab px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition" onclick="filterNotificationTab('items', this)">Item Updates</button>
+<button class="notif-tab px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition" onclick="filterNotificationTab('system', this)">System</button>
 </div>
 </div>
 <!-- Notifications list (Exact list from Screen 11) -->
 <div class="space-y-3" id="notifications-list">
 <!-- 1: Message from Rahul -->
-<div class="notif-item p-4 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 hover:bg-emerald-50 cursor-pointer flex items-start space-x-3 transition" data-type="messages" onclick="navigateTo('screen-7-messages')">
+<div class="notif-item p-4 sm:p-4.5 rounded-2xl bg-emerald-50/50 dark:bg-emerald-950/20 border border-emerald-200/60 dark:border-emerald-800/40 hover:bg-emerald-50 dark:hover:bg-emerald-950/30 cursor-pointer flex items-start space-x-4 transition" data-type="messages" onclick="navigateTo('screen-7-messages')">
 <div class="w-10 h-10 rounded-xl bg-emerald-100 dark:bg-emerald-900 text-brand-900 dark:text-emerald-300 flex items-center justify-center font-bold shrink-0">R</div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center justify-between">
@@ -1214,7 +1214,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 </div>
 </div>
 <!-- 2: Offer on Laptop Stand -->
-<div class="notif-item p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 cursor-pointer flex items-start space-x-3 transition" data-type="items" onclick="navigateTo('screen-10-borrow-request')">
+<div class="notif-item p-4 sm:p-4.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-start space-x-4 transition" data-type="items" onclick="navigateTo('screen-10-borrow-request')">
 <div class="w-10 h-10 rounded-xl bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 flex items-center justify-center font-bold shrink-0">💻</div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center justify-between">
@@ -1225,7 +1225,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 </div>
 </div>
 <!-- 3: Lost item found (Brown Wallet) -->
-<div class="notif-item p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 cursor-pointer flex items-start space-x-3 transition" data-type="items" onclick="navigateTo('screen-8-lostfound')">
+<div class="notif-item p-4 sm:p-4.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-start space-x-4 transition" data-type="items" onclick="navigateTo('screen-8-lostfound')">
 <div class="w-10 h-10 rounded-xl bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 flex items-center justify-center font-bold shrink-0">👛</div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center justify-between">
@@ -1236,7 +1236,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 </div>
 </div>
 <!-- 4: Message from Sneha -->
-<div class="notif-item p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 cursor-pointer flex items-start space-x-3 transition" data-type="messages" onclick="navigateTo('screen-7-messages')">
+<div class="notif-item p-4 sm:p-4.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-start space-x-4 transition" data-type="messages" onclick="navigateTo('screen-7-messages')">
 <div class="w-10 h-10 rounded-xl bg-purple-100 dark:bg-purple-950 text-purple-700 dark:text-purple-300 flex items-center justify-center font-bold shrink-0">S</div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center justify-between">
@@ -1247,7 +1247,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 </div>
 </div>
 <!-- 5: Item marked as sold -->
-<div class="notif-item p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 cursor-pointer flex items-start space-x-3 transition" data-type="items" onclick="navigateTo('screen-12-profile')">
+<div class="notif-item p-4 sm:p-4.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/60 cursor-pointer flex items-start space-x-4 transition" data-type="items" onclick="navigateTo('screen-12-profile')">
 <div class="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center font-bold shrink-0">🏷️</div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center justify-between">
@@ -1258,7 +1258,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 </div>
 </div>
 <!-- 6: System update -->
-<div class="notif-item p-4 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-start space-x-3" data-type="system">
+<div class="notif-item p-4 sm:p-4.5 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-start space-x-4" data-type="system">
 <div class="w-10 h-10 rounded-xl bg-brand-100 dark:bg-brand-950 text-brand-900 dark:text-emerald-300 flex items-center justify-center font-bold shrink-0">⚙️</div>
 <div class="flex-1 min-w-0">
 <div class="flex items-center justify-between">
@@ -1486,6 +1486,49 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     }
     window.isAuthenticated = isAuthenticated;
 
+    // Registered screen identifiers in the application
+    const VALID_SCREENS = [
+      'screen-1-landing',
+      'screen-2-auth',
+      'screen-3-dashboard',
+      'screen-4-marketplace',
+      'screen-5-details',
+      'screen-6-add-item',
+      'screen-7-messages',
+      'screen-8-lostfound',
+      'screen-9-borrow',
+      'screen-10-borrow-request',
+      'screen-11-notifications',
+      'screen-12-profile',
+      'screen-my-listings'
+    ];
+
+    // Mapping for subviews (e.g. details pages) that should fall back to parent on reload
+    const SUBVIEW_PARENT_FALLBACKS = {
+      'screen-5-details': 'screen-4-marketplace',
+      'screen-10-borrow-request': 'screen-9-borrow'
+    };
+
+    function resolveSafeScreenId(screenId) {
+      if (!screenId || typeof screenId !== 'string') {
+        return 'screen-3-dashboard';
+      }
+      // If modal or item-details subview was saved, return parent screen
+      if (SUBVIEW_PARENT_FALLBACKS[screenId]) {
+        return SUBVIEW_PARENT_FALLBACKS[screenId];
+      }
+      // For authenticated restoration, avoid restoring raw auth screen
+      if (screenId === 'screen-2-auth') {
+        return 'screen-3-dashboard';
+      }
+      // Validate against registered screens
+      if (VALID_SCREENS.includes(screenId)) {
+        return screenId;
+      }
+      return 'screen-3-dashboard';
+    }
+    window.resolveSafeScreenId = resolveSafeScreenId;
+
     // --- Master Navigation Controller ---
     function navigateTo(targetScreenId) {
       // Authentication Guard: Screens other than landing (1) and auth (2) require a valid login session
@@ -1534,6 +1577,14 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       }
 
       appState.currentScreen = targetScreenId;
+
+      // Save last visited screen for authenticated sessions
+      if (isAuthenticated()) {
+        const screenToSave = SUBVIEW_PARENT_FALLBACKS[targetScreenId] || targetScreenId;
+        if (screenToSave !== 'screen-2-auth') {
+          sessionStorage.setItem('unilink_last_screen', screenToSave);
+        }
+      }
 
       if (targetScreenId === 'screen-my-listings') {
         if (typeof window.loadMyListingsFromAPI === 'function') window.loadMyListingsFromAPI();
@@ -1682,10 +1733,51 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     }
     window.closeAvatarModal = closeAvatarModal;
 
-    function confirmAvatarSelection() {
+    async function confirmAvatarSelection() {
+      const selectedIndex = (appState && appState.currentUser && typeof appState.currentUser.avatarIndex === 'number')
+        ? appState.currentUser.avatarIndex
+        : 0;
+
+      // Validate avatar index range (0 to 19 for available non-human mascots)
+      if (selectedIndex < 0 || selectedIndex > 19) {
+        showToast('Invalid mascot selection. Please choose a mascot from the list.');
+        return;
+      }
+
       closeAvatarModal();
       applyUserAvatarEverywhere();
-      showToast('Profile avatar updated successfully!');
+
+      // Persist to backend if student is logged in with an access token
+      const token = sessionStorage.getItem('unilink_access_token');
+      if (token) {
+        try {
+          const resp = await fetch(`${API_BASE_URL}/auth/me`, {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`,
+              'Accept': 'application/json'
+            },
+            body: JSON.stringify({ avatar_index: selectedIndex })
+          });
+
+          if (resp.ok) {
+            const updatedProfile = await resp.json();
+            updateUserDisplayProfile(updatedProfile);
+            showToast('Mascot updated and saved to your campus profile!');
+          } else {
+            const errData = await resp.json().catch(() => ({}));
+            console.warn('Failed to persist avatar_index to backend:', errData);
+            showToast(errData.detail || 'Mascot updated locally, but server update failed.');
+          }
+        } catch (err) {
+          console.warn('Network error persisting mascot selection:', err);
+          showToast('Mascot updated locally. Network error connecting to server.');
+        }
+      } else {
+        showToast('Profile avatar updated successfully!');
+      }
+
       if (appState.currentScreen === 'screen-2-auth') {
         navigateTo('screen-3-dashboard');
       }
@@ -2172,28 +2264,37 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     window.handleGoogleLogin = handleGoogleLogin;
 
     function logoutToLanding() {
-      // Clear stored JWT token from sessionStorage
+      // Clear stored JWT token and last screen from sessionStorage
       sessionStorage.removeItem('unilink_access_token');
       sessionStorage.removeItem('unilink_demo_session');
+      sessionStorage.removeItem('unilink_last_screen');
       appState.currentUser.isLoggedIn = false;
       showToast('Logged out of UniLink');
       navigateTo('screen-1-landing');
     }
     window.logoutToLanding = logoutToLanding;
 
-    // Check existing authentication session on startup
+    // Check existing authentication session on startup and restore last visited screen
     async function checkExistingAuthSession() {
       sessionStorage.removeItem('unilink_demo_session');
       const token = sessionStorage.getItem('unilink_access_token');
-      if (!token) return;
+      if (!token) {
+        sessionStorage.removeItem('unilink_last_screen');
+        return;
+      }
       try {
         const student = await fetchCurrentStudentProfile(token);
         updateUserDisplayProfile(student);
-        if (appState.currentScreen === 'screen-2-auth') {
-          navigateTo('screen-3-dashboard');
-        }
+
+        // Restore previously visited screen after authentication and profile verification
+        const savedScreen = sessionStorage.getItem('unilink_last_screen');
+        const targetScreen = resolveSafeScreenId(savedScreen);
+        navigateTo(targetScreen);
       } catch (e) {
         sessionStorage.removeItem('unilink_access_token');
+        sessionStorage.removeItem('unilink_last_screen');
+        appState.currentUser.isLoggedIn = false;
+        navigateTo('screen-1-landing');
       }
     }
 
@@ -4873,7 +4974,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           : 'bg-emerald-50/50 dark:bg-emerald-950/20 border-emerald-200/60 dark:border-emerald-800/40';
 
         const card = document.createElement('div');
-        card.className = `notif-item p-4 rounded-2xl border ${unreadCardClass} hover:bg-slate-50 dark:hover:bg-slate-800/80 cursor-pointer flex items-start space-x-3 transition`;
+        card.className = `notif-item p-4 sm:p-4.5 rounded-2xl border ${unreadCardClass} hover:bg-slate-50 dark:hover:bg-slate-800/80 cursor-pointer flex items-start space-x-4 transition`;
         card.setAttribute('data-id', notif.id);
         card.setAttribute('data-type', notif.notification_type);
 
@@ -5772,7 +5873,7 @@ if (window.appState) {
     if (modal) modal.classList.remove('hidden');
   };
 
-  window.saveProfileChanges = function(e) {
+  window.saveProfileChanges = async function(e) {
     if (e) e.preventDefault();
     var sName = document.getElementById('edit-student-name');
     var sReg = document.getElementById('edit-reg-no');
@@ -5781,9 +5882,39 @@ if (window.appState) {
     var sProg = document.getElementById('edit-program');
     var nameVal = sName ? sName.value.trim() : '';
     var regVal = sReg ? sReg.value.trim() : '';
-    var emailVal = sEmail ? sEmail.value.trim() : '';
     var yearVal = sYear ? sYear.value : '2nd Year';
     var progVal = sProg ? sProg.value : 'B.Tech';
+
+    var token = sessionStorage.getItem('unilink_access_token');
+    if (token) {
+      try {
+        var resp = await fetch(API_BASE_URL + '/auth/me', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token,
+            'Accept': 'application/json'
+          },
+          body: JSON.stringify({
+            full_name: nameVal || undefined,
+            reg_no: regVal || undefined,
+            year_of_study: yearVal || undefined,
+            program: progVal || undefined
+          })
+        });
+
+        if (resp.ok) {
+          var updatedProfile = await resp.json();
+          updateUserDisplayProfile(updatedProfile);
+          closeEditProfileModal();
+          if (typeof showToast === 'function') showToast('Student profile saved successfully!');
+          return;
+        }
+      } catch (err) {
+        console.warn('Network error updating profile:', err);
+      }
+    }
+
     if (nameVal) {
       appState.currentUser.name = nameVal;
       ['user-display-name', 'dashboard-name', 'profile-card-name', 'profile-info-name'].forEach(function(id) {
@@ -5795,11 +5926,6 @@ if (window.appState) {
       appState.currentUser.regNo = regVal;
       var elReg = document.getElementById('profile-info-reg');
       if (elReg) elReg.textContent = regVal;
-    }
-    if (emailVal) {
-      appState.currentUser.email = emailVal;
-      var elEm = document.getElementById('profile-card-email');
-      if (elEm) elEm.textContent = emailVal;
     }
     if (yearVal) {
       appState.currentUser.year = yearVal;

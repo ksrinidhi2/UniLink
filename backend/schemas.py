@@ -152,6 +152,19 @@ class StudentOut(BaseModel):
         from_attributes = True
 
 
+class StudentUpdate(BaseModel):
+    """
+    Schema for updating student profile fields.
+    Restricted to permitted, safe attributes (e.g. avatar_index, full_name, program, year_of_study, reg_no).
+    Does NOT allow updating password, email, or is_verified here.
+    """
+    avatar_index: Optional[int] = Field(None, ge=0, le=19, description="Mascot index (0 to 19)")
+    full_name: Optional[str] = Field(None, min_length=1, max_length=100, description="Full student name")
+    program: Optional[str] = Field(None, max_length=100, description="Degree or academic program")
+    year_of_study: Optional[str] = Field(None, max_length=50, description="Academic year")
+    reg_no: Optional[str] = Field(None, max_length=50, description="Registration number")
+
+
 # ==============================================================================
 # 5. GOOGLE LOGIN SCHEMA (For Phase 2)
 # ==============================================================================
