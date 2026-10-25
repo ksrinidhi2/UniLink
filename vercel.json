@@ -1,0 +1,18 @@
+{
+  "rewrites": [
+    { "source": "/auth/:path*", "destination": "/api/index.py" },
+    { "source": "/listings/:path*", "destination": "/api/index.py" },
+    { "source": "/borrow/:path*", "destination": "/api/index.py" },
+    { "source": "/saved-items/:path*", "destination": "/api/index.py" },
+    { "source": "/lost-found/:path*", "destination": "/api/index.py" },
+    { "source": "/messages/:path*", "destination": "/api/index.py" },
+    { "source": "/notifications/:path*", "destination": "/api/index.py" },
+    { "source": "/uploads/:path*", "destination": "/api/index.py" },
+    { "source": "/health", "destination": "/api/index.py" },
+    { "source": "/db-check", "destination": "/api/index.py" },
+    { "source": "/docs", "destination": "/api/index.py" },
+    { "source": "/openapi.json", "destination": "/api/index.py" },
+    { "source": "/", "destination": "/code.html" },
+    { "source": "/index.html", "destination": "/code.html" }
+  ]
+}

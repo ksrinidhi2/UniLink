@@ -1415,6 +1415,17 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <!-- END: Report Item Modal -->
 <!-- BEGIN: JavaScript Logic and State Management -->
 <script data-purpose="app-state-and-navigation">
+    // Environment-aware API Base URL
+    // In local development (localhost / 127.0.0.1 / file:), connect to local FastAPI backend on port 8000.
+    // In production (Vercel or custom domain), use same-origin relative URLs ('').
+    var API_BASE_URL = (
+      typeof window !== 'undefined' &&
+      (window.location.hostname === 'localhost' ||
+       window.location.hostname === '127.0.0.1' ||
+       window.location.protocol === 'file:')
+    ) ? 'http://127.0.0.1:8000' : '';
+    window.API_BASE_URL = API_BASE_URL;
+
     // --- Global State ---
     const appState = {
       currentScreen: 'screen-1-landing',
@@ -1811,7 +1822,12 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     window.applyUserAvatarEverywhere = applyUserAvatarEverywhere;
   </script>
 <script data-purpose="auth-and-dashboard-handlers">
-    const API_BASE_URL = 'http://127.0.0.1:8000';
+    // API_BASE_URL is dynamically defined in app-state-and-navigation script
+    var API_BASE_URL = window.API_BASE_URL || (
+      (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:'))
+        ? 'http://127.0.0.1:8000'
+        : ''
+    );
 
     // Password visibility toggle
     function togglePasswordVisibility() {
