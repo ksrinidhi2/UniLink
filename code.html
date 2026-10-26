@@ -228,7 +228,7 @@
 <div>
 <div class="flex items-center justify-between mb-1">
 <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500">Password</label>
-<a class="text-xs text-brand-900 dark:text-emerald-400 hover:underline" href="#">Forgot password?</a>
+<a class="text-xs text-brand-900 dark:text-emerald-400 hover:underline cursor-pointer" onclick="handleForgotPassword(event)" href="#">Forgot password?</a>
 </div>
 <div class="relative">
 <input class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-900 text-sm outline-none" id="auth-password-input" placeholder="Enter password (min 8 characters)" required="" type="password" value="">
@@ -1416,14 +1416,16 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <!-- BEGIN: JavaScript Logic and State Management -->
 <script data-purpose="app-state-and-navigation">
     // Environment-aware API Base URL
-    // In local development (localhost / 127.0.0.1 / file:), connect to local FastAPI backend on port 8000.
+    // In local development (localhost / 127.0.0.1 / file:), connect to local FastAPI backend on port 8001.
     // In production (Vercel or custom domain), use same-origin relative URLs ('').
     var API_BASE_URL = (
+      typeof window !== 'undefined' && window.__API_BASE_URL__
+    ) ? window.__API_BASE_URL__ : (
       typeof window !== 'undefined' &&
       (window.location.hostname === 'localhost' ||
        window.location.hostname === '127.0.0.1' ||
        window.location.protocol === 'file:')
-    ) ? 'http://127.0.0.1:8000' : '';
+    ) ? 'http://127.0.0.1:8001' : '';
     window.API_BASE_URL = API_BASE_URL;
 
     // --- Global State ---
@@ -1824,9 +1826,11 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <script data-purpose="auth-and-dashboard-handlers">
     // API_BASE_URL is dynamically defined in app-state-and-navigation script
     var API_BASE_URL = window.API_BASE_URL || (
-      (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:'))
-        ? 'http://127.0.0.1:8000'
-        : ''
+      (typeof window !== 'undefined' && window.__API_BASE_URL__) ? window.__API_BASE_URL__ : (
+        (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1' || window.location.protocol === 'file:'))
+          ? 'http://127.0.0.1:8001'
+          : ''
+      )
     );
 
     // Password visibility toggle
@@ -1996,10 +2000,14 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       }
 
       // Prevent duplicate submissions while in progress
-      const originalBtnText = submitBtn.textContent;
+      const originalBtnText = isSignup ? 'Create Account' : 'Login';
       submitBtn.disabled = true;
       submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
       submitBtn.textContent = isSignup ? 'Creating account...' : 'Logging in...';
+
+      // Set up a 15-second abort controller to prevent hanging if backend port is unresponsive
+      const abortController = typeof AbortController !== 'undefined' ? new AbortController() : null;
+      const timeoutId = abortController ? setTimeout(() => abortController.abort(), 15000) : null;
 
       try {
         if (isSignup) {
@@ -2030,7 +2038,8 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           const regResp = await fetch(`${API_BASE_URL}/auth/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify(registerPayload)
+            body: JSON.stringify(registerPayload),
+            signal: abortController ? abortController.signal : undefined
           });
 
           const regData = await regResp.json();
@@ -2052,7 +2061,8 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           const loginResp = await fetch(`${API_BASE_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify({ email: email, password: password })
+            body: JSON.stringify({ email: email, password: password }),
+            signal: abortController ? abortController.signal : undefined
           });
 
           const loginData = await loginResp.json();
@@ -2080,7 +2090,8 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           const loginResp = await fetch(`${API_BASE_URL}/auth/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-            body: JSON.stringify(loginPayload)
+            body: JSON.stringify(loginPayload),
+            signal: abortController ? abortController.signal : undefined
           });
 
           const loginData = await loginResp.json();
@@ -2104,18 +2115,37 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           navigateTo('screen-3-dashboard');
         }
       } catch (err) {
-        if (err.name === 'TypeError' && err.message.toLowerCase().includes('fetch')) {
-          setAuthError('Cannot connect to backend server. Make sure the FastAPI server is running at http://127.0.0.1:8000.');
+        if (err.name === 'AbortError' || err.name === 'TimeoutError') {
+          setAuthError('Connection timed out. Backend server is not responding at ' + (API_BASE_URL || window.location.origin) + '. Please check that the server is running on port 8001.');
+        } else if (err.name === 'TypeError' && err.message.toLowerCase().includes('fetch')) {
+          setAuthError('Cannot connect to backend server. Make sure the FastAPI server is running at ' + (API_BASE_URL || window.location.origin) + '.');
         } else {
           setAuthError(err.message || 'An unexpected authentication error occurred.');
         }
       } finally {
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
-        submitBtn.textContent = originalBtnText;
+        if (timeoutId) clearTimeout(timeoutId);
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
+          submitBtn.textContent = originalBtnText;
+        }
       }
     }
     window.handleAuthSubmit = handleAuthSubmit;
+
+    // Forgot password handler
+    function handleForgotPassword(e) {
+      if (e) e.preventDefault();
+      clearAuthError();
+      const emailInput = document.getElementById('auth-email-input');
+      const emailVal = emailInput ? emailInput.value.trim() : '';
+      if (emailVal) {
+        showToast('Password recovery for campus accounts is managed by IT admin. Please contact support for ' + emailVal);
+      } else {
+        showToast('Please enter your campus email to request password assistance.');
+      }
+    }
+    window.handleForgotPassword = handleForgotPassword;
 
     // ==============================================================================
     // GOOGLE SIGN-IN INTEGRATION (Phase 8)
@@ -2135,8 +2165,10 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           const cfg = await resp.json();
           googleAuthConfig.clientId = cfg.google_client_id;
           googleAuthConfig.allowedDomain = cfg.allowed_email_domain || 'vitapstudent.ac.in';
-          googleAuthConfig.isConfigured = !!(cfg.google_client_id && !cfg.google_client_id.includes('YOUR_GOOGLE_CLIENT_ID'));
-          initGoogleIdentityServices();
+          googleAuthConfig.isConfigured = !!(cfg.google_client_id && !cfg.google_client_id.includes('YOUR_GOOGLE_CLIENT_ID') && !cfg.google_client_id.includes('placeholder'));
+          if (googleAuthConfig.isConfigured) {
+            initGoogleIdentityServices();
+          }
         }
       } catch (e) {
         console.warn('Could not fetch auth config from backend:', e);
@@ -2145,7 +2177,9 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
     function initGoogleIdentityServices() {
       if (!window.google || !window.google.accounts || !window.google.accounts.id) return;
-      if (!googleAuthConfig.clientId) return;
+      if (!googleAuthConfig.clientId || !googleAuthConfig.isConfigured || googleAuthConfig.clientId.includes('YOUR_GOOGLE_CLIENT_ID') || googleAuthConfig.clientId.includes('placeholder')) {
+        return;
+      }
 
       try {
         window.google.accounts.id.initialize({
@@ -2230,7 +2264,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         navigateTo('screen-3-dashboard');
       } catch (err) {
         if (err.name === 'TypeError' && err.message.toLowerCase().includes('fetch')) {
-          setAuthError('Cannot reach backend server. Make sure the FastAPI server is running at http://127.0.0.1:8000.');
+          setAuthError('Cannot reach backend server. Make sure the FastAPI server is running at ' + (API_BASE_URL || window.location.origin) + '.');
         } else {
           setAuthError(err.message || 'An error occurred during Google Sign-In.');
         }

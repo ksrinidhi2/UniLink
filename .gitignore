@@ -53,3 +53,5 @@ uploads/
 test_*.py
 scratch/
 test_screens/
+pg_cluster_backup/
+

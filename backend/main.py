@@ -10,10 +10,12 @@ for _p in [str(_ROOT_DIR), str(_BACKEND_DIR)]:
     if _p not in sys.path:
         sys.path.insert(0, _p)
 
-from fastapi import FastAPI
+from fastapi import FastAPI, status, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError, OperationalError
 
 # Import database engine and routers
 try:
@@ -59,6 +61,25 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization", "Accept"],
 )
+
+# Database exception handlers to prevent uncaught connection drops from hanging the server
+@app.exception_handler(OperationalError)
+async def db_operational_error_handler(request: Request, exc: OperationalError):
+    return JSONResponse(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        content={
+            "detail": "Database connection failed. Please ensure PostgreSQL is running on port 5432 and accepting connections."
+        }
+    )
+
+@app.exception_handler(SQLAlchemyError)
+async def db_general_error_handler(request: Request, exc: SQLAlchemyError):
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "detail": "A database error occurred while processing your request. Please check server logs."
+        }
+    )
 
 # Mount routers
 app.include_router(auth_router)

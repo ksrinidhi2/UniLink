@@ -27,11 +27,19 @@ DATABASE_URL = os.getenv(
 )
 
 # 1. SQLAlchemy Engine:
-# The Engine is the starting point for any SQLAlchemy application.
-# It maintains a pool of database connections and knows how to talk to PostgreSQL using the Psycopg driver.
+# Configured with a bounded 5-second connection timeout, pool pre-ping, and pool timeout
+# to guarantee worker threads never hang indefinitely when PostgreSQL is offline or unreachable.
+connect_args = {}
+if "psycopg" in DATABASE_URL:
+    connect_args["connect_timeout"] = 5  # Psycopg driver connect timeout in seconds
+
 engine = create_engine(
     DATABASE_URL,
-    echo=False  # Set to True if you want to see generated SQL statements in the terminal
+    echo=False,
+    pool_pre_ping=True,
+    pool_timeout=5,
+    pool_recycle=300,
+    connect_args=connect_args
 )
 
 # 2. SessionLocal:
