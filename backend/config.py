@@ -27,11 +27,27 @@ if ENV_PATH.exists():
                     key, val = line.split("=", 1)
                     os.environ.setdefault(key.strip(), val.strip())
 
+def normalize_database_url(url: str) -> str:
+    """
+    Normalizes database URL for SQLAlchemy 2.0 with modern psycopg v3 driver.
+    Converts standard 'postgres://' and 'postgresql://' prefixes to 'postgresql+psycopg://'.
+    Strips surrounding quotes and extraneous whitespace.
+    """
+    if not url:
+        return ""
+    clean_url = url.strip().strip("'\"")
+    if clean_url.startswith("postgres://"):
+        return "postgresql+psycopg://" + clean_url[len("postgres://"):]
+    if clean_url.startswith("postgresql://") and not clean_url.startswith("postgresql+psycopg://"):
+        return "postgresql+psycopg://" + clean_url[len("postgresql://"):]
+    return clean_url
+
 # Database configuration
-DATABASE_URL: str = os.getenv(
+RAW_DATABASE_URL: str = os.getenv(
     "DATABASE_URL",
     "postgresql+psycopg://postgres:localhost:5432/unilink_db"
 )
+DATABASE_URL: str = normalize_database_url(RAW_DATABASE_URL)
 
 # JWT Security configuration
 SECRET_KEY: str = os.getenv("SECRET_KEY", "").strip()
@@ -48,7 +64,7 @@ ALLOWED_EMAIL_DOMAIN: str = os.getenv("ALLOWED_EMAIL_DOMAIN", "vitapstudent.ac.i
 # Environment mode ('development', 'staging', 'production')
 ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development").strip().lower()
 
-# Allowed Origins for CORS
+# Allowed Origins for CORS (comma-separated list of explicit origins)
 ALLOWED_ORIGINS_RAW: str = os.getenv("ALLOWED_ORIGINS", "").strip()
 
 # Google OAuth Client ID
@@ -61,18 +77,36 @@ PLACEHOLDER_KEY = "CHANGE_THIS_TO_A_SECURE_RANDOM_HEX_KEY"
 def get_cors_allowed_origins() -> list[str]:
     """
     Returns the parsed list of allowed CORS origins based on environment settings.
-    In production: strictly uses explicit origins from ALLOWED_ORIGINS and never permits 'null'.
-    In development: provides local development ports (3000, 8000).
+    - Explicit comma-separated origins from ALLOWED_ORIGINS.
+    - Filters out permissive wildcard '*' when credentials are used (forbidden by CORS spec).
+    - Automatically adds Vercel deployment URL if VERCEL_URL is present.
+    - In development mode: includes local ports (3000, 8000, 8001).
     """
-    if ALLOWED_ORIGINS_RAW:
-        return [orig.strip() for orig in ALLOWED_ORIGINS_RAW.split(",") if orig.strip()]
+    origins: list[str] = []
+    raw_origins = os.getenv("ALLOWED_ORIGINS", ALLOWED_ORIGINS_RAW).strip()
+
+    if raw_origins:
+        for orig in raw_origins.split(","):
+            cleaned = orig.strip().rstrip("/")
+            # Disallow wildcard '*' to prevent browser credential rejection
+            if cleaned and cleaned != "*" and cleaned not in origins:
+                origins.append(cleaned)
+
+    # In Vercel environments, automatically include the preview / production Vercel domain
+    vercel_url = os.getenv("VERCEL_URL", "").strip()
+    if vercel_url:
+        vercel_origin = f"https://{vercel_url}".rstrip("/")
+        if vercel_origin not in origins:
+            origins.append(vercel_origin)
 
     if ENVIRONMENT == "production":
-        # Production default requires explicit configuration
+        # Production mode strictly requires explicit origins
+        if origins:
+            return origins
         return ["https://unilink.vitapstudent.ac.in"]
 
     # Local development origins
-    return [
+    dev_origins = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
         "http://localhost:8000",
@@ -80,6 +114,11 @@ def get_cors_allowed_origins() -> list[str]:
         "http://localhost:8001",
         "http://127.0.0.1:8001"
     ]
+    for dev_orig in dev_origins:
+        if dev_orig not in origins:
+            origins.append(dev_orig)
+
+    return origins
 
 
 def ensure_secret_key() -> str:

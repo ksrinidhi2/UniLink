@@ -11,6 +11,8 @@
     { "source": "/health", "destination": "/api/index.py" },
     { "source": "/db-check", "destination": "/api/index.py" },
     { "source": "/docs", "destination": "/api/index.py" },
+    { "source": "/docs/:path*", "destination": "/api/index.py" },
+    { "source": "/redoc", "destination": "/api/index.py" },
     { "source": "/openapi.json", "destination": "/api/index.py" },
     { "source": "/", "destination": "/code.html" },
     { "source": "/index.html", "destination": "/code.html" }

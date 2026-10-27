@@ -367,11 +367,11 @@ def submit_claim(
             detail="You cannot submit a claim or found match on your own report"
         )
 
-    # Rule 2: Cannot claim a report that is already resolved
-    if report.status == "resolved":
+    # Rule 2: Cannot claim a report that is already claimed or resolved
+    if report.status in ["claimed", "resolved"]:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="This report has already been resolved and is no longer accepting claims"
+            detail=f"This report has already been {report.status} and is no longer accepting claims"
         )
 
     # Rule 3: Check for existing active claims (status in pending, approved)

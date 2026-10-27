@@ -2,6 +2,7 @@ import os
 from pathlib import Path
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from sqlalchemy.pool import NullPool
 
 # Locate the .env file in the backend directory
 env_path = Path(__file__).resolve().parent / ".env"
@@ -20,27 +21,58 @@ if env_path.exists():
                     key, val = line.split("=", 1)
                     os.environ.setdefault(key.strip(), val.strip())
 
-# Read DATABASE_URL from environment
-DATABASE_URL = os.getenv(
+def normalize_database_url(url: str) -> str:
+    """
+    Normalizes database URL for SQLAlchemy 2.0 with modern psycopg v3 driver.
+    Converts standard 'postgres://' and 'postgresql://' prefixes to 'postgresql+psycopg://'.
+    Strips surrounding quotes and extraneous whitespace.
+    """
+    if not url:
+        return ""
+    clean_url = url.strip().strip("'\"")
+    if clean_url.startswith("postgres://"):
+        return "postgresql+psycopg://" + clean_url[len("postgres://"):]
+    if clean_url.startswith("postgresql://") and not clean_url.startswith("postgresql+psycopg://"):
+        return "postgresql+psycopg://" + clean_url[len("postgresql://"):]
+    return clean_url
+
+# Read DATABASE_URL from environment and normalize it
+RAW_DATABASE_URL = os.getenv(
     "DATABASE_URL",
     "postgresql+psycopg://postgres:YOUR_POSTGRES_PASSWORD@localhost:5432/unilink_db"
 )
+DATABASE_URL = normalize_database_url(RAW_DATABASE_URL)
 
 # 1. SQLAlchemy Engine:
-# Configured with a bounded 5-second connection timeout, pool pre-ping, and pool timeout
-# to guarantee worker threads never hang indefinitely when PostgreSQL is offline or unreachable.
+# Detect serverless runtime (e.g. Vercel Functions, AWS Lambda)
+IS_SERVERLESS = (
+    os.getenv("VERCEL") == "1"
+    or os.getenv("SERVERLESS", "").strip().lower() in ("1", "true", "yes")
+    or os.getenv("DB_POOL_NULL", "").strip().lower() in ("1", "true", "yes")
+)
+
 connect_args = {}
 if "psycopg" in DATABASE_URL:
     connect_args["connect_timeout"] = 5  # Psycopg driver connect timeout in seconds
 
-engine = create_engine(
-    DATABASE_URL,
-    echo=False,
-    pool_pre_ping=True,
-    pool_timeout=5,
-    pool_recycle=300,
-    connect_args=connect_args
-)
+if IS_SERVERLESS:
+    # Serverless runtime: Use NullPool to avoid exhausting connections across ephemeral lambdas
+    engine = create_engine(
+        DATABASE_URL,
+        echo=False,
+        poolclass=NullPool,
+        connect_args=connect_args
+    )
+else:
+    # Dedicated / Local development server: Use persistent connection pool with health checks
+    engine = create_engine(
+        DATABASE_URL,
+        echo=False,
+        pool_pre_ping=True,
+        pool_timeout=5,
+        pool_recycle=300,
+        connect_args=connect_args
+    )
 
 # 2. SessionLocal:
 # A factory that creates new Session objects whenever a request comes in.

@@ -49,6 +49,18 @@ package-lock.json.bak
 backend/uploads/
 uploads/
 
+# Database Backups, SQL Dumps, and Data Exports
+*.sql
+*.dump
+*.tar
+*.bak
+unilink_production_*.sql
+seed_*.sql
+export_*.json
+
+# Deployment Artifacts
+.vercel/
+
 # Local Scratch / Test Scripts
 test_*.py
 scratch/

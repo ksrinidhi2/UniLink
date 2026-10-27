@@ -2434,8 +2434,9 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       const imgEl = document.getElementById('item-details-img');
       const iconEl = document.getElementById('item-details-icon');
       if (imgEl) {
-        if (item.image) {
-          imgEl.src = item.image;
+        const resolvedDetailImg = resolveItemImageUrl(item.image);
+        if (resolvedDetailImg) {
+          imgEl.src = resolvedDetailImg;
           imgEl.alt = item.title || 'Item photo';
           imgEl.classList.remove('hidden');
           if (iconEl) iconEl.classList.add('hidden');
@@ -2452,7 +2453,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       const thumb1 = document.getElementById('item-details-thumb-1');
       if (thumb1 && item.image) {
-        thumb1.src = item.image;
+        thumb1.src = resolveItemImageUrl(item.image) || item.image;
       }
 
       // Location
@@ -2516,15 +2517,28 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       const secondaryAction = document.getElementById('item-details-secondary-action');
 
       if (isLostFound) {
-        const isOwner = appState.currentUser && appState.currentUser.isLoggedIn && appState.currentUser.id && item.reporterId && (appState.currentUser.id === item.reporterId);
+        const currentUserId = (appState.currentUser && appState.currentUser.isLoggedIn && appState.currentUser.id) ? Number(appState.currentUser.id) : null;
+        const reporterId = item.reporterId ? Number(item.reporterId) : null;
+        const isOwner = !!(currentUserId && reporterId && currentUserId === reporterId);
+        const isClosed = (item.status === 'claimed' || item.status === 'resolved');
+
         if (primaryAction) {
           if (isOwner) {
+            primaryAction.disabled = false;
+            primaryAction.classList.remove('opacity-50', 'cursor-not-allowed');
             primaryAction.innerHTML = `
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
               <span>Edit Your Report</span>
             `;
             primaryAction.onclick = () => openEditLostFoundModal(item);
+          } else if (isClosed) {
+            primaryAction.disabled = true;
+            primaryAction.classList.add('opacity-50', 'cursor-not-allowed');
+            primaryAction.innerHTML = `<span>${item.status === 'claimed' ? 'Already Claimed' : 'Resolved'}</span>`;
+            primaryAction.onclick = null;
           } else {
+            primaryAction.disabled = false;
+            primaryAction.classList.remove('opacity-50', 'cursor-not-allowed');
             const btnText = isLost ? 'Found This? Report Match' : 'Claim Item';
             primaryAction.innerHTML = `
               <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -2535,10 +2549,16 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         }
         if (secondaryAction) {
           if (isOwner) {
-            const claimCountText = item.claims_count !== undefined ? ` (${item.claims_count})` : '';
-            secondaryAction.innerHTML = `📋 Review Claims${claimCountText}`;
-            secondaryAction.onclick = () => openClaimsReviewModal(item);
+            if (!isLost) {
+              const claimCountText = item.claims_count !== undefined ? ` (${item.claims_count})` : '';
+              secondaryAction.classList.remove('hidden');
+              secondaryAction.innerHTML = `📋 Review Claims${claimCountText}`;
+              secondaryAction.onclick = () => openClaimsReviewModal(item);
+            } else {
+              secondaryAction.classList.add('hidden');
+            }
           } else {
+            secondaryAction.classList.remove('hidden');
             secondaryAction.innerHTML = '💬 Message Coordinator';
             secondaryAction.onclick = () => startChatWithSeller(personName, item.title, `${item.type || 'Lost & Found'} Item`, item.reporterId, null);
           }
@@ -2627,12 +2647,25 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     }
     window.updateItemDetailsFavoriteUI = updateItemDetailsFavoriteUI;
 
+    // Helper to safely resolve image URLs (prepending API_BASE_URL for uploaded assets)
+    function resolveItemImageUrl(url) {
+      if (!url || typeof url !== 'string') return null;
+      const trimmed = url.trim();
+      if (!trimmed || trimmed === 'null' || trimmed === 'undefined') return null;
+      if (trimmed.startsWith('/uploads/') && typeof API_BASE_URL !== 'undefined' && API_BASE_URL) {
+        return `${API_BASE_URL}${trimmed}`;
+      }
+      return trimmed;
+    }
+    window.resolveItemImageUrl = resolveItemImageUrl;
+
     // Universal item photo helper with graceful fallback and broken photo handling
     function getItemPhotoHTML(item, extraClasses) {
       extraClasses = extraClasses || 'w-full h-full object-cover';
-      if (item && item.image && String(item.image).trim()) {
+      const resolvedImg = resolveItemImageUrl(item && item.image);
+      if (resolvedImg) {
         const escapedTitle = escapeHTML(item.title || 'Item');
-        return `<img src="${item.image}" alt="${escapedTitle}" class="${extraClasses}" onerror="this.onerror=null;const card=this.closest('.item-card-wrapper')||this.closest('.group');if(card&&card.parentElement&&(card.parentElement.id==='marketplace-cards-grid'||card.parentElement.id==='borrow-cards-grid'||card.parentElement.id==='home-recent-grid')){card.remove();}else{this.parentElement.innerHTML='<span class=\\'text-4xl\\'>${item.icon || '📦'}</span>';}" />`;
+        return `<img src="${resolvedImg}" alt="${escapedTitle}" class="${extraClasses}" onerror="this.onerror=null;const card=this.closest('.item-card-wrapper')||this.closest('.group');if(card&&card.parentElement&&(card.parentElement.id==='marketplace-cards-grid'||card.parentElement.id==='borrow-cards-grid'||card.parentElement.id==='home-recent-grid')){card.remove();}else{this.parentElement.innerHTML='<span class=\\'text-4xl\\'>${item.icon || '📦'}</span>';}" />`;
       }
       return `<span class="text-4xl">${(item && item.icon) || '📦'}</span>`;
     }
@@ -2687,7 +2720,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         location: bItem.location || 'VIT-AP Campus',
         place: bItem.location || 'VIT-AP Campus',
         icon: defaultIcon,
-        image: bItem.image_url || null,
+        image: resolveItemImageUrl(bItem.image_url) || null,
         badge: null,
         desc: bItem.description || '',
         condition: bItem.condition || 'Good',
@@ -2868,7 +2901,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         place: lf.location || 'Campus',
         location: lf.location || 'Campus',
         icon: icon,
-        image: lf.image_url || defaultImg,
+        image: resolveItemImageUrl(lf.image_url) || defaultImg,
         color: isLost ? 'text-red-500' : 'text-emerald-500',
         desc: lf.description || '',
         description: lf.description || '',
@@ -3484,7 +3517,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       if (item.image) {
         if (previewImg) {
-          previewImg.src = item.image;
+          previewImg.src = resolveItemImageUrl(item.image) || item.image;
           delete previewImg.dataset.blobUrl;
         }
         if (photoContainer) photoContainer.classList.remove('hidden');
@@ -4052,35 +4085,77 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       items.forEach(item => {
         const isLost = (item.type || '').toLowerCase() === 'lost';
-        const isOwner = appState.currentUser && appState.currentUser.isLoggedIn && appState.currentUser.id && item.reporterId && (appState.currentUser.id === item.reporterId);
+        const isClaimed = (item.status || '').toLowerCase() === 'claimed';
+        const isResolved = (item.status || '').toLowerCase() === 'resolved';
+        const isClosed = isClaimed || isResolved;
+
+        const currentUserId = (appState.currentUser && appState.currentUser.isLoggedIn && appState.currentUser.id) ? Number(appState.currentUser.id) : null;
+        const reporterId = item.reporterId ? Number(item.reporterId) : null;
+        const isOwner = !!(currentUserId && reporterId && currentUserId === reporterId);
         const card = document.createElement('div');
         card.className = 'bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition group';
 
         let ctaButtonHTML = '';
         if (isOwner) {
-          ctaButtonHTML = `
-            <div class="mt-3 flex space-x-1.5" onclick="event.stopPropagation()">
-              <button onclick="openClaimsReviewModal(${item.id})" class="flex-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-brand-900 dark:text-emerald-400 transition truncate">
-                Claims (${item.claims_count || 0})
-              </button>
-              <button onclick="openEditLostFoundModal(${item.id})" class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-slate-600 dark:text-slate-300 transition">
-                Edit
-              </button>
-              <button onclick="deleteLostFoundReport(${item.id}, '${escapeHTML(item.title)}')" class="px-2.5 py-1.5 rounded-lg border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30 text-[11px] font-semibold text-red-600 dark:text-red-400 transition">
-                ✕
-              </button>
-            </div>
-          `;
+          // A. Reports created by logged-in user:
+          // Show Edit and Delete only when user owns the report
+          // Show claim management only for FOUND items (where other students submit claims)
+          // Do not display Claim Item on own report
+          if (isLost) {
+            ctaButtonHTML = `
+              <div class="mt-3 flex space-x-1.5" onclick="event.stopPropagation()">
+                <button onclick="openEditLostFoundModal(${item.id})" class="flex-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-slate-700 dark:text-slate-300 transition">
+                  Edit Report
+                </button>
+                <button onclick="deleteLostFoundReport(${item.id}, '${escapeHTML(item.title)}')" class="px-3 py-1.5 rounded-lg border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30 text-[11px] font-semibold text-red-600 dark:text-red-400 transition" title="Delete Report">
+                  ✕
+                </button>
+              </div>
+            `;
+          } else {
+            ctaButtonHTML = `
+              <div class="mt-3 flex space-x-1.5" onclick="event.stopPropagation()">
+                <button onclick="openClaimsReviewModal(${item.id})" class="flex-1 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-brand-900 dark:text-emerald-400 transition truncate">
+                  Claims (${item.claims_count || 0})
+                </button>
+                <button onclick="openEditLostFoundModal(${item.id})" class="px-2.5 py-1.5 rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-[11px] font-semibold text-slate-600 dark:text-slate-300 transition">
+                  Edit
+                </button>
+                <button onclick="deleteLostFoundReport(${item.id}, '${escapeHTML(item.title)}')" class="px-2.5 py-1.5 rounded-lg border border-red-200 dark:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-950/30 text-[11px] font-semibold text-red-600 dark:text-red-400 transition" title="Delete Report">
+                  ✕
+                </button>
+              </div>
+            `;
+          }
         } else {
-          ctaButtonHTML = `
-            <button onclick="event.stopPropagation(); openClaimItemModal(${item.id})" class="mt-3 w-full py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-brand-900 dark:text-emerald-400 transition">
-              ${isLost ? 'Found This?' : 'Claim Item'}
-            </button>
-          `;
+          // B. Reports created by other users:
+          // Never show Edit or Delete to someone who does not own the report
+          if (isClosed) {
+            // C. Already claimed/resolved items: disabled status prevents duplicate claims
+            ctaButtonHTML = `
+              <button disabled class="mt-3 w-full py-2 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 text-xs font-semibold cursor-not-allowed">
+                ${isClaimed ? '✓ Claimed' : '✓ Resolved'}
+              </button>
+            `;
+          } else if (isLost) {
+            // Lost item by someone else: allow finder to report match
+            ctaButtonHTML = `
+              <button onclick="event.stopPropagation(); openClaimItemModal(${item.id})" class="mt-3 w-full py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-brand-900 dark:text-emerald-400 transition">
+                Found This?
+              </button>
+            `;
+          } else {
+            // Found item by someone else, open and eligible to claim:
+            ctaButtonHTML = `
+              <button onclick="event.stopPropagation(); openClaimItemModal(${item.id})" class="mt-3 w-full py-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-800 text-xs font-semibold text-brand-900 dark:text-emerald-400 transition">
+                Claim Item
+              </button>
+            `;
+          }
         }
 
         const statusTag = item.status && item.status !== 'open'
-          ? `<span class="inline-block text-[10px] px-2 py-0.5 rounded-full font-bold ml-1.5 ${item.status === 'claimed' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'}">${escapeHTML(item.status)}</span>`
+          ? `<span class="inline-block text-[10px] px-2 py-0.5 rounded-full font-bold ml-1.5 ${item.status === 'claimed' ? 'bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'}">${escapeHTML(item.status.charAt(0).toUpperCase() + item.status.slice(1))}</span>`
           : '';
 
         card.innerHTML = `
@@ -4340,6 +4415,17 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     function openClaimItemModal(itemOrId) {
       const item = typeof itemOrId === 'object' ? itemOrId : (appState.lostFoundItems || []).find(i => i.id === itemOrId);
       if (!item) return;
+
+      if (item.status === 'claimed' || item.status === 'resolved') {
+        showToast(`This item is already ${item.status} and cannot receive new claims.`);
+        return;
+      }
+
+      const currentUserId = (appState.currentUser && appState.currentUser.isLoggedIn && appState.currentUser.id) ? Number(appState.currentUser.id) : null;
+      if (currentUserId && item.reporterId && Number(item.reporterId) === currentUserId) {
+        showToast('You cannot submit a claim or found match on your own report.');
+        return;
+      }
 
       const token = sessionStorage.getItem('unilink_access_token');
       if (!token) {
@@ -6007,7 +6093,7 @@ if (window.appState) {
     var iconEl = document.getElementById('borrow-details-icon');
     if (bImgEl && bIconWrap) {
       if (item.image) {
-        bImgEl.src = item.image;
+        bImgEl.src = resolveItemImageUrl(item.image) || item.image;
         bImgEl.alt = item.title || 'Item preview';
         bImgEl.classList.remove('hidden');
         bIconWrap.classList.add('hidden');

@@ -35,9 +35,12 @@ except ImportError:
 
 router = APIRouter(tags=["Image Uploads"])
 
-# Persistent directory for storing uploaded images
+# Persistent directory for storing uploaded images during local development
 UPLOAD_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "uploads")
-os.makedirs(UPLOAD_DIR, exist_ok=True)
+try:
+    os.makedirs(UPLOAD_DIR, exist_ok=True)
+except OSError:
+    pass
 
 MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB maximum
 
@@ -49,6 +52,57 @@ MIME_TO_EXT = {
     "image/webp": ".webp",
     "image/gif": ".gif",
 }
+
+
+def is_cloudinary_configured() -> bool:
+    """
+    Checks whether Cloudinary credentials are provided via environment variables.
+    Supports either CLOUDINARY_URL or CLOUDINARY_CLOUD_NAME + API KEY + API SECRET.
+    """
+    cloudinary_url = os.getenv("CLOUDINARY_URL", "").strip()
+    if cloudinary_url:
+        return True
+    cloud_name = os.getenv("CLOUDINARY_CLOUD_NAME", "").strip()
+    api_key = os.getenv("CLOUDINARY_API_KEY", "").strip()
+    api_secret = os.getenv("CLOUDINARY_API_SECRET", "").strip()
+    return bool(cloud_name and api_key and api_secret)
+
+
+def upload_to_cloudinary(content: bytes, ext: str) -> str:
+    """
+    Uploads image bytes directly to Cloudinary.
+    Uses official cloudinary package and returns the secure HTTPS URL.
+    """
+    try:
+        import cloudinary
+        import cloudinary.uploader
+        import io
+
+        cloudinary_url = os.getenv("CLOUDINARY_URL", "").strip()
+        if cloudinary_url:
+            cloudinary.config(cloudinary_url=cloudinary_url, secure=True)
+        else:
+            cloudinary.config(
+                cloud_name=os.getenv("CLOUDINARY_CLOUD_NAME", "").strip(),
+                api_key=os.getenv("CLOUDINARY_API_KEY", "").strip(),
+                api_secret=os.getenv("CLOUDINARY_API_SECRET", "").strip(),
+                secure=True
+            )
+
+        res = cloudinary.uploader.upload(
+            io.BytesIO(content),
+            folder="unilink",
+            resource_type="image"
+        )
+        secure_url = res.get("secure_url")
+        if secure_url:
+            return secure_url
+        raise ValueError("Cloudinary response did not contain secure_url")
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_502_BAD_GATEWAY,
+            detail=f"Cloud image upload failed: {str(exc)}"
+        )
 
 
 def validate_image_bytes(content: bytes, declared_content_type: Optional[str] = None) -> Tuple[bool, str, str]:
@@ -89,9 +143,18 @@ def validate_image_bytes(content: bytes, declared_content_type: Optional[str] = 
 
 def save_image_bytes(content: bytes, ext: str) -> str:
     """
-    Saves image content with a unique UUID filename to the persistent uploads folder.
-    Returns the relative URL path for the saved image.
+    Saves image content either to Cloudinary (if configured) or to local persistent storage.
+    - If Cloudinary is configured (production): uploads to Cloudinary and returns HTTPS URL.
+    - If Cloudinary is not configured (local dev): writes to UPLOAD_DIR and returns /uploads/<filename>.
     """
+    if is_cloudinary_configured():
+        return upload_to_cloudinary(content, ext)
+
+    # Local filesystem storage for development
+    try:
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
+    except OSError:
+        pass
     filename = f"{uuid.uuid4().hex}{ext}"
     target_path = os.path.join(UPLOAD_DIR, filename)
     with open(target_path, "wb") as f:
