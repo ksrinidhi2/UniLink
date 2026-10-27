@@ -286,14 +286,21 @@
 <!-- DESKTOP APP SHELL (Shared for Screens 3 through 12) -->
 <!-- ======================================================== -->
 <!-- BEGIN: Desktop App Layout Shell -->
-<div class="screen-view flex-1 flex flex-col md:flex-row min-h-[calc(100vh-41px)] bg-[#F8FAF9] dark:bg-slate-950" id="app-shell">
-<!-- LEFT SIDEBAR -->
-<aside class="w-full md:w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 p-4">
+<div class="screen-view flex-1 flex flex-col md:flex-row min-h-[calc(100vh-41px)] bg-[#F8FAF9] dark:bg-slate-950 relative" id="app-shell">
+<!-- Mobile Sidebar Backdrop Overlay -->
+<div id="mobile-sidebar-backdrop" class="fixed inset-0 bg-slate-950/60 backdrop-blur-sm z-40 hidden md:hidden transition-opacity" onclick="toggleMobileSidebar(false)"></div>
+<!-- LEFT SIDEBAR / MOBILE DRAWER -->
+<aside id="app-sidebar" class="fixed inset-y-0 left-0 z-50 w-72 max-w-[85vw] -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0 md:static md:w-64 md:z-auto bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col justify-between shrink-0 p-4 shadow-2xl md:shadow-none overflow-y-auto custom-scrollbar">
 <div>
-<!-- Brand Logo -->
-<div class="flex items-center space-x-3 px-3 py-2 cursor-pointer mb-6" onclick="navigateTo('screen-3-dashboard')">
+<!-- Brand Logo & Mobile Close -->
+<div class="flex items-center justify-between px-3 py-2 mb-6">
+<div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('screen-3-dashboard')">
 <div class="w-9 h-9 rounded-xl bg-white flex items-center justify-center shadow-sm overflow-hidden p-1"><img src="https://lh3.googleusercontent.com/aida-public/AB6AXuD16KCi4sDehMUh6qJ3T66N5kJ3rjkDC0oRjt_zQ-_FuHk2QAMPv-IbD8FP_z78F6nEZifSDHQToPbpcEtuiHgBRpLnajefkVQXdgWY3SygXLO9ykt45jvBfwK7OwaNE4b7FqoEbAPCSdY89XhUJO2jXnSR3AuE8M1HjkYJozP72cum-ZNxW23qog77-kFbEQEgjVq28m9qLEqOF25UNV42N7Sd-rlIQAmyinm9QdWO8qTo2L-OyQ2Sjg" class="w-8 h-8 object-contain" alt="UniLink Logo"></div>
 <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">UniLink</span>
+</div>
+<button class="md:hidden p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800" onclick="toggleMobileSidebar(false)" aria-label="Close menu">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+</button>
 </div>
 <!-- Navigation Links -->
 <nav class="space-y-1 text-sm font-medium" id="sidebar-nav">
@@ -348,14 +355,14 @@
 <!-- Sidebar Bottom: User Card and Logout -->
 <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
 <div class="flex items-center justify-between">
-<div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('screen-12-profile')">
-<div class="w-10 h-10 rounded-full border-2 border-emerald-500 overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-800 p-0.5 shadow-sm" id="sidebar-avatar-thumb"></div>
-<div class="leading-tight">
-<span class="block text-sm font-bold text-slate-900 dark:text-white" id="user-display-name">Varshitha</span>
-<span class="text-xs text-slate-400" id="sidebar-verify-badge">VIT-AP Verified</span>
+<div class="flex items-center space-x-3 cursor-pointer min-w-0" onclick="navigateTo('screen-12-profile')">
+<div class="w-10 h-10 rounded-full border-2 border-emerald-500 overflow-hidden flex items-center justify-center bg-slate-100 dark:bg-slate-800 p-0.5 shadow-sm shrink-0" id="sidebar-avatar-thumb"></div>
+<div class="leading-tight min-w-0">
+<span class="block text-sm font-bold text-slate-900 dark:text-white truncate" id="user-display-name">Varshitha</span>
+<span class="text-xs text-slate-400 truncate block" id="sidebar-verify-badge">VIT-AP Verified</span>
 </div>
 </div>
-<button class="text-slate-400 hover:text-red-500 transition p-1.5" onclick="logoutToLanding()" title="Logout">
+<button class="text-slate-400 hover:text-red-500 transition p-1.5 shrink-0" onclick="logoutToLanding()" title="Logout">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 </button>
 </div>
@@ -364,28 +371,33 @@
 <!-- MAIN APP CONTENT VIEWPORT -->
 <div class="flex-1 flex flex-col min-w-0 overflow-y-auto custom-scrollbar">
 <!-- Universal App Header Inside Shell -->
-<header class="h-16 px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
-<!-- Dynamic Campus Global Search Input -->
+<header class="h-14 sm:h-16 px-3 sm:px-6 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between shrink-0">
+<!-- Mobile Menu Hamburger & Dynamic Search -->
+<div class="flex items-center flex-1 min-w-0 mr-2 sm:mr-4">
+<button id="mobile-menu-btn" class="md:hidden mr-2 p-1.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl shrink-0" onclick="toggleMobileSidebar(true)" aria-label="Open navigation menu">
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+</button>
 <div class="relative w-full max-w-md">
 <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 </span>
-<input class="w-full pl-9 pr-4 py-2 rounded-xl text-sm border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-900" id="global-search-input" oninput="handleUniversalSearch(this.value)" placeholder="Search for items, people or categories..." type="text">
+<input class="w-full pl-9 pr-3 sm:pr-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-brand-900" id="global-search-input" oninput="handleUniversalSearch(this.value)" placeholder="Search items, people..." type="text">
+</div>
 </div>
 <!-- Header Right Utilities -->
-<div class="flex items-center space-x-3 ml-4">
-<button aria-label="Theme mode" class="p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition" id="header-theme-toggle" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode"><svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button><button class="relative p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" onclick="navigateTo('screen-11-notifications')">
+<div class="flex items-center space-x-1.5 sm:space-x-3 shrink-0">
+<button aria-label="Theme mode" class="p-1.5 sm:p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition" id="header-theme-toggle" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode"><svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></button><button class="relative p-1.5 sm:p-2 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800" onclick="navigateTo('screen-11-notifications')">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500"></span>
 </button>
 <!-- User Initials / Avatar Small Button -->
-<div class="cursor-pointer flex items-center space-x-2 pl-2" onclick="navigateTo('screen-12-profile')">
-<div class="w-9 h-9 rounded-full border-2 border-emerald-500 text-white font-bold flex items-center justify-center text-sm shadow overflow-hidden p-0.5 bg-slate-100 dark:bg-slate-800" id="header-avatar-badge"></div>
+<div class="cursor-pointer flex items-center pl-1 sm:pl-2" onclick="navigateTo('screen-12-profile')">
+<div class="w-8 h-8 sm:w-9 sm:h-9 rounded-full border-2 border-emerald-500 text-white font-bold flex items-center justify-center text-xs sm:text-sm shadow overflow-hidden p-0.5 bg-slate-100 dark:bg-slate-800" id="header-avatar-badge"></div>
 </div>
 </div>
 </header>
 <!-- VIEW CONTAINER FOR APP VIEWS -->
-<main class="flex-1 p-6 overflow-y-auto">
+<main class="flex-1 p-3.5 sm:p-6 pb-24 md:pb-6 overflow-y-auto">
 <!-- ========================================== -->
 <!-- SCREEN 3: HOME DASHBOARD (AFTER LOGIN) -->
 <!-- ========================================== -->
@@ -398,46 +410,46 @@
 <p class="text-slate-500 dark:text-slate-400 text-base mt-1">What are you looking for today?</p>
 </div>
 <!-- 4 Quick Action Cards (Screen 3 style) -->
-<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-<div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-8-lostfound')">
-<div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-3">
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4 mb-6 sm:mb-8">
+<div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-8-lostfound')">
+<div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-2.5 sm:mb-3">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 </div>
-<h3 class="font-bold text-sm text-slate-900 dark:text-white">Lost &amp; Found</h3>
-<p class="text-xs text-slate-400 mt-1">Report or search items</p>
+<h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">Lost &amp; Found</h3>
+<p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">Report or search items</p>
 </div>
-<div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-4-marketplace')">
-<div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-3">
+<div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-4-marketplace')">
+<div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-2.5 sm:mb-3">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 </div>
-<h3 class="font-bold text-sm text-slate-900 dark:text-white">Buy &amp; Sell</h3>
-<p class="text-xs text-slate-400 mt-1">Find or list items</p>
+<h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">Buy &amp; Sell</h3>
+<p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">Find or list items</p>
 </div>
-<div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-9-borrow')">
-<div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-3">
+<div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-9-borrow')">
+<div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-2.5 sm:mb-3">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 </div>
-<h3 class="font-bold text-sm text-slate-900 dark:text-white">Borrow</h3>
-<p class="text-xs text-slate-400 mt-1">Lend or borrow items</p>
+<h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">Borrow</h3>
+<p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">Lend or borrow items</p>
 </div>
-<div class="p-4 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-8-lostfound')">
-<div class="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-3">
+<div class="p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-emerald-500 cursor-pointer shadow-sm transition" onclick="navigateTo('screen-8-lostfound')">
+<div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-brand-900 dark:text-emerald-400 flex items-center justify-center mb-2.5 sm:mb-3">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 </div>
-<h3 class="font-bold text-sm text-slate-900 dark:text-white">Report an Item</h3>
-<p class="text-xs text-slate-400 mt-1">Help someone find</p>
+<h3 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white">Report an Item</h3>
+<p class="text-[11px] sm:text-xs text-slate-400 mt-0.5 sm:mt-1">Help someone find</p>
 </div>
 </div>
 <!-- Recently Listed Items Header -->
 <div class="flex items-center justify-between mb-4">
-<h2 class="text-lg font-bold text-slate-900 dark:text-white">Recently Listed Items</h2>
-<button class="text-sm font-semibold text-brand-900 dark:text-emerald-400 hover:underline flex items-center" onclick="navigateTo('screen-4-marketplace')">
+<h2 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Recently Listed Items</h2>
+<button class="text-xs sm:text-sm font-semibold text-brand-900 dark:text-emerald-400 hover:underline flex items-center" onclick="navigateTo('screen-4-marketplace')">
 <span class="">View all</span>
 <span class="ml-1">→</span>
 </button>
 </div>
 <!-- Recent Listings Grid -->
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4" id="home-recent-grid"><div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 cursor-pointer transition">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 sm:gap-4" id="home-recent-grid"><div class="bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 cursor-pointer transition">
           <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
             📟
           </div>
@@ -489,9 +501,9 @@
 <!-- ========================================== -->
 <div class="app-subview" id="view-screen-4">
 <!-- Header bar with category filter pills and "Sell an Item" CTA -->
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-6">
 <!-- Category Filter Pills -->
-<div class="flex items-center space-x-2 overflow-x-auto pb-2 custom-scrollbar">
+<div class="flex items-center space-x-2 overflow-x-auto pb-2 custom-scrollbar max-w-full flex-1 min-w-0">
 <button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap" onclick="filterMarketplaceCategory('All', this)">All</button>
 <button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Electronics', this)">Electronics</button>
 <button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Books', this)">Books</button>
@@ -501,12 +513,12 @@
 <button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Others', this)">Others</button>
 </div>
 <!-- Sell Button -->
-<button class="shrink-0 px-5 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs sm:text-sm flex items-center shadow-sm" onclick="navigateTo('screen-6-add-item')">
+<button class="shrink-0 px-4 sm:px-5 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs sm:text-sm flex items-center shadow-sm self-start sm:self-auto" onclick="navigateTo('screen-6-add-item')">
 <span class="mr-1.5 text-base">+</span> Sell an Item
               </button>
 </div>
 <!-- Items Cards Grid (Screen 4 exact cards) -->
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5" id="marketplace-cards-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5" id="marketplace-cards-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between">
           <div>
             <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-5xl mb-3 overflow-hidden cursor-pointer" onclick="navigateTo('screen-5-details')">
               <span class="group-hover:scale-110 transition-transform">📟</span>
@@ -594,7 +606,7 @@
 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 <span id="item-details-back-label" class="">Back to Marketplace</span>
 </button>
-<div id="item-details-container" class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8">
+<div id="item-details-container" class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
 <!-- Left: Item Photo / Graphic Display -->
 <div class="space-y-4">
 <div class="w-full aspect-square rounded-2xl bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700">
@@ -617,10 +629,10 @@
 <div class="flex items-start justify-between">
 <div>
 <div class="flex items-center space-x-2">
-<h2 class="text-2xl font-bold text-slate-900 dark:text-white" id="item-details-title">Scientific Calculator</h2>
+<h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white" id="item-details-title">Scientific Calculator</h2>
 <span class="hidden px-2.5 py-0.5 rounded-full text-xs font-bold" id="item-details-badge"></span>
 </div>
-<div class="text-2xl font-black text-brand-900 dark:text-emerald-400 mt-2" id="item-details-price">₹450</div>
+<div class="text-xl sm:text-2xl font-black text-brand-900 dark:text-emerald-400 mt-2" id="item-details-price">₹450</div>
 </div>
 <button id="item-details-fav-btn" class="p-2.5 rounded-full border border-slate-200 dark:border-slate-700 hover:text-red-500 text-slate-400" onclick="toggleItemDetailsFavorite()">
 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
@@ -635,7 +647,7 @@
 Casio scientific calculator in good condition. Barely used. Perfect for first year B.Tech courses.
 </p>
 <!-- Specs Grid -->
-<div class="grid grid-cols-3 gap-3 mt-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80" id="item-details-specs-grid">
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 mt-6 p-3 sm:p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80" id="item-details-specs-grid">
 <div>
 <span class="block text-[11px] uppercase tracking-wider text-slate-400" id="spec-label-1">Condition</span>
 <span class="font-bold text-sm text-slate-800 dark:text-white" id="spec-val-1">Good</span>
@@ -742,7 +754,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <div class="app-subview hidden" id="view-screen-7">
 <div class="h-[calc(100vh-140px)] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col md:flex-row">
 <!-- Left Conversations Column -->
-<div class="w-full md:w-80 border-r border-slate-200 dark:border-slate-800 flex flex-col h-full shrink-0">
+<div id="chat-conversations-pane" class="w-full md:w-80 border-r border-slate-200 dark:border-slate-800 flex flex-col h-full shrink-0">
 <!-- Header -->
 <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
 <h2 class="font-bold text-lg text-slate-900 dark:text-white">Messages</h2>
@@ -823,11 +835,14 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 </div>
 </div>
 <!-- Right WhatsApp Chat Area -->
-<div class="flex-1 flex flex-col h-full bg-[#f0f2f5] dark:bg-slate-950">
+<div id="chat-active-pane" class="hidden md:flex flex-1 flex-col h-full bg-[#f0f2f5] dark:bg-slate-950">
 <!-- Chat Header -->
-<div class="p-3 px-5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
-<div class="flex items-center space-x-3">
-<div class="w-10 h-10 rounded-full bg-emerald-800 text-white font-bold flex items-center justify-center text-sm" id="chat-active-avatar">
+<div class="p-3 px-3 sm:px-5 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
+<div class="flex items-center space-x-2 sm:space-x-3">
+<button id="chat-mobile-back-btn" class="md:hidden mr-1 p-1 text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white" onclick="showConversationsListOnMobile()" title="Back to conversations">
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<div class="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-emerald-800 text-white font-bold flex items-center justify-center text-sm" id="chat-active-avatar">
                       R
                     </div>
 <div>
@@ -836,7 +851,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 </div>
 </div>
 <!-- Item Context Banner in header -->
-<div class="flex items-center space-x-3 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
+<div class="hidden sm:flex items-center space-x-3 bg-slate-50 dark:bg-slate-800 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
 <div class="w-8 h-8 rounded bg-slate-700 flex items-center justify-center text-xs text-white">📟</div>
 <div class="text-right">
 <span class="block text-xs font-bold text-slate-800 dark:text-white" id="chat-item-title">Scientific Calculator</span>
@@ -919,25 +934,25 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <!-- ========================================== -->
 <div class="app-subview hidden" id="view-screen-8">
 <!-- Header with Search, Toggle Pills and Report Item CTA -->
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-<div class="flex items-center space-x-2">
-<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white" onclick="toggleLostFoundFilter('all', this)">All</button>
-<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100" onclick="toggleLostFoundFilter('lost', this)">Lost Items</button>
-<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100" onclick="toggleLostFoundFilter('found', this)">Found Items</button>
-<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100" onclick="toggleLostFoundFilter('my', this)">My Reports</button>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 mb-6">
+<div class="flex items-center space-x-2 overflow-x-auto pb-1.5 max-w-full custom-scrollbar">
+<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap" onclick="toggleLostFoundFilter('all', this)">All</button>
+<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 whitespace-nowrap" onclick="toggleLostFoundFilter('lost', this)">Lost Items</button>
+<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 whitespace-nowrap" onclick="toggleLostFoundFilter('found', this)">Found Items</button>
+<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 whitespace-nowrap" onclick="toggleLostFoundFilter('my', this)">My Reports</button>
 </div>
-<div class="flex items-center space-x-3">
-<div class="relative w-64">
+<div class="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
+<div class="relative flex-1 sm:w-64 min-w-0">
 <input class="w-full pl-8 pr-3 py-1.5 rounded-xl text-xs border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white" id="lf-search-input" oninput="filterLostFoundCards(this.value)" placeholder="Search lost or found items..." type="text">
 <span class="absolute left-2.5 top-2 text-xs text-slate-400">🔍</span>
 </div>
-<button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs flex items-center shadow-sm whitespace-nowrap" onclick="openReportItemModal()">
+<button class="px-3.5 sm:px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs flex items-center shadow-sm whitespace-nowrap shrink-0" onclick="openReportItemModal()">
 <span class="mr-1">+</span> Report an Item
                 </button>
 </div>
 </div>
 <!-- Lost & Found Cards Grid (Screen 8 items: Blue Water Bottle, Brown Wallet, Keychain, AirPods Case, iPhone 13, Spectacles) -->
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5" id="lostfound-cards-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5" id="lostfound-cards-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
           <div>
             <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
               🍶
@@ -1040,9 +1055,24 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <!-- ========================================== -->
 <div class="app-subview hidden" id="view-screen-9">
 <!-- Header bar with categories and title -->
-<div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6"><div><h2 class="text-xl font-bold text-slate-900 dark:text-white">Borrow Items</h2><p class="text-xs text-slate-400">Lend or borrow items freely within the campus community</p></div><div class="flex flex-wrap items-center gap-3"><div class="flex items-center space-x-2 overflow-x-auto pb-1"><button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap" onclick="filterBorrowCategory('All', this)">All</button><button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Books', this)">Books</button><button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Electronics', this)">Electronics</button><button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Sports', this)">Sports</button><button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Others', this)">Others</button></div><button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs flex items-center shadow-sm whitespace-nowrap" onclick="openBorrowModal()"><span class="mr-1 text-sm">+</span> List an Item to Borrow</button></div></div>
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 mb-6">
+  <div>
+    <h2 class="text-xl font-bold text-slate-900 dark:text-white">Borrow Items</h2>
+    <p class="text-xs text-slate-400">Lend or borrow items freely within the campus community</p>
+  </div>
+  <div class="flex flex-wrap items-center gap-3">
+    <div class="flex items-center space-x-2 overflow-x-auto pb-1 max-w-full custom-scrollbar">
+      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap" onclick="filterBorrowCategory('All', this)">All</button>
+      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Books', this)">Books</button>
+      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Electronics', this)">Electronics</button>
+      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Sports', this)">Sports</button>
+      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Others', this)">Others</button>
+    </div>
+    <button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs flex items-center shadow-sm whitespace-nowrap" onclick="openBorrowModal()"><span class="mr-1 text-sm">+</span> List an Item to Borrow</button>
+  </div>
+</div>
 <!-- Borrow Items Grid (Laptop Stand, DSA Textbook, Projector, DSLR Camera, Extension Board, Tennis Racket) -->
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5" id="borrow-cards-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-3.5" id="borrow-cards-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:border-emerald-500 cursor-pointer flex flex-col justify-between transition">
           <div>
             <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center text-4xl mb-3 shadow-inner">
               💻
@@ -1113,7 +1143,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 <span id="borrow-back-label" class="">Back to Borrow</span>
 </button>
-<div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-8">
+<div class="bg-white dark:bg-slate-900 rounded-2xl sm:rounded-3xl p-4 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
 <!-- Left Item Preview -->
 <div class="w-full aspect-square rounded-2xl bg-slate-100 dark:bg-slate-800 overflow-hidden flex items-center justify-center border border-slate-200 dark:border-slate-700" id="borrow-details-preview-container">
 <div class="w-full h-full flex items-center justify-center relative" id="borrow-details-preview-content">
@@ -1129,7 +1159,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <div>
 <div class="flex items-start justify-between">
 <div>
-<h2 class="text-2xl font-bold text-slate-900 dark:text-white" id="borrow-details-title">Laptop Stand</h2>
+<h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white" id="borrow-details-title">Laptop Stand</h2>
 <span class="inline-block mt-2 px-3 py-1 bg-emerald-100 dark:bg-emerald-950 text-brand-900 dark:text-emerald-300 font-bold text-sm rounded-full" id="borrow-details-fee">
                         Free to Borrow
                       </span>
@@ -1143,7 +1173,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <p class="text-sm text-slate-600 dark:text-slate-300 mt-4 leading-relaxed" id="borrow-details-desc">
                     Adjustable laptop stand. Sturdy build, good condition. Available for short-term peer borrow during exam prep week. Please return in good condition.
                   </p>
-<div class="grid grid-cols-3 gap-3 mt-6 p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
+<div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5 sm:gap-3 mt-6 p-3 sm:p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/80">
 <div>
 <span class="block text-[11px] uppercase tracking-wider text-slate-400">Condition</span>
 <span class="font-bold text-sm text-slate-800 dark:text-white" id="borrow-details-condition">Good</span>
@@ -1193,11 +1223,11 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <button onclick="markAllNotificationsAsRead()" class="text-xs text-brand-900 dark:text-emerald-400 font-semibold hover:underline" id="notif-mark-all-read-btn">Mark all as read</button>
 </div>
 <!-- Filter Pills -->
-<div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-semibold">
-<button class="notif-tab px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition" onclick="filterNotificationTab('all', this)">All</button>
-<button class="notif-tab px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition" onclick="filterNotificationTab('messages', this)">Messages</button>
-<button class="notif-tab px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition" onclick="filterNotificationTab('items', this)">Item Updates</button>
-<button class="notif-tab px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition" onclick="filterNotificationTab('system', this)">System</button>
+<div class="flex items-center space-x-1 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl text-xs font-semibold overflow-x-auto max-w-full custom-scrollbar">
+<button class="notif-tab px-3.5 py-1.5 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm transition whitespace-nowrap" onclick="filterNotificationTab('all', this)">All</button>
+<button class="notif-tab px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition whitespace-nowrap" onclick="filterNotificationTab('messages', this)">Messages</button>
+<button class="notif-tab px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition whitespace-nowrap" onclick="filterNotificationTab('items', this)">Item Updates</button>
+<button class="notif-tab px-3.5 py-1.5 rounded-lg text-slate-500 hover:text-slate-900 dark:hover:text-white transition whitespace-nowrap" onclick="filterNotificationTab('system', this)">System</button>
 </div>
 </div>
 <!-- Notifications list (Exact list from Screen 11) -->
@@ -1274,19 +1304,19 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <!-- ========================================== -->
 <!-- SCREEN 12: PROFILE (MANAGE LISTINGS) -->
 <!-- ========================================== -->
-<div class="app-subview hidden" id="view-screen-my-listings"><div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800"><div class="flex flex-wrap items-center gap-2"><h2 class="text-xl font-bold text-slate-900 dark:text-white mr-1">My Listings &amp; Requests</h2><div class="flex items-center space-x-1.5" id="my-listings-subtabs"><button class="px-3.5 py-1.5 rounded-xl bg-brand-900 text-white text-xs font-bold transition my-listings-subtab" id="subtab-my-listings" onclick="switchMyListingsSubTab('listings', this)">My Listings</button><button class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition my-listings-subtab" id="subtab-incoming-reqs" onclick="switchMyListingsSubTab('incoming', this)">Incoming Requests (<span id="incoming-reqs-count">0</span>)</button><button class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition my-listings-subtab" id="subtab-outgoing-reqs" onclick="switchMyListingsSubTab('outgoing', this)">Sent Requests (<span id="outgoing-reqs-count">0</span>)</button></div></div><div class="flex items-center space-x-3"><button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-xs font-bold shadow flex items-center transition" onclick="navigateTo('screen-6-add-item')"><span class="mr-1 text-sm">+</span> Add New Listing</button></div></div><div class="space-y-4" id="manage-listings-container"></div><div class="space-y-4 hidden" id="incoming-borrow-requests-container"></div><div class="space-y-4 hidden" id="outgoing-borrow-requests-container"></div></div></div><div class="app-subview hidden" id="view-screen-12">
+<div class="app-subview hidden" id="view-screen-my-listings"><div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm"><div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-200 dark:border-slate-800"><div class="flex flex-wrap items-center gap-2"><h2 class="text-xl font-bold text-slate-900 dark:text-white mr-1">My Listings &amp; Requests</h2><div class="flex items-center space-x-1.5 overflow-x-auto pb-1 max-w-full custom-scrollbar" id="my-listings-subtabs"><button class="px-3.5 py-1.5 rounded-xl bg-brand-900 text-white text-xs font-bold transition my-listings-subtab whitespace-nowrap" id="subtab-my-listings" onclick="switchMyListingsSubTab('listings', this)">My Listings</button><button class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition my-listings-subtab whitespace-nowrap" id="subtab-incoming-reqs" onclick="switchMyListingsSubTab('incoming', this)">Incoming Requests (<span id="incoming-reqs-count">0</span>)</button><button class="px-3.5 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-bold hover:bg-slate-200 transition my-listings-subtab whitespace-nowrap" id="subtab-outgoing-reqs" onclick="switchMyListingsSubTab('outgoing', this)">Sent Requests (<span id="outgoing-reqs-count">0</span>)</button></div></div><div class="flex items-center space-x-3"><button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-xs font-bold shadow flex items-center transition whitespace-nowrap" onclick="navigateTo('screen-6-add-item')"><span class="mr-1 text-sm">+</span> Add New Listing</button></div></div><div class="space-y-4" id="manage-listings-container"></div><div class="space-y-4 hidden" id="incoming-borrow-requests-container"></div><div class="space-y-4 hidden" id="outgoing-borrow-requests-container"></div></div></div><div class="app-subview hidden" id="view-screen-12">
 <!-- User Profile Header Card -->
-<div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm mb-6 flex flex-col sm:flex-row items-center justify-between gap-6">
-<div class="flex items-center space-x-4">
+<div class="bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-sm mb-6 flex flex-col sm:flex-row items-center sm:items-start justify-between gap-4 sm:gap-6 text-center sm:text-left">
+<div class="flex flex-col sm:flex-row items-center space-y-3 sm:space-y-0 sm:space-x-4 min-w-0">
 <!-- Mascot avatar display with quick avatar modal trigger -->
-<div class="relative cursor-pointer group" onclick="openAvatarModal()" title="Click to Change Avatar">
+<div class="relative cursor-pointer group shrink-0" onclick="openAvatarModal()" title="Click to Change Avatar">
 <div class="w-20 h-20 rounded-full border-4 border-emerald-500 overflow-hidden bg-slate-100 dark:bg-slate-800 flex items-center justify-center p-1 shadow-md" id="profile-avatar-large"></div>
 <span class="absolute bottom-0 right-0 p-1.5 bg-brand-900 text-white rounded-full text-xs shadow group-hover:scale-110 transition">✎</span>
 </div>
-<div>
+<div class="min-w-0">
 <h2 class="text-2xl font-black text-slate-900 dark:text-white" id="profile-card-name">Varshitha</h2>
-<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5" id="profile-card-email">varshitha.25bca1234@vitapstudent.ac.in</p>
-<div class="flex items-center space-x-2 mt-2">
+<p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 truncate max-w-[240px] sm:max-w-none" id="profile-card-email">varshitha.25bca1234@vitapstudent.ac.in</p>
+<div class="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 mt-2">
 <span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-100 dark:bg-emerald-950 text-brand-900 dark:text-emerald-300" id="profile-card-verify-badge">VIT-AP Verified Student</span>
 <span class="text-xs text-slate-400">Member since Aug 2024</span>
 </div>
@@ -1294,43 +1324,69 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 </div>
 <!-- Profile Quick Actions -->
 <div class="flex items-center space-x-2">
-<button class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition" onclick="openAvatarModal()">
+<button class="px-4 py-2 rounded-xl border border-slate-300 dark:border-slate-700 text-xs font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 transition whitespace-nowrap" onclick="openAvatarModal()">
                   Change Mascot
                 </button>
-<button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-xs font-semibold transition" onclick="openEditProfileModal()">
+<button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-xs font-semibold transition whitespace-nowrap" onclick="openEditProfileModal()">
                   Edit Profile
                 </button>
 </div>
 </div>
 <!-- Manage Listings Section -->
 
-<div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm mb-6"><div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4 mb-4"><div class="flex items-center space-x-2 overflow-x-auto pb-1" id="profile-tab-buttons"><button class="px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-900 text-white" id="tab-btn-student-info" onclick="switchProfileSection('info', this)">Overview</button><button class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200" id="tab-btn-saved-items" onclick="switchProfileSection('saved', this)">Saved Items (<span id="profile-saved-count" class="">2</span>)</button><button class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200" onclick="navigateTo('screen-my-listings')">My Listings</button></div></div><div class="hidden" id="profile-saved-section"><div class="flex items-center justify-between mb-4"><h3 class="text-sm font-bold text-slate-900 dark:text-white">Saved Items</h3><p class="text-xs text-slate-400">Items you bookmarked for quick access</p></div><div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5" id="profile-saved-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between"><div><div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 overflow-hidden cursor-pointer"><img src="assets/items/calc -new.webp" alt="Scientific Calculator" class="w-full h-full object-cover"><button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 text-red-500 flex items-center justify-center text-sm shadow" title="Unsave item">❤️</button></div><h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer">Scientific Calculator</h3><span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹450</span><div class="flex items-center text-[11px] text-slate-400 mt-1"><span class="truncate">📍 CB 303</span></div></div></div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between"><div><div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 overflow-hidden cursor-pointer"><img src="assets/items/laptop_stand - neww.jpg" alt="Laptop Stand" class="w-full h-full object-cover"><button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 text-red-500 flex items-center justify-center text-sm shadow" title="Unsave item">❤️</button></div><h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer">Laptop Stand</h3><span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹500</span><div class="flex items-center text-[11px] text-slate-400 mt-1"><span class="truncate">📍 LH3</span></div></div></div></div></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="profile-overview-section"><div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm md:col-span-2 space-y-4"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Student Information</h3><div class="grid grid-cols-2 gap-4 text-sm"><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Full Name</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-name">Varshitha</span></div><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Registration No.</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-reg">25BCA1234</span></div><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Year of Study</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-year">2nd Year</span></div><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Program</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-prog">B.Tech CSE</span></div></div></div><div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between"><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-3">Activity Stats</h3><div class="space-y-3"><div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><span class="text-xs text-slate-500 dark:text-slate-400">Active Listings</span><span class="font-bold text-brand-900 dark:text-emerald-400">3</span></div><div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><span class="text-xs text-slate-500 dark:text-slate-400">Items Borrowed / Lent</span><span class="font-bold text-brand-900 dark:text-emerald-400">7</span></div><div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><span class="text-xs text-slate-500 dark:text-slate-400">Items Recovered</span><span class="font-bold text-brand-900 dark:text-emerald-400">2</span></div></div><button class="mt-4 w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 transition" onclick="navigateTo('screen-my-listings')">View My Listings →</button></div></div></div>
+<div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm mb-6"><div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4 mb-4"><div class="flex items-center space-x-2 overflow-x-auto pb-1 max-w-full custom-scrollbar" id="profile-tab-buttons"><button class="px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-900 text-white whitespace-nowrap" id="tab-btn-student-info" onclick="switchProfileSection('info', this)">Overview</button><button class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 whitespace-nowrap" id="tab-btn-saved-items" onclick="switchProfileSection('saved', this)">Saved Items (<span id="profile-saved-count" class="">2</span>)</button><button class="px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 whitespace-nowrap" onclick="navigateTo('screen-my-listings')">My Listings</button></div></div><div class="hidden" id="profile-saved-section"><div class="flex items-center justify-between mb-4"><h3 class="text-sm font-bold text-slate-900 dark:text-white">Saved Items</h3><p class="text-xs text-slate-400">Items you bookmarked for quick access</p></div><div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5" id="profile-saved-grid"><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between"><div><div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 overflow-hidden cursor-pointer"><img src="assets/items/calc -new.webp" alt="Scientific Calculator" class="w-full h-full object-cover"><button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 text-red-500 flex items-center justify-center text-sm shadow" title="Unsave item">❤️</button></div><h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer">Scientific Calculator</h3><span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹450</span><div class="flex items-center text-[11px] text-slate-400 mt-1"><span class="truncate">📍 CB 303</span></div></div></div><div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 p-3.5 shadow-sm hover:shadow-md hover:border-emerald-500 transition group flex flex-col justify-between"><div><div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl flex items-center justify-center mb-3 overflow-hidden cursor-pointer"><img src="assets/items/laptop_stand - neww.jpg" alt="Laptop Stand" class="w-full h-full object-cover"><button class="absolute top-2 right-2 w-8 h-8 rounded-full bg-white/90 dark:bg-slate-900/90 text-red-500 flex items-center justify-center text-sm shadow" title="Unsave item">❤️</button></div><h3 class="font-bold text-sm text-slate-900 dark:text-white truncate cursor-pointer">Laptop Stand</h3><span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">₹500</span><div class="flex items-center text-[11px] text-slate-400 mt-1"><span class="truncate">📍 LH3</span></div></div></div></div></div></div><div class="grid grid-cols-1 md:grid-cols-3 gap-6" id="profile-overview-section"><div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm md:col-span-2 space-y-4"><h3 class="text-lg font-bold text-slate-900 dark:text-white">Student Information</h3><div class="grid grid-cols-2 gap-4 text-sm"><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Full Name</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-name">Varshitha</span></div><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Registration No.</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-reg">25BCA1234</span></div><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Year of Study</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-year">2nd Year</span></div><div class="p-3 bg-slate-50 dark:bg-slate-800/60 rounded-xl"><span class="block text-xs text-slate-400">Program</span><span class="font-bold text-slate-800 dark:text-white" id="profile-info-prog">B.Tech CSE</span></div></div></div><div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between"><h3 class="text-lg font-bold text-slate-900 dark:text-white mb-3">Activity Stats</h3><div class="space-y-3"><div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><span class="text-xs text-slate-500 dark:text-slate-400">Active Listings</span><span class="font-bold text-brand-900 dark:text-emerald-400">3</span></div><div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><span class="text-xs text-slate-500 dark:text-slate-400">Items Borrowed / Lent</span><span class="font-bold text-brand-900 dark:text-emerald-400">7</span></div><div class="flex justify-between items-center p-3 rounded-xl bg-slate-50 dark:bg-slate-800"><span class="text-xs text-slate-500 dark:text-slate-400">Items Recovered</span><span class="font-bold text-brand-900 dark:text-emerald-400">2</span></div></div><button class="mt-4 w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200 transition" onclick="navigateTo('screen-my-listings')">View My Listings →</button></div></div></div>
 </main>
 </div>
+<!-- Mobile Sticky Bottom Navigation Bar -->
+<nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 right-0 z-30 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-t border-slate-200 dark:border-slate-800 flex items-center justify-around py-1.5 px-2 shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+  <button onclick="navigateTo('screen-3-dashboard')" class="flex flex-col items-center justify-center py-1 px-2 text-slate-500 dark:text-slate-400 hover:text-brand-900 dark:hover:text-emerald-400 mobile-nav-item min-w-[56px]" id="mob-nav-home">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    <span class="text-[10px] font-semibold mt-0.5">Home</span>
+  </button>
+  <button onclick="navigateTo('screen-8-lostfound')" class="flex flex-col items-center justify-center py-1 px-2 text-slate-500 dark:text-slate-400 hover:text-brand-900 dark:hover:text-emerald-400 mobile-nav-item min-w-[56px]" id="mob-nav-lostfound">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <span class="text-[10px] font-semibold mt-0.5">Lost/Found</span>
+  </button>
+  <button onclick="navigateTo('screen-4-marketplace')" class="flex flex-col items-center justify-center py-1 px-2 text-slate-500 dark:text-slate-400 hover:text-brand-900 dark:hover:text-emerald-400 mobile-nav-item min-w-[56px]" id="mob-nav-marketplace">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+    <span class="text-[10px] font-semibold mt-0.5">Buy/Sell</span>
+  </button>
+  <button onclick="navigateTo('screen-9-borrow')" class="flex flex-col items-center justify-center py-1 px-2 text-slate-500 dark:text-slate-400 hover:text-brand-900 dark:hover:text-emerald-400 mobile-nav-item min-w-[56px]" id="mob-nav-borrow">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+    <span class="text-[10px] font-semibold mt-0.5">Borrow</span>
+  </button>
+  <button onclick="navigateTo('screen-7-messages')" class="flex flex-col items-center justify-center py-1 px-2 text-slate-500 dark:text-slate-400 hover:text-brand-900 dark:hover:text-emerald-400 relative mobile-nav-item min-w-[56px]" id="mob-nav-messages">
+    <div class="relative">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/></svg>
+      <span class="absolute -top-1 -right-1.5 w-3.5 h-3.5 rounded-full bg-emerald-500 text-white text-[8px] flex items-center justify-center font-bold" id="mobile-badge-messages">2</span>
+    </div>
+    <span class="text-[10px] font-semibold mt-0.5">Messages</span>
+  </button>
+</nav>
 </div>
 <!-- END: Desktop App Layout Shell -->
 </div>
 <!-- END: Application Container Root -->
 <!-- BEGIN: Report Item Modal (Lost & Found feature) -->
 <div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="report-item-modal">
-<div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl">
+<div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl max-h-[90vh] flex flex-col">
 <div class="flex items-center justify-between mb-4">
 <h3 class="text-xl font-bold text-slate-900 dark:text-white">Report Lost / Found Item</h3>
 <button class="text-slate-400 hover:text-slate-600" onclick="closeReportItemModal()">✕</button>
 </div>
-<form class="space-y-4" onsubmit="handleReportItemSubmit(event)"><div class="flex space-x-3"><label id="lf-radio-btn-found" onclick="selectReportRadioType('Found')" class="flex-1 flex items-center justify-center p-3 rounded-xl border border-emerald-700 bg-emerald-700 text-white text-xs font-semibold cursor-pointer lf-radio-label transition-all"><input checked="" class="mr-2 text-brand-900 focus:ring-0" name="report_type" type="radio" value="Found"> Found Something</label><label id="lf-radio-btn-lost" onclick="selectReportRadioType('Lost')" class="flex-1 flex items-center justify-center p-3 rounded-xl border border-transparent bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold cursor-pointer lf-radio-label transition-all"><input class="mr-2 text-brand-900 focus:ring-0" name="report_type" type="radio" value="Lost"> Lost Something</label></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Item Name</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="report-item-name" placeholder="e.g. Blue Water Bottle, Casio Calculator" required="" type="text"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Campus Location</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="report-item-location" placeholder="e.g. Central Library 2nd Floor, Academic Block C" required="" type="text"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Description / Distinguishing Marks</label><textarea class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="report-item-details" placeholder="Brand, color, stickers, key marks..." rows="2"></textarea></div><div><label class="block text-xs font-semibold text-slate-500 mb-1.5">Attach Item Photo (Optional)</label><div class="flex items-center space-x-3"><div class="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-brand-900 transition" onclick="document.getElementById('report-photo-input').click()"><span class="text-lg">📷</span><span class="text-[9px]">Upload</span></div><input accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" id="report-photo-input" onchange="handleItemPhotoSelected(this, 'report-photo-preview', 'report-photo-container', 'report-photo-remove-btn')" type="file"><div class="hidden w-16 h-16 rounded-xl border-2 border-emerald-500 overflow-hidden flex items-center justify-center relative group cursor-pointer" id="report-photo-container" onclick="document.getElementById('report-photo-input').click()"><img src="" alt="Preview" id="report-photo-preview" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-[9px] font-bold">Change</div></div><div class="hidden text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center space-x-1" id="photo-uploaded-badge"><span class="">✓ Photo selected</span></div><button type="button" class="hidden text-xs text-red-500 hover:text-red-700 font-semibold" id="report-photo-remove-btn" onclick="clearSelectedPhoto('report-photo-input', 'report-photo-preview', '', 'report-photo-remove-btn', 'report-photo-container')">✕ Remove</button></div></div><button class="w-full py-3.5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-bold text-sm shadow transition" type="submit">Submit Report</button></form>
+<form class="space-y-4 overflow-y-auto custom-scrollbar pr-1" onsubmit="handleReportItemSubmit(event)"><div class="flex space-x-3"><label id="lf-radio-btn-found" onclick="selectReportRadioType('Found')" class="flex-1 flex items-center justify-center p-3 rounded-xl border border-emerald-700 bg-emerald-700 text-white text-xs font-semibold cursor-pointer lf-radio-label transition-all"><input checked="" class="mr-2 text-brand-900 focus:ring-0" name="report_type" type="radio" value="Found"> Found Something</label><label id="lf-radio-btn-lost" onclick="selectReportRadioType('Lost')" class="flex-1 flex items-center justify-center p-3 rounded-xl border border-transparent bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 text-xs font-semibold cursor-pointer lf-radio-label transition-all"><input class="mr-2 text-brand-900 focus:ring-0" name="report_type" type="radio" value="Lost"> Lost Something</label></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Item Name</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="report-item-name" placeholder="e.g. Blue Water Bottle, Casio Calculator" required="" type="text"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Campus Location</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="report-item-location" placeholder="e.g. Central Library 2nd Floor, Academic Block C" required="" type="text"></div><div><label class="block text-xs font-semibold text-slate-500 mb-1">Description / Distinguishing Marks</label><textarea class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="report-item-details" placeholder="Brand, color, stickers, key marks..." rows="2"></textarea></div><div><label class="block text-xs font-semibold text-slate-500 mb-1.5">Attach Item Photo (Optional)</label><div class="flex items-center space-x-3"><div class="w-16 h-16 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-brand-900 transition" onclick="document.getElementById('report-photo-input').click()"><span class="text-lg">📷</span><span class="text-[9px]">Upload</span></div><input accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" id="report-photo-input" onchange="handleItemPhotoSelected(this, 'report-photo-preview', 'report-photo-container', 'report-photo-remove-btn')" type="file"><div class="hidden w-16 h-16 rounded-xl border-2 border-emerald-500 overflow-hidden flex items-center justify-center relative group cursor-pointer" id="report-photo-container" onclick="document.getElementById('report-photo-input').click()"><img src="" alt="Preview" id="report-photo-preview" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-[9px] font-bold">Change</div></div><div class="hidden text-xs text-emerald-600 dark:text-emerald-400 font-medium flex items-center space-x-1" id="photo-uploaded-badge"><span class="">✓ Photo selected</span></div><button type="button" class="hidden text-xs text-red-500 hover:text-red-700 font-semibold" id="report-photo-remove-btn" onclick="clearSelectedPhoto('report-photo-input', 'report-photo-preview', '', 'report-photo-remove-btn', 'report-photo-container')">✕ Remove</button></div></div><button class="w-full py-3.5 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-bold text-sm shadow transition" type="submit">Submit Report</button></form>
 </div>
-</div><div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="borrow-item-modal"><div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl"><div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-slate-900 dark:text-white">List an Item to Borrow</h3><button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="closeBorrowModal()">✕</button></div><form class="space-y-4" onsubmit="handleCreateBorrowSubmit(event)"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Item Name</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="borrow-modal-title" placeholder="e.g. Scientific Calculator, Badminton Racket" required="" type="text"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Campus Location</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="borrow-modal-location" placeholder="e.g. Block C, Central Library" required="" type="text"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Lending Terms / Description</label><textarea class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="borrow-modal-desc" placeholder="Available for 3 days, return safely..." rows="2"></textarea></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Attach Photo (Optional)</label><div class="flex items-center space-x-3"><input accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" id="borrow-photo-input" onchange="handleItemPhotoSelected(this, 'borrow-photo-preview', 'borrow-photo-container', 'borrow-photo-remove-btn')" type="file"><div class="w-14 h-14 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-brand-900 transition" onclick="document.getElementById('borrow-photo-input').click()"><span class="text-base">📷</span><span class="text-[9px]">Upload</span></div><div class="hidden w-14 h-14 rounded-xl border-2 border-emerald-500 overflow-hidden flex items-center justify-center relative group cursor-pointer" id="borrow-photo-container" onclick="document.getElementById('borrow-photo-input').click()"><img src="" alt="Preview" id="borrow-photo-preview" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-[9px] font-bold">Change</div></div><button type="button" class="hidden text-xs text-red-500 hover:text-red-700 font-semibold" id="borrow-photo-remove-btn" onclick="clearSelectedPhoto('borrow-photo-input', 'borrow-photo-preview', '', 'borrow-photo-remove-btn', 'borrow-photo-container')">✕ Remove</button></div></div><div class="pt-2 flex space-x-3"><button class="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold transition" onclick="closeBorrowModal()" type="button">Cancel</button><button class="flex-1 py-3 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-sm font-bold shadow transition" type="submit">List for Borrowing</button></div></form></div></div><div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="edit-profile-modal"><div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl"><div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-slate-900 dark:text-white">Edit Student Profile</h3><button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="closeEditProfileModal()">✕</button></div><form class="space-y-4" onsubmit="saveProfileChanges(event)"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Student Name</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-student-name" required="" type="text" value="Varshitha"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Registration Number</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-reg-no" required="" type="text" value="25BCA1234"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">College Email</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-college-email" required="" type="email" value="varshitha.25bca1234@vitapstudent.ac.in"></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Year of Study</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-year-study"><option value="1st Year">1st Year</option><option selected="" value="2nd Year">2nd Year</option><option value="3rd Year">3rd Year</option><option value="4th Year">4th Year</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Program</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-program"><option selected="" value="B.Tech CSE">B.Tech CSE</option><option value="B.Tech">B.Tech</option><option value="BBA">BBA</option><option value="B.Sc">B.Sc</option><option value="M.Tech">M.Tech</option><option value="MBA">MBA</option></select></div></div><div class="pt-2 flex space-x-3"><button class="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold transition" onclick="closeEditProfileModal()" type="button">Cancel</button><button class="flex-1 py-3 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-sm font-bold shadow transition" type="submit">Save Changes</button></div></form></div></div>
+</div><div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="borrow-item-modal"><div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl max-h-[90vh] flex flex-col"><div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-slate-900 dark:text-white">List an Item to Borrow</h3><button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="closeBorrowModal()">✕</button></div><form class="space-y-4 overflow-y-auto custom-scrollbar pr-1" onsubmit="handleCreateBorrowSubmit(event)"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Item Name</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="borrow-modal-title" placeholder="e.g. Scientific Calculator, Badminton Racket" required="" type="text"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Campus Location</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="borrow-modal-location" placeholder="e.g. Block C, Central Library" required="" type="text"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Lending Terms / Description</label><textarea class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="borrow-modal-desc" placeholder="Available for 3 days, return safely..." rows="2"></textarea></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Attach Photo (Optional)</label><div class="flex items-center space-x-3"><input accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" id="borrow-photo-input" onchange="handleItemPhotoSelected(this, 'borrow-photo-preview', 'borrow-photo-container', 'borrow-photo-remove-btn')" type="file"><div class="w-14 h-14 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-brand-900 transition" onclick="document.getElementById('borrow-photo-input').click()"><span class="text-base">📷</span><span class="text-[9px]">Upload</span></div><div class="hidden w-14 h-14 rounded-xl border-2 border-emerald-500 overflow-hidden flex items-center justify-center relative group cursor-pointer" id="borrow-photo-container" onclick="document.getElementById('borrow-photo-input').click()"><img src="" alt="Preview" id="borrow-photo-preview" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-[9px] font-bold">Change</div></div><button type="button" class="hidden text-xs text-red-500 hover:text-red-700 font-semibold" id="borrow-photo-remove-btn" onclick="clearSelectedPhoto('borrow-photo-input', 'borrow-photo-preview', '', 'borrow-photo-remove-btn', 'borrow-photo-container')">✕ Remove</button></div></div><div class="pt-2 flex space-x-3"><button class="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold transition" onclick="closeBorrowModal()" type="button">Cancel</button><button class="flex-1 py-3 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-sm font-bold shadow transition" type="submit">List for Borrowing</button></div></form></div></div><div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="edit-profile-modal"><div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl max-h-[90vh] flex flex-col"><div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-slate-900 dark:text-white">Edit Student Profile</h3><button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="closeEditProfileModal()">✕</button></div><form class="space-y-4 overflow-y-auto custom-scrollbar pr-1" onsubmit="saveProfileChanges(event)"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Student Name</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-student-name" required="" type="text" value="Varshitha"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Registration Number</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-reg-no" required="" type="text" value="25BCA1234"></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">College Email</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-college-email" required="" type="email" value="varshitha.25bca1234@vitapstudent.ac.in"></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Year of Study</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-year-study"><option value="1st Year">1st Year</option><option selected="" value="2nd Year">2nd Year</option><option value="3rd Year">3rd Year</option><option value="4th Year">4th Year</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Program</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-program"><option selected="" value="B.Tech CSE">B.Tech CSE</option><option value="B.Tech">B.Tech</option><option value="BBA">BBA</option><option value="B.Sc">B.Sc</option><option value="M.Tech">M.Tech</option><option value="MBA">MBA</option></select></div></div><div class="pt-2 flex space-x-3"><button class="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold transition" onclick="closeEditProfileModal()" type="button">Cancel</button><button class="flex-1 py-3 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-sm font-bold shadow transition" type="submit">Save Changes</button></div></form></div></div>
 <!-- BEGIN: Edit Listing Modal -->
-<div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="edit-listing-modal"><div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl"><div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-slate-900 dark:text-white" id="edit-listing-modal-title">Edit Listing</h3><button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="closeEditListingModal()">✕</button></div><form class="space-y-4" onsubmit="handleEditListingSubmit(event)"><input type="hidden" id="edit-listing-id"><input type="hidden" id="edit-listing-type"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Item Title</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-title-input" required="" type="text"></div><div id="edit-listing-price-container"><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Price (₹)</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-price-input" min="0" step="1" type="number"></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Category</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-category-input"><option value="Electronics">Electronics</option><option value="Books">Books</option><option value="Clothing">Clothing</option><option value="Accessories">Accessories</option><option value="Sports">Sports</option><option value="Others">Others</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Condition</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-condition-input"><option value="Like New">Like New</option><option value="Good">Good</option><option value="Fair">Fair</option></select></div></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Status</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-status-input"><option value="active">Active</option><option value="sold">Sold</option><option value="borrowed">Borrowed</option><option value="archived">Archived</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Location</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-location-input" required="" type="text"></div></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Description</label><textarea class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-desc-input" rows="2"></textarea></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Item Photo (Optional)</label><div class="flex items-center space-x-3"><input accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" id="edit-listing-photo-input" onchange="handleItemPhotoSelected(this, 'edit-listing-photo-preview', 'edit-listing-photo-container', 'edit-listing-photo-remove-btn')" type="file"><div class="w-14 h-14 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-brand-900 transition" onclick="document.getElementById('edit-listing-photo-input').click()"><span class="text-base">📷</span><span class="text-[9px]">Upload</span></div><div class="hidden w-14 h-14 rounded-xl border-2 border-emerald-500 overflow-hidden flex items-center justify-center relative group cursor-pointer" id="edit-listing-photo-container" onclick="document.getElementById('edit-listing-photo-input').click()"><img src="" alt="Listing photo" id="edit-listing-photo-preview" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-[9px] font-bold">Change</div></div><button type="button" class="hidden text-xs text-red-500 hover:text-red-700 font-semibold" id="edit-listing-photo-remove-btn" onclick="handleRemoveEditListingPhoto()">✕ Remove</button></div></div><div class="pt-2 flex space-x-3"><button class="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold transition" onclick="closeEditListingModal()" type="button">Cancel</button><button class="flex-1 py-3 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-sm font-bold shadow transition" id="edit-listing-submit-btn" type="submit">Save Changes</button></div></form></div></div>
+<div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="edit-listing-modal"><div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl max-h-[90vh] flex flex-col"><div class="flex items-center justify-between mb-4"><h3 class="text-xl font-bold text-slate-900 dark:text-white" id="edit-listing-modal-title">Edit Listing</h3><button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="closeEditListingModal()">✕</button></div><form class="space-y-4 overflow-y-auto custom-scrollbar pr-1" onsubmit="handleEditListingSubmit(event)"><input type="hidden" id="edit-listing-id"><input type="hidden" id="edit-listing-type"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Item Title</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-title-input" required="" type="text"></div><div id="edit-listing-price-container"><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Price (₹)</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-price-input" min="0" step="1" type="number"></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Category</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-category-input"><option value="Electronics">Electronics</option><option value="Books">Books</option><option value="Clothing">Clothing</option><option value="Accessories">Accessories</option><option value="Sports">Sports</option><option value="Others">Others</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Condition</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-condition-input"><option value="Like New">Like New</option><option value="Good">Good</option><option value="Fair">Fair</option></select></div></div><div class="grid grid-cols-2 gap-3"><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Status</label><select class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-status-input"><option value="active">Active</option><option value="sold">Sold</option><option value="borrowed">Borrowed</option><option value="archived">Archived</option></select></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Location</label><input class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-location-input" required="" type="text"></div></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Description</label><textarea class="w-full px-4 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none" id="edit-listing-desc-input" rows="2"></textarea></div><div><label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Item Photo (Optional)</label><div class="flex items-center space-x-3"><input accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" id="edit-listing-photo-input" onchange="handleItemPhotoSelected(this, 'edit-listing-photo-preview', 'edit-listing-photo-container', 'edit-listing-photo-remove-btn')" type="file"><div class="w-14 h-14 rounded-xl border-2 border-dashed border-slate-300 dark:border-slate-700 flex flex-col items-center justify-center text-slate-400 cursor-pointer hover:border-brand-900 transition" onclick="document.getElementById('edit-listing-photo-input').click()"><span class="text-base">📷</span><span class="text-[9px]">Upload</span></div><div class="hidden w-14 h-14 rounded-xl border-2 border-emerald-500 overflow-hidden flex items-center justify-center relative group cursor-pointer" id="edit-listing-photo-container" onclick="document.getElementById('edit-listing-photo-input').click()"><img src="" alt="Listing photo" id="edit-listing-photo-preview" class="w-full h-full object-cover"><div class="absolute inset-0 bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-[9px] font-bold">Change</div></div><button type="button" class="hidden text-xs text-red-500 hover:text-red-700 font-semibold" id="edit-listing-photo-remove-btn" onclick="handleRemoveEditListingPhoto()">✕ Remove</button></div></div><div class="pt-2 flex space-x-3"><button class="flex-1 py-3 rounded-xl border border-slate-300 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 text-sm font-semibold transition" onclick="closeEditListingModal()" type="button">Cancel</button><button class="flex-1 py-3 rounded-xl bg-brand-900 hover:bg-brand-800 text-white text-sm font-bold shadow transition" id="edit-listing-submit-btn" type="submit">Save Changes</button></div></form></div></div>
 <!-- BEGIN: Claim Item Modal -->
 <div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="claim-item-modal">
-  <div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl">
+  <div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl max-h-[90vh] flex flex-col">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-xl font-bold text-slate-900 dark:text-white" id="claim-item-modal-title">Submit Item Claim</h3>
       <button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="closeClaimItemModal()">✕</button>
     </div>
-    <form class="space-y-4" onsubmit="handleClaimItemSubmit(event)">
+    <form class="space-y-4 overflow-y-auto custom-scrollbar pr-1" onsubmit="handleClaimItemSubmit(event)">
       <input type="hidden" id="claim-report-id">
       <div>
         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1" id="claim-type-label">Claim Type</label>
@@ -1374,12 +1430,12 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
 <!-- BEGIN: Edit Lost & Found Report Modal -->
 <div class="fixed inset-0 z-50 hidden bg-slate-950/70 backdrop-blur-sm flex items-center justify-center p-4" id="edit-lostfound-modal">
-  <div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-6 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl">
+  <div class="w-full max-w-lg bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-8 border border-slate-200 dark:border-slate-800 shadow-2xl max-h-[90vh] flex flex-col">
     <div class="flex items-center justify-between mb-4">
       <h3 class="text-xl font-bold text-slate-900 dark:text-white">Edit Lost & Found Report</h3>
       <button class="text-slate-400 hover:text-slate-600 dark:hover:text-white" onclick="closeEditLostFoundModal()">✕</button>
     </div>
-    <form class="space-y-4" onsubmit="handleEditLostFoundSubmit(event)">
+    <form class="space-y-4 overflow-y-auto custom-scrollbar pr-1" onsubmit="handleEditLostFoundSubmit(event)">
       <input type="hidden" id="edit-lf-id">
       <div>
         <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Item Title</label>
@@ -1585,8 +1641,17 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           targetElement.classList.remove('hidden');
         }
 
-        // Update active class on left sidebar buttons
+        // Close mobile drawer if opened
+        toggleMobileSidebar(false);
+
+        // Update active class on left sidebar buttons and mobile bottom nav
         updateSidebarActiveStyle(targetScreenId);
+        updateBottomNavActiveStyle(targetScreenId);
+
+        // On mobile, if navigating to messages, ensure conversations list is visible by default
+        if (targetScreenId === 'screen-7-messages' && window.innerWidth < 768) {
+          showConversationsListOnMobile();
+        }
       }
 
       appState.currentScreen = targetScreenId;
@@ -1620,6 +1685,74 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     window.navigateTo = navigateTo;
+
+    // Toggle Mobile Sidebar Drawer
+    function toggleMobileSidebar(open) {
+      const sidebar = document.getElementById('app-sidebar');
+      const backdrop = document.getElementById('mobile-sidebar-backdrop');
+      if (!sidebar) return;
+      const willOpen = (typeof open === 'boolean') ? open : sidebar.classList.contains('-translate-x-full');
+      if (willOpen) {
+        sidebar.classList.remove('-translate-x-full');
+        if (backdrop) backdrop.classList.remove('hidden');
+        document.body.classList.add('overflow-hidden', 'md:overflow-auto');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        if (backdrop) backdrop.classList.add('hidden');
+        document.body.classList.remove('overflow-hidden', 'md:overflow-auto');
+      }
+    }
+    window.toggleMobileSidebar = toggleMobileSidebar;
+
+    // Toggle Messages Master-Detail views on mobile
+    function showConversationsListOnMobile() {
+      const convPane = document.getElementById('chat-conversations-pane');
+      const chatPane = document.getElementById('chat-active-pane');
+      if (convPane) convPane.classList.remove('hidden');
+      if (chatPane) chatPane.classList.add('hidden');
+    }
+    window.showConversationsListOnMobile = showConversationsListOnMobile;
+
+    // Highlight active item on mobile bottom nav
+    function updateBottomNavActiveStyle(activeId) {
+      const navButtons = document.querySelectorAll('#mobile-bottom-nav .mobile-nav-item');
+      navButtons.forEach(btn => {
+        btn.classList.remove('text-brand-900', 'dark:text-emerald-400', 'font-bold');
+        btn.classList.add('text-slate-500', 'dark:text-slate-400');
+      });
+
+      const map = {
+        'screen-3-dashboard': 'mob-nav-home',
+        'screen-8-lostfound': 'mob-nav-lostfound',
+        'screen-4-marketplace': 'mob-nav-marketplace',
+        'screen-5-details': 'mob-nav-marketplace',
+        'screen-6-add-item': 'mob-nav-marketplace',
+        'screen-9-borrow': 'mob-nav-borrow',
+        'screen-10-borrow-request': 'mob-nav-borrow',
+        'screen-7-messages': 'mob-nav-messages'
+      };
+
+      const btnId = map[activeId];
+      if (btnId) {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+          btn.classList.remove('text-slate-500', 'dark:text-slate-400');
+          btn.classList.add('text-brand-900', 'dark:text-emerald-400', 'font-bold');
+        }
+      }
+    }
+    window.updateBottomNavActiveStyle = updateBottomNavActiveStyle;
+
+    // Window resize event handler to sync responsive panes and drawer
+    window.addEventListener('resize', () => {
+      if (window.innerWidth >= 768) {
+        const convPane = document.getElementById('chat-conversations-pane');
+        const chatPane = document.getElementById('chat-active-pane');
+        if (convPane) convPane.classList.remove('hidden');
+        if (chatPane) chatPane.classList.remove('hidden');
+        toggleMobileSidebar(false);
+      }
+    });
 
     // Update active highlight on sidebar items
     function updateSidebarActiveStyle(activeId) {
@@ -3845,6 +3978,14 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       // Update sidebar visual selection
       renderConversationsList();
+
+      // Switch view on mobile to active chat pane
+      if (window.innerWidth < 768) {
+        const convPane = document.getElementById('chat-conversations-pane');
+        const chatPane = document.getElementById('chat-active-pane');
+        if (convPane) convPane.classList.add('hidden');
+        if (chatPane) chatPane.classList.remove('hidden');
+      }
 
       // If partner ID is set, fetch message history and mark read
       if (appState.activeChatPartnerId) {
