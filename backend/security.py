@@ -143,7 +143,7 @@ def decode_access_token(token: str) -> Dict[str, Any]:
 # ==============================================================================
 def validate_campus_email_domain(email: str) -> bool:
     """
-    Checks whether an email belongs to the approved institutional domain (@vitapstudent.ac.in).
+    Checks whether an email belongs to an approved institutional domain.
 
     CRITICAL SECURITY DISTINCTION:
     - This function enforces domain format policy (e.g. rejecting @gmail.com or @yahoo.com).
@@ -153,8 +153,20 @@ def validate_campus_email_domain(email: str) -> bool:
     """
     if not email or "@" not in email:
         return False
-    domain = email.strip().lower().split("@")[-1]
-    return domain == ALLOWED_EMAIL_DOMAIN
+
+    parts = email.strip().lower().rsplit("@", 1)
+    if len(parts) != 2 or not parts[0].strip() or not parts[1].strip():
+        return False
+
+    domain = parts[1].strip()
+
+    allowed_domains = {
+        item.strip().lower()
+        for item in ALLOWED_EMAIL_DOMAIN.split(",")
+        if item.strip()
+    }
+
+    return domain in allowed_domains
 
 
 # ==============================================================================

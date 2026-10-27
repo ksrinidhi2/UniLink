@@ -90,7 +90,7 @@ def register_student(payload: StudentRegister, db: Session = Depends(get_db)):
     if not validate_campus_email_domain(clean_email):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Registration is restricted to official campus emails (@vitapstudent.ac.in)."
+            detail="Registration is restricted to official campus emails (@vitapstudent.ac.in, @vitap.ac.in)."
         )
 
     # 2. Check for duplicate email
@@ -236,7 +236,7 @@ def google_sign_in(payload: GoogleLoginRequest, db: Session = Depends(get_db)):
     if not validate_campus_email_domain(verified_email):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="Access restricted: Google account must belong to the approved campus domain (@vitapstudent.ac.in)."
+            detail="Access restricted: Google account must belong to the approved campus domain (@vitapstudent.ac.in, @vitap.ac.in)."
         )
 
     # 3. Locate existing student by verified email

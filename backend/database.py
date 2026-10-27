@@ -37,10 +37,14 @@ def normalize_database_url(url: str) -> str:
     return clean_url
 
 # Read DATABASE_URL from environment and normalize it
-RAW_DATABASE_URL = os.getenv(
-    "DATABASE_URL",
-    "postgresql+psycopg://postgres:YOUR_POSTGRES_PASSWORD@localhost:5432/unilink_db"
-)
+RAW_DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
+if not RAW_DATABASE_URL:
+    if os.getenv("ENVIRONMENT", "").strip().lower() == "production" or os.getenv("VERCEL") == "1":
+        raise RuntimeError(
+            "Configuration Error: 'DATABASE_URL' environment variable is required in production but was not set."
+        )
+    RAW_DATABASE_URL = "postgresql+psycopg://postgres:localhost:5432/unilink_db"
+
 DATABASE_URL = normalize_database_url(RAW_DATABASE_URL)
 
 # 1. SQLAlchemy Engine:

@@ -1,11 +1,17 @@
 {
   "rewrites": [
     { "source": "/auth/:path*", "destination": "/api/index.py" },
+    { "source": "/listings", "destination": "/api/index.py" },
     { "source": "/listings/:path*", "destination": "/api/index.py" },
+    { "source": "/borrow", "destination": "/api/index.py" },
     { "source": "/borrow/:path*", "destination": "/api/index.py" },
+    { "source": "/saved-items", "destination": "/api/index.py" },
     { "source": "/saved-items/:path*", "destination": "/api/index.py" },
+    { "source": "/lost-found", "destination": "/api/index.py" },
     { "source": "/lost-found/:path*", "destination": "/api/index.py" },
+    { "source": "/messages", "destination": "/api/index.py" },
     { "source": "/messages/:path*", "destination": "/api/index.py" },
+    { "source": "/notifications", "destination": "/api/index.py" },
     { "source": "/notifications/:path*", "destination": "/api/index.py" },
     { "source": "/uploads/:path*", "destination": "/api/index.py" },
     { "source": "/health", "destination": "/api/index.py" },

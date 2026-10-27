@@ -150,6 +150,12 @@ def save_image_bytes(content: bytes, ext: str) -> str:
     if is_cloudinary_configured():
         return upload_to_cloudinary(content, ext)
 
+    if os.getenv("VERCEL") == "1" or os.getenv("ENVIRONMENT", "").strip().lower() == "production":
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Persistent cloud storage is not configured. Please set CLOUDINARY credentials in Vercel."
+        )
+
     # Local filesystem storage for development
     try:
         os.makedirs(UPLOAD_DIR, exist_ok=True)
