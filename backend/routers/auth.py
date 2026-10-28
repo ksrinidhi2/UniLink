@@ -29,7 +29,7 @@ try:
         validate_campus_email_domain,
         verify_google_id_token,
     )
-    from backend.dependencies import get_current_student
+    from backend.dependencies import get_current_student, require_non_demo_mutation
 except ImportError:
     from database import get_db
     from models import Student
@@ -48,7 +48,7 @@ except ImportError:
         validate_campus_email_domain,
         verify_google_id_token,
     )
-    from dependencies import get_current_student
+    from dependencies import get_current_student, require_non_demo_mutation
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -175,6 +175,52 @@ def login_student(payload: StudentLogin, db: Session = Depends(get_db)):
         access_token = create_access_token(student_id=student.id, email=student.email)
     except RuntimeError as exc:
         # Catches unconfigured SECRET_KEY
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Authentication configuration error. Please contact server administrator."
+        )
+
+    return TokenResponse(
+        access_token=access_token,
+        token_type="bearer",
+        student=StudentOut.model_validate(student)
+    )
+
+
+# ==============================================================================
+# 2.5. DEMO PRESENTATION ACCESS ENDPOINT
+# ==============================================================================
+@router.post(
+    "/demo-session",
+    response_model=TokenResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Access designated demo presentation account",
+    description="Securely issues a signed JWT access token for Varshitha's demo account for presentation and evaluation purposes with is_demo protection."
+)
+def create_demo_session(db: Session = Depends(get_db)):
+    """
+    Presentation demo authentication endpoint:
+    - Never trusts client-supplied student ID, email, or credentials.
+    - Strictly resolves the fixed Varshitha demo account only.
+    - Generates an authentic JWT signed with the server's internal SECRET_KEY.
+    - Embeds 'is_demo': True in JWT claims to protect records from destructive modifications.
+    """
+    DEMO_EMAIL = "varshitha.25bca1234@vitapstudent.ac.in"
+    student = db.query(Student).filter(Student.email == DEMO_EMAIL).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="The demo presentation account has not been initialized in the database yet. Please ensure the production seeder has been executed."
+        )
+
+    try:
+        access_token = create_access_token(
+            student_id=student.id,
+            email=student.email,
+            is_demo=True
+        )
+    except RuntimeError:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="Authentication configuration error. Please contact server administrator."
@@ -339,9 +385,10 @@ def get_current_student_profile(current_student: Student = Depends(get_current_s
 )
 def update_current_student_profile(
     payload: StudentUpdate,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     if payload.avatar_index is not None:
         if not (0 <= payload.avatar_index <= 19):
             raise HTTPException(

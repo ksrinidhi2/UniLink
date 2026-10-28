@@ -29,7 +29,7 @@ try:
         BorrowRequestOut,
         BorrowRequestActionResponse,
     )
-    from backend.dependencies import get_current_student
+    from backend.dependencies import get_current_student, require_non_demo_mutation
 except ImportError:
     from database import get_db
     from models import Listing, Student, BorrowRequest, Notification
@@ -43,7 +43,7 @@ except ImportError:
         BorrowRequestOut,
         BorrowRequestActionResponse,
     )
-    from dependencies import get_current_student
+    from dependencies import get_current_student, require_non_demo_mutation
 
 router = APIRouter(prefix="/borrow", tags=["Peer Borrow Listings"])
 
@@ -186,9 +186,10 @@ def get_received_borrow_requests(
 def review_borrow_request(
     request_id: int,
     payload: BorrowRequestReview,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     req = (
         db.query(BorrowRequest)
         .options(
@@ -286,9 +287,10 @@ def review_borrow_request(
 def create_borrow_request(
     listing_id: int,
     payload: Optional[BorrowRequestCreate] = None,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     listing = (
         db.query(Listing)
         .options(joinedload(Listing.owner))
@@ -425,9 +427,10 @@ def get_borrow_listing_by_id(
 )
 def create_borrow_listing(
     payload: BorrowListingCreate,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     new_listing = Listing(
         student_id=current_student.id,
         listing_type="borrow",
@@ -475,9 +478,10 @@ def create_borrow_listing(
 def update_borrow_listing(
     listing_id: int,
     payload: BorrowListingUpdate,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     listing = (
         db.query(Listing)
         .filter(
@@ -549,9 +553,10 @@ def update_borrow_listing(
 )
 def delete_borrow_listing(
     listing_id: int,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     listing = (
         db.query(Listing)
         .filter(

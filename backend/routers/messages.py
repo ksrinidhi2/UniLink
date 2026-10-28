@@ -23,7 +23,7 @@ try:
         MessageMarkReadResponse,
         StudentBrief,
     )
-    from backend.dependencies import get_current_student
+    from backend.dependencies import get_current_student, require_non_demo_mutation
 except ImportError:
     from database import get_db
     from models import Message, Student, Listing, Notification
@@ -34,7 +34,7 @@ except ImportError:
         MessageMarkReadResponse,
         StudentBrief,
     )
-    from dependencies import get_current_student
+    from dependencies import get_current_student, require_non_demo_mutation
 
 router = APIRouter(prefix="/messages", tags=["Messaging"])
 
@@ -201,6 +201,18 @@ def send_message(
             detail=f"Recipient student with ID {payload.receiver_id} was not found"
         )
 
+    # Rule 2b: Protect non-demo accounts during Demo Presentation Mode
+    if getattr(current_student, "is_demo_session", False):
+        demo_recipients = {
+            "ananya.25bce1234@vitapstudent.ac.in",
+            "test.25bca2008@vitapstudent.ac.in"
+        }
+        if receiver.email not in demo_recipients:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="In Demo Presentation Mode, messages can only be sent to demo contacts."
+            )
+
     # Rule 3: If listing_id is provided, verify listing exists
     if payload.listing_id is not None:
         listing = db.query(Listing).filter(Listing.id == payload.listing_id).first()
@@ -267,9 +279,10 @@ def send_message(
 )
 def mark_conversation_as_read(
     other_student_id: int,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     try:
         updated_count = (
             db.query(Message)

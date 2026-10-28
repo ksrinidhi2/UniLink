@@ -31,7 +31,7 @@ try:
         LostFoundClaimOut,
         LostFoundActionResponse,
     )
-    from backend.dependencies import get_current_student
+    from backend.dependencies import get_current_student, require_non_demo_mutation
 except ImportError:
     from database import get_db
     from models import LostFoundReport, LostFoundClaim, Student, Notification
@@ -44,7 +44,7 @@ except ImportError:
         LostFoundClaimOut,
         LostFoundActionResponse,
     )
-    from dependencies import get_current_student
+    from dependencies import get_current_student, require_non_demo_mutation
 
 router = APIRouter(prefix="/lost-found", tags=["Lost & Found"])
 
@@ -214,9 +214,10 @@ def get_lost_found_report(
 )
 def create_lost_found_report(
     payload: LostFoundReportCreate,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     new_report = LostFoundReport(
         student_id=current_student.id,
         report_type=payload.report_type.strip().lower(),
@@ -258,9 +259,10 @@ def create_lost_found_report(
 def update_lost_found_report(
     report_id: int,
     payload: LostFoundReportUpdate,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     report = (
         db.query(LostFoundReport)
         .options(
@@ -310,9 +312,10 @@ def update_lost_found_report(
 )
 def delete_lost_found_report(
     report_id: int,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     report = db.query(LostFoundReport).filter(LostFoundReport.id == report_id).first()
 
     if not report:
@@ -349,9 +352,10 @@ def delete_lost_found_report(
 def submit_claim(
     report_id: int,
     payload: LostFoundClaimCreate,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     report = db.query(LostFoundReport).filter(LostFoundReport.id == report_id).first()
 
     if not report:
@@ -477,9 +481,10 @@ def review_claim(
     report_id: int,
     claim_id: int,
     payload: LostFoundClaimReview,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     report = db.query(LostFoundReport).filter(LostFoundReport.id == report_id).first()
 
     if not report:

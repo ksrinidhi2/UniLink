@@ -63,4 +63,24 @@ def get_current_student(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    # Attach session attributes
+    student.is_demo_session = bool(token_payload.get("is_demo", False))
+
     return student
+
+
+def require_non_demo_mutation(
+    current_student: Student = Depends(get_current_student)
+) -> Student:
+    """
+    Dependency guard that blocks destructive and state-altering mutations
+    when invoked from a presentation demo session ('is_demo': True).
+    Normal logged-in students pass through with zero restriction.
+    """
+    if getattr(current_student, "is_demo_session", False):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Modifications and deletions are disabled in Demo Presentation Mode to protect demo records."
+        )
+    return current_student
+

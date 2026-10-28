@@ -27,11 +27,11 @@ from sqlalchemy.orm import Session
 try:
     from backend.database import get_db
     from backend.models import Student, Listing, LostFoundReport
-    from backend.dependencies import get_current_student
+    from backend.dependencies import get_current_student, require_non_demo_mutation
 except ImportError:
     from database import get_db
     from models import Student, Listing, LostFoundReport
-    from dependencies import get_current_student
+    from dependencies import get_current_student, require_non_demo_mutation
 
 router = APIRouter(tags=["Image Uploads"])
 
@@ -218,12 +218,13 @@ class ResourceImageActionResponse(BaseModel):
 )
 async def upload_image_multipart(
     file: UploadFile = File(..., description="Image file to upload"),
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
 ):
     """
     Receives an image via multipart/form-data.
     Validates magic bytes, enforces maximum file size, and stores on disk.
     """
+    require_non_demo_mutation(current_student)
     try:
         content = await file.read()
     except Exception as exc:
@@ -252,12 +253,13 @@ async def upload_image_multipart(
 )
 def upload_image_base64(
     payload: Base64ImageUploadPayload,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
 ):
     """
     Receives an image encoded in base64 string.
     Decodes and validates binary content.
     """
+    require_non_demo_mutation(current_student)
     raw_b64 = payload.file_base64.strip()
     declared_ct = payload.content_type
 
@@ -303,7 +305,7 @@ async def attach_marketplace_image(
     listing_id: int,
     file: UploadFile = File(..., description="New image file"),
     db: Session = Depends(get_db),
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
 ):
     listing = db.query(Listing).filter(Listing.id == listing_id, Listing.listing_type == "marketplace").first()
     if not listing:
@@ -346,7 +348,7 @@ async def attach_marketplace_image(
 def remove_marketplace_image(
     listing_id: int,
     db: Session = Depends(get_db),
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
 ):
     listing = db.query(Listing).filter(Listing.id == listing_id, Listing.listing_type == "marketplace").first()
     if not listing:
@@ -385,7 +387,7 @@ async def attach_borrow_image(
     listing_id: int,
     file: UploadFile = File(..., description="New image file"),
     db: Session = Depends(get_db),
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
 ):
     listing = db.query(Listing).filter(Listing.id == listing_id, Listing.listing_type == "borrow").first()
     if not listing:
@@ -427,7 +429,7 @@ async def attach_borrow_image(
 def remove_borrow_image(
     listing_id: int,
     db: Session = Depends(get_db),
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
 ):
     listing = db.query(Listing).filter(Listing.id == listing_id, Listing.listing_type == "borrow").first()
     if not listing:
@@ -466,7 +468,7 @@ async def attach_lost_found_image(
     report_id: int,
     file: UploadFile = File(..., description="New image file"),
     db: Session = Depends(get_db),
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
 ):
     report = db.query(LostFoundReport).filter(LostFoundReport.id == report_id).first()
     if not report:
@@ -508,7 +510,7 @@ async def attach_lost_found_image(
 def remove_lost_found_image(
     report_id: int,
     db: Session = Depends(get_db),
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
 ):
     report = db.query(LostFoundReport).filter(LostFoundReport.id == report_id).first()
     if not report:

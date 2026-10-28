@@ -19,7 +19,7 @@ try:
         NotificationOut,
         NotificationMarkReadResponse,
     )
-    from backend.dependencies import get_current_student
+    from backend.dependencies import get_current_student, require_non_demo_mutation
 except ImportError:
     from database import get_db
     from models import Notification, Student
@@ -27,7 +27,7 @@ except ImportError:
         NotificationOut,
         NotificationMarkReadResponse,
     )
-    from dependencies import get_current_student
+    from dependencies import get_current_student, require_non_demo_mutation
 
 router = APIRouter(prefix="/notifications", tags=["Notifications"])
 
@@ -79,9 +79,10 @@ def get_notifications(
     description="Marks all unread notifications belonging to the authenticated student as read."
 )
 def mark_all_notifications_as_read(
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     try:
         updated_count = (
             db.query(Notification)
@@ -117,9 +118,10 @@ def mark_all_notifications_as_read(
 )
 def mark_notification_as_read(
     notification_id: int,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     notification = db.query(Notification).filter(Notification.id == notification_id).first()
 
     if not notification:

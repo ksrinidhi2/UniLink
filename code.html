@@ -250,6 +250,15 @@
 <span id="google-signin-btn-text">Continue with Google</span>
 </button>
 <div id="gsi-hidden-target" class="hidden"></div>
+<!-- Explore Demo Account for Presentations/Evaluators -->
+<div class="mt-4 pt-3 border-t border-slate-200/80 dark:border-slate-800 text-center">
+<button class="w-full py-2.5 px-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800/60 hover:bg-amber-100 dark:hover:bg-amber-900/40 text-amber-900 dark:text-amber-200 text-xs font-semibold flex items-center justify-center space-x-2 transition shadow-sm" id="demo-access-btn" onclick="handleDemoAccountAccess()" type="button">
+<span>✨ Explore Demo Account (Varshitha · Presentation Access)</span>
+</button>
+<p class="text-[11px] text-slate-400 dark:text-slate-500 mt-1.5">
+Presentation access with populated campus listings, messages &amp; notifications
+</p>
+</div>
 </div>
 </section>
 <!-- END: Screen 2 - Auth Screen -->
@@ -2445,6 +2454,42 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       }
     }
     window.handleGoogleLogin = handleGoogleLogin;
+
+    async function handleDemoAccountAccess() {
+      clearAuthError();
+      const btn = document.getElementById('demo-access-btn');
+      const originalText = btn ? btn.innerHTML : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+        btn.innerHTML = '<span>Connecting to demo account...</span>';
+      }
+
+      try {
+        const resp = await fetch(`${API_BASE_URL}/auth/demo-session`, {
+          method: 'POST',
+          headers: { 'Accept': 'application/json' }
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+          throw new Error(data.detail || 'Demo presentation account is currently unavailable.');
+        }
+
+        sessionStorage.setItem('unilink_access_token', data.access_token);
+        updateUserDisplayProfile(data.student);
+        showToast('Welcome to the UniLink Demo Account (Varshitha)!');
+        navigateTo('screen-3-dashboard');
+      } catch (err) {
+        setAuthError(err.message || 'Failed to start demo presentation session.');
+      } finally {
+        if (btn) {
+          btn.disabled = false;
+          btn.classList.remove('opacity-75', 'cursor-not-allowed');
+          btn.innerHTML = originalText;
+        }
+      }
+    }
+    window.handleDemoAccountAccess = handleDemoAccountAccess;
 
     function logoutToLanding() {
       // Clear stored JWT token and last screen from sessionStorage

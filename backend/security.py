@@ -70,12 +70,14 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 def create_access_token(
     student_id: int,
     email: Optional[str] = None,
-    expires_delta: Optional[timedelta] = None
+    expires_delta: Optional[timedelta] = None,
+    is_demo: bool = False
 ) -> str:
     """
     Generates a short-lived signed JWT access token.
     - Serializes the student's database integer ID as a string in the 'sub' claim.
     - Sets 'iat' (issued at) and 'exp' (expiration) timestamps using UTC timezone.
+    - Includes 'is_demo' boolean flag if requested for presentation demo access.
     - Signs with SECRET_KEY using HS256.
     """
     if not isinstance(student_id, int) or student_id <= 0:
@@ -97,6 +99,9 @@ def create_access_token(
 
     if email:
         payload["email"] = email.strip().lower()
+
+    if is_demo:
+        payload["is_demo"] = True
 
     return jwt.encode(payload, secret_key, algorithm=ALGORITHM)
 
@@ -134,7 +139,8 @@ def decode_access_token(token: str) -> Dict[str, Any]:
         "student_id": student_id,
         "email": payload.get("email"),
         "exp": payload.get("exp"),
-        "iat": payload.get("iat")
+        "iat": payload.get("iat"),
+        "is_demo": bool(payload.get("is_demo", False))
     }
 
 

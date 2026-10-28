@@ -25,7 +25,7 @@ try:
         ListingOut,
         ListingActionResponse,
     )
-    from backend.dependencies import get_current_student
+    from backend.dependencies import get_current_student, require_non_demo_mutation
 except ImportError:
     from database import get_db
     from models import Listing, Student
@@ -35,7 +35,7 @@ except ImportError:
         ListingOut,
         ListingActionResponse,
     )
-    from dependencies import get_current_student
+    from dependencies import get_current_student, require_non_demo_mutation
 
 router = APIRouter(prefix="/listings", tags=["Marketplace Listings"])
 
@@ -163,9 +163,10 @@ def get_marketplace_listing_by_id(
 )
 def create_marketplace_listing(
     payload: ListingCreate,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     new_listing = Listing(
         student_id=current_student.id,
         listing_type="marketplace",
@@ -214,9 +215,10 @@ def create_marketplace_listing(
 def update_marketplace_listing(
     listing_id: int,
     payload: ListingUpdate,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     listing = (
         db.query(Listing)
         .filter(
@@ -288,9 +290,10 @@ def update_marketplace_listing(
 )
 def delete_marketplace_listing(
     listing_id: int,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     listing = (
         db.query(Listing)
         .filter(

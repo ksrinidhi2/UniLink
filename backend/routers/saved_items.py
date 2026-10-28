@@ -18,7 +18,7 @@ try:
         SavedItemOut,
         SavedItemActionResponse,
     )
-    from backend.dependencies import get_current_student
+    from backend.dependencies import get_current_student, require_non_demo_mutation
 except ImportError:
     from database import get_db
     from models import Listing, SavedItem, Student
@@ -26,7 +26,7 @@ except ImportError:
         SavedItemOut,
         SavedItemActionResponse,
     )
-    from dependencies import get_current_student
+    from dependencies import get_current_student, require_non_demo_mutation
 
 router = APIRouter(prefix="/saved-items", tags=["Saved Items"])
 
@@ -139,9 +139,10 @@ def save_item(
 )
 def remove_saved_item(
     listing_id: int,
-    current_student: Student = Depends(get_current_student),
+    current_student: Student = Depends(require_non_demo_mutation),
     db: Session = Depends(get_db)
 ):
+    require_non_demo_mutation(current_student)
     saved = (
         db.query(SavedItem)
         .filter(
