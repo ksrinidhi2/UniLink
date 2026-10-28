@@ -162,7 +162,9 @@ def login_student(payload: StudentLogin, db: Session = Depends(get_db)):
     # Look up student by email
     student = db.query(Student).filter(Student.email == clean_email).first()
 
-    # Constant-time password verification; generic error prevents account enumeration
+    # Constant-time password verification; generic error prevents account enumeration.
+    # Note: Demo presentation sessions are handled strictly via the dedicated
+    # POST /auth/demo-session endpoint; placeholder dots are never accepted as a password.
     if not student or not verify_password(payload.password, student.hashed_password):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -170,9 +172,9 @@ def login_student(payload: StudentLogin, db: Session = Depends(get_db)):
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    # Generate short-lived signed JWT access token
+    # Generate short-lived signed JWT access token for authentic student login
     try:
-        access_token = create_access_token(student_id=student.id, email=student.email)
+        access_token = create_access_token(student_id=student.id, email=student.email, is_demo=False)
     except RuntimeError as exc:
         # Catches unconfigured SECRET_KEY
         raise HTTPException(
