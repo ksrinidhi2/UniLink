@@ -18,7 +18,7 @@ from sqlalchemy import func
 
 try:
     from backend.database import get_db
-    from backend.models import Listing, Student, BorrowRequest, Notification
+    from backend.models import Listing, Student, BorrowRequest, Notification, Message
     from backend.schemas import (
         BorrowListingCreate,
         BorrowListingUpdate,
@@ -32,7 +32,7 @@ try:
     from backend.dependencies import get_current_student, require_non_demo_mutation
 except ImportError:
     from database import get_db
-    from models import Listing, Student, BorrowRequest, Notification
+    from models import Listing, Student, BorrowRequest, Notification, Message
     from schemas import (
         BorrowListingCreate,
         BorrowListingUpdate,
@@ -361,6 +361,21 @@ def create_borrow_request(
             is_read=False
         )
         db.add(owner_notif)
+
+        # Create direct message so the lender sees the request in the messaging interface
+        msg_body = f"Hi! I requested to borrow your item '{listing.title}'."
+        if req_note:
+            msg_body += f" Note: {req_note}"
+
+        borrow_message = Message(
+            sender_id=current_student.id,
+            receiver_id=listing.student_id,
+            listing_id=listing.id,
+            content=msg_body,
+            is_read=False
+        )
+        db.add(borrow_message)
+
         db.commit()
         db.refresh(new_req)
     except Exception:

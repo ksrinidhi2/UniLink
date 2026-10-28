@@ -43,6 +43,9 @@
       height: 100%;
       scroll-behavior: smooth;
     }
+    button, a, input, select, textarea {
+      touch-action: manipulation;
+    }
     .custom-scrollbar::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -74,19 +77,32 @@
       background-color: #d1fae5;
       color: #064e3b;
       border-top-right-radius: 4px;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      line-height: 1.45;
+      font-size: 0.875rem;
     }
     .dark .chat-bubble-out {
       background-color: #064e3b;
       color: #ecfdf5;
+      border: 1px solid rgba(16, 185, 129, 0.25);
     }
     .chat-bubble-in {
       background-color: #ffffff;
-      color: #1e293b;
+      color: #0f172a;
       border-top-left-radius: 4px;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      line-height: 1.45;
+      font-size: 0.875rem;
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
     .dark .chat-bubble-in {
       background-color: #1e293b;
-      color: #f1f5f9;
+      color: #f8fafc;
+      border: 1px solid rgba(51, 65, 85, 0.9);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
     }
   </style>
 <!-- END: Custom CSS Blocks -->
@@ -232,7 +248,9 @@
 </div>
 <div class="relative">
 <input class="w-full px-4 py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-900 text-sm outline-none" id="auth-password-input" placeholder="Enter password (min 8 characters)" required="" type="password" value="••••••••••••">
-<span class="absolute right-3.5 top-3 text-slate-400 cursor-pointer select-none" onclick="togglePasswordVisibility()" title="Show/hide password">👁</span>
+<button type="button" id="auth-password-toggle-btn" class="absolute right-3.5 top-3.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 cursor-pointer select-none focus:outline-none flex items-center justify-center p-0 bg-transparent border-0" onclick="togglePasswordVisibility()" aria-label="Show password" title="Show password">
+<svg id="auth-password-toggle-svg" class="w-5 h-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+</button>
 </div>
 </div>
 <div class="hidden p-3 rounded-xl bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-xs text-red-600 dark:text-red-400 font-medium" id="auth-error-msg"></div>
@@ -752,7 +770,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <!-- SCREEN 7: MESSAGES (WHATSAPP STYLE) -->
 <!-- ========================================== -->
 <div class="app-subview hidden" id="view-screen-7">
-<div class="h-[calc(100vh-140px)] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col md:flex-row">
+<div class="h-[calc(100dvh-11.5rem)] sm:h-[calc(100vh-140px)] bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden flex flex-col md:flex-row">
 <!-- Left Conversations Column -->
 <div id="chat-conversations-pane" class="w-full md:w-80 border-r border-slate-200 dark:border-slate-800 flex flex-col h-full shrink-0">
 <!-- Header -->
@@ -919,10 +937,10 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 </div>
 </div>
 <!-- Chat Input Box -->
-<form class="p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-2" onsubmit="handleSendChatMessage(event)">
-<button class="p-2 text-slate-400 hover:text-slate-600" type="button">📎</button>
-<input autocomplete="off" class="flex-1 px-4 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-white text-sm outline-none focus:ring-1 focus:ring-brand-900" id="chat-input-text" placeholder="Type a message..." type="text">
-<button class="w-10 h-10 rounded-full bg-brand-900 hover:bg-brand-800 text-white flex items-center justify-center shrink-0 shadow" type="submit">
+<form class="p-2.5 sm:p-3 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex items-center space-x-2" onsubmit="handleSendChatMessage(event)">
+<button class="p-2 text-slate-400 hover:text-slate-600 focus:outline-none" type="button" title="Attach item / file">📎</button>
+<input autocomplete="off" class="flex-1 px-4 py-2.5 rounded-full border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm outline-none focus:ring-2 focus:ring-brand-900 font-medium" id="chat-input-text" placeholder="Type a message..." type="text">
+<button class="w-10 h-10 rounded-full bg-brand-900 hover:bg-brand-800 text-white flex items-center justify-center shrink-0 shadow focus:outline-none focus:ring-2 focus:ring-brand-900 transition active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed" id="chat-send-btn" type="submit" title="Send message">
 <svg class="w-4 h-4 transform rotate-90" fill="currentColor" viewBox="0 0 20 20"><path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z"></path></svg>
 </button>
 </form>
@@ -1966,11 +1984,19 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       )
     );
 
-    // Password visibility toggle
+    // Password visibility toggle with monochrome vector SVG icons
     function togglePasswordVisibility() {
       const pwdInput = document.getElementById('auth-password-input');
-      if (pwdInput) {
-        pwdInput.type = pwdInput.type === 'password' ? 'text' : 'password';
+      const toggleBtn = document.getElementById('auth-password-toggle-btn');
+      if (!pwdInput) return;
+      const isPassword = pwdInput.type === 'password';
+      pwdInput.type = isPassword ? 'text' : 'password';
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-label', isPassword ? 'Hide password' : 'Show password');
+        toggleBtn.setAttribute('title', isPassword ? 'Hide password' : 'Show password');
+        toggleBtn.innerHTML = isPassword
+          ? '<svg class="w-5 h-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
+          : '<svg class="w-5 h-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
       }
     }
     window.togglePasswordVisibility = togglePasswordVisibility;
@@ -2003,6 +2029,14 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         const emailInput = document.getElementById('auth-email-input');
         if (emailInput && !emailInput.value) emailInput.value = 'varshitha.25bca1234@vitapstudent.ac.in';
         if (pwdInput && !pwdInput.value) pwdInput.value = '••••••••••••';
+      }
+      const toggleBtn = document.getElementById('auth-password-toggle-btn');
+      const pwdInputForToggle = document.getElementById('auth-password-input');
+      if (pwdInputForToggle) pwdInputForToggle.type = 'password';
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-label', 'Show password');
+        toggleBtn.setAttribute('title', 'Show password');
+        toggleBtn.innerHTML = '<svg class="w-5 h-5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
       }
     }
     window.switchAuthTab = switchAuthTab;
@@ -4105,19 +4139,19 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
         if (isMe) {
           bubble.innerHTML = `
-            <div class="chat-bubble-out max-w-md p-3 rounded-2xl shadow-sm">
-              <p class="text-sm whitespace-pre-wrap">${escapeHTML(msg.content)}</p>
-              <div class="flex items-center justify-end space-x-1 mt-1">
-                <span class="text-[10px] opacity-75">${timeStr}</span>
-                <span class="text-[11px] text-blue-500 font-bold">${msg.is_read ? '✓✓' : '✓'}</span>
+            <div class="chat-bubble-out max-w-[85%] sm:max-w-md p-3 rounded-2xl shadow-sm">
+              <p class="text-sm font-normal leading-relaxed whitespace-pre-wrap">${escapeHTML(msg.content)}</p>
+              <div class="flex items-center justify-end space-x-1.5 mt-1 text-[11px] font-medium text-emerald-800/80 dark:text-emerald-200/90">
+                <span>${timeStr}</span>
+                <span class="text-blue-500 font-bold">${msg.is_read ? '✓✓' : '✓'}</span>
               </div>
             </div>
           `;
         } else {
           bubble.innerHTML = `
-            <div class="chat-bubble-in max-w-md p-3 rounded-2xl shadow-sm">
-              <p class="text-sm whitespace-pre-wrap">${escapeHTML(msg.content)}</p>
-              <span class="block text-[10px] text-slate-400 text-right mt-1">${timeStr}</span>
+            <div class="chat-bubble-in max-w-[85%] sm:max-w-md p-3 rounded-2xl shadow-sm">
+              <p class="text-sm font-normal leading-relaxed whitespace-pre-wrap">${escapeHTML(msg.content)}</p>
+              <span class="block text-[11px] font-medium text-slate-500 dark:text-slate-400 text-right mt-1">${timeStr}</span>
             </div>
           `;
         }
@@ -4153,11 +4187,14 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     }
     window.startChatWithSeller = startChatWithSeller;
 
-    // Send new message (POST /messages)
+    // Send new message (POST /messages) with duplicate prevention and loading feedback
+    let isSendingChatMessage = false;
     async function handleSendChatMessage(e) {
       e.preventDefault();
+      if (isSendingChatMessage) return;
+
       const input = document.getElementById('chat-input-text');
-      const text = input.value.trim();
+      const text = input ? input.value.trim() : '';
       if (!text) return;
 
       const token = sessionStorage.getItem('unilink_access_token');
@@ -4176,6 +4213,13 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       if (appState.currentUser && appState.currentUser.id && appState.activeChatPartnerId === appState.currentUser.id) {
         showToast('You cannot send a message to yourself.');
         return;
+      }
+
+      const sendBtn = document.getElementById('chat-send-btn') || (e.target ? e.target.querySelector('button[type="submit"]') : null);
+      isSendingChatMessage = true;
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.classList.add('opacity-60', 'cursor-not-allowed');
       }
 
       const payload = {
@@ -4224,11 +4268,11 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           const bubble = document.createElement('div');
           bubble.className = 'flex justify-end';
           bubble.innerHTML = `
-            <div class="chat-bubble-out max-w-md p-3 rounded-2xl shadow-sm">
-              <p class="text-sm whitespace-pre-wrap">${escapeHTML(sentMsg.content)}</p>
-              <div class="flex items-center justify-end space-x-1 mt-1">
-                <span class="text-[10px] opacity-75">${timeStr}</span>
-                <span class="text-[11px] text-blue-500 font-bold">✓</span>
+            <div class="chat-bubble-out max-w-[85%] sm:max-w-md p-3 rounded-2xl shadow-sm">
+              <p class="text-sm font-normal leading-relaxed whitespace-pre-wrap">${escapeHTML(sentMsg.content)}</p>
+              <div class="flex items-center justify-end space-x-1.5 mt-1 text-[11px] font-medium text-emerald-800/80 dark:text-emerald-200/90">
+                <span>${timeStr}</span>
+                <span class="text-blue-500 font-bold">✓</span>
               </div>
             </div>
           `;
@@ -4236,12 +4280,18 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           container.scrollTop = container.scrollHeight;
         }
 
-        input.value = '';
+        if (input) input.value = '';
 
         // Refresh conversation summary in background
         loadConversationsFromAPI();
       } catch (err) {
         showToast('Network error while sending message.');
+      } finally {
+        isSendingChatMessage = false;
+        if (sendBtn) {
+          sendBtn.disabled = false;
+          sendBtn.classList.remove('opacity-60', 'cursor-not-allowed');
+        }
       }
     }
     window.handleSendChatMessage = handleSendChatMessage;
@@ -5128,10 +5178,16 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         return;
       }
 
-      const origText = btn.textContent;
-      btn.disabled = true;
-      btn.textContent = 'Requesting...';
+      const targetBtn = btn || document.getElementById('request-borrow-btn');
+      const origText = targetBtn ? targetBtn.textContent : 'Request to Borrow';
+      if (targetBtn) {
+        if (targetBtn.disabled) return;
+        targetBtn.disabled = true;
+        targetBtn.classList.add('opacity-75', 'cursor-not-allowed');
+        targetBtn.textContent = 'Requesting...';
+      }
 
+      let isSuccessOrConflict = false;
       try {
         const resp = await fetch(`${API_BASE_URL}/borrow/${item.id}/requests`, {
           method: 'POST',
@@ -5151,9 +5207,12 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         }
 
         if (resp.status === 409) {
-          btn.textContent = 'Requested ✓';
-          btn.className = 'w-full py-3.5 rounded-2xl bg-slate-700 cursor-not-allowed text-white font-bold text-sm shadow-md transition';
-          btn.disabled = true;
+          isSuccessOrConflict = true;
+          if (targetBtn) {
+            targetBtn.textContent = 'Requested ✓';
+            targetBtn.className = 'w-full py-3.5 rounded-2xl bg-slate-700 cursor-not-allowed text-white font-bold text-sm shadow-md transition';
+            targetBtn.disabled = true;
+          }
           showToast('You already have an active borrow request for this item.');
           if (typeof loadSentBorrowRequestsFromAPI === 'function') loadSentBorrowRequestsFromAPI();
           return;
@@ -5162,24 +5221,30 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         if (!resp.ok) {
           const err = await resp.json().catch(() => ({}));
           showToast(err.detail || 'Failed to submit borrow request.');
-          btn.disabled = false;
-          btn.textContent = origText;
           return;
         }
 
         const data = await resp.json();
-        btn.textContent = 'Requested ✓';
-        btn.className = 'w-full py-3.5 rounded-2xl bg-slate-700 cursor-not-allowed text-white font-bold text-sm shadow-md transition';
-        btn.disabled = true;
+        isSuccessOrConflict = true;
+        if (targetBtn) {
+          targetBtn.textContent = 'Requested ✓';
+          targetBtn.className = 'w-full py-3.5 rounded-2xl bg-slate-700 cursor-not-allowed text-white font-bold text-sm shadow-md transition';
+          targetBtn.disabled = true;
+        }
         showToast(`Borrow request sent to ${item.lender || 'lender'}! You will receive a notification when accepted.`);
 
         if (!appState.sentBorrowRequests) appState.sentBorrowRequests = [];
         appState.sentBorrowRequests.unshift(data);
         if (typeof loadSentBorrowRequestsFromAPI === 'function') loadSentBorrowRequestsFromAPI();
+        if (typeof loadConversationsFromAPI === 'function') loadConversationsFromAPI();
       } catch (err) {
         showToast('Network error while submitting borrow request.');
-        btn.disabled = false;
-        btn.textContent = origText;
+      } finally {
+        if (!isSuccessOrConflict && targetBtn) {
+          targetBtn.disabled = false;
+          targetBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+          targetBtn.textContent = origText;
+        }
       }
     }
     window.submitBorrowRequest = submitBorrowRequest;
@@ -5680,14 +5745,16 @@ if (window.appState) {
   }
   window.loadSavedItemsFromAPI = loadSavedItemsFromAPI;
 
+  const savingInflightItemIds = new Set();
   async function toggleSavedItem(itemId) {
-    if (!itemId) return;
+    if (!itemId || savingInflightItemIds.has(itemId)) return;
     const token = sessionStorage.getItem('unilink_access_token');
     if (!token) {
       showToast('Please sign in with your campus account to save items.');
       navigateTo('screen-2-auth');
       return;
     }
+    savingInflightItemIds.add(itemId);
 
     const isCurrentlySaved = (window.savedItemIds || []).includes(itemId);
 
@@ -5718,6 +5785,8 @@ if (window.appState) {
         }
       } catch (err) {
         showToast('Network error while removing saved item.');
+      } finally {
+        savingInflightItemIds.delete(itemId);
       }
     } else {
       // POST /saved-items/{listing_id}
@@ -5758,6 +5827,8 @@ if (window.appState) {
         }
       } catch (err) {
         showToast('Network error while saving item.');
+      } finally {
+        savingInflightItemIds.delete(itemId);
       }
     }
   }
@@ -5947,12 +6018,12 @@ if (window.appState) {
         let actionBtns = '';
         if (req.status === 'pending') {
           actionBtns = `
-            <button onclick="handleReviewBorrowRequest(${req.id}, 'approved')" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition">Approve</button>
-            <button onclick="handleReviewBorrowRequest(${req.id}, 'declined')" class="px-3.5 py-1.5 rounded-xl border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 text-xs font-bold transition">Decline</button>
+            <button onclick="handleReviewBorrowRequest(${req.id}, 'approved', this)" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition">Approve</button>
+            <button onclick="handleReviewBorrowRequest(${req.id}, 'declined', this)" class="px-3.5 py-1.5 rounded-xl border border-red-200 dark:border-red-900/50 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 text-xs font-bold transition">Decline</button>
           `;
         } else if (req.status === 'approved') {
           actionBtns = `
-            <button onclick="handleReviewBorrowRequest(${req.id}, 'returned')" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-sm transition">Mark as Returned</button>
+            <button onclick="handleReviewBorrowRequest(${req.id}, 'returned', this)" class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold shadow-sm transition">Mark as Returned</button>
           `;
         }
 
@@ -6108,10 +6179,18 @@ if (window.appState) {
   }
   window.loadSentBorrowRequestsFromAPI = loadSentBorrowRequestsFromAPI;
 
-  // Review / Decide Borrow Request (Owner)
-  async function handleReviewBorrowRequest(requestId, targetStatus) {
+  // Review / Decide Borrow Request (Owner) with responsive button state
+  async function handleReviewBorrowRequest(requestId, targetStatus, btn) {
     const token = sessionStorage.getItem('unilink_access_token');
     if (!token || !requestId) return;
+
+    const originalText = btn ? btn.textContent : '';
+    if (btn) {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      btn.classList.add('opacity-70', 'cursor-not-allowed');
+      btn.textContent = 'Updating...';
+    }
 
     try {
       const resp = await fetch(`${API_BASE_URL}/borrow/requests/${requestId}`, {
@@ -6152,6 +6231,12 @@ if (window.appState) {
       if (typeof loadBorrowFromAPI === 'function') loadBorrowFromAPI();
     } catch (err) {
       showToast('Network error while updating borrow request.');
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.classList.remove('opacity-70', 'cursor-not-allowed');
+        btn.textContent = originalText;
+      }
     }
   }
   window.handleReviewBorrowRequest = handleReviewBorrowRequest;
