@@ -62,8 +62,8 @@ try:
 except ValueError:
     ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
-# Campus Institutional Domain
-ALLOWED_EMAIL_DOMAIN: str = os.getenv("ALLOWED_EMAIL_DOMAIN", "vitapstudent.ac.in").strip().lower()
+# Campus Institutional Domain (supports multiple comma-separated domains)
+ALLOWED_EMAIL_DOMAIN: str = os.getenv("ALLOWED_EMAIL_DOMAIN", "vitapstudent.ac.in,vitap.ac.in").strip().lower()
 
 # Environment mode ('development', 'staging', 'production')
 ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development").strip().lower()

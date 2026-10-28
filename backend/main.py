@@ -12,7 +12,7 @@ for _p in [str(_ROOT_DIR), str(_BACKEND_DIR)]:
 
 from fastapi import FastAPI, status, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError, OperationalError
@@ -99,11 +99,43 @@ try:
 except Exception:
     pass
 
+# Mount static files for application assets (avatars, item thumbnails)
+_ASSETS_DIR = _ROOT_DIR / "assets"
+if _ASSETS_DIR.is_dir():
+    app.mount("/assets", StaticFiles(directory=str(_ASSETS_DIR)), name="assets")
 
-# Root endpoint: Welcomes visitors / confirms API is up
-@app.get("/")
+# Frontend single-page application and static script paths
+_CODE_HTML_PATH = _ROOT_DIR / "code.html"
+_TAILWIND_PATH = _ROOT_DIR / "tailwindcss.js"
+
+
+# Root endpoint: Serves the UniLink frontend single-page application
+@app.get("/", response_class=FileResponse)
 def read_root():
+    if _CODE_HTML_PATH.is_file():
+        return FileResponse(str(_CODE_HTML_PATH), media_type="text/html")
     return {"message": "UniLink API is running"}
+
+
+@app.get("/code.html", response_class=FileResponse)
+def read_code_html():
+    if _CODE_HTML_PATH.is_file():
+        return FileResponse(str(_CODE_HTML_PATH), media_type="text/html")
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+
+@app.get("/index.html", response_class=FileResponse)
+def read_index_html():
+    if _CODE_HTML_PATH.is_file():
+        return FileResponse(str(_CODE_HTML_PATH), media_type="text/html")
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+
+@app.get("/tailwindcss.js", response_class=FileResponse)
+def read_tailwind_js():
+    if _TAILWIND_PATH.is_file():
+        return FileResponse(str(_TAILWIND_PATH), media_type="application/javascript")
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 
 # Health check endpoint: Used to monitor server health

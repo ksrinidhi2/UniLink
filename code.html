@@ -2116,8 +2116,8 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         return;
       }
 
-      if (!email.endsWith('@vitapstudent.ac.in')) {
-        setAuthError('Access is restricted to official campus emails (@vitapstudent.ac.in).');
+      if (!email.endsWith('@vitapstudent.ac.in') && !email.endsWith('@vitap.ac.in')) {
+        setAuthError('Access is restricted to official campus emails (@vitapstudent.ac.in, @vitap.ac.in).');
         return;
       }
 

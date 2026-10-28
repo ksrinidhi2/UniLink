@@ -78,14 +78,14 @@ class StudentRegister(BaseModel):
     @classmethod
     def validate_campus_domain(cls, value: str) -> str:
         """
-        Enforces that registrations use the institutional @vitapstudent.ac.in domain.
+        Enforces that registrations use an approved institutional domain (@vitapstudent.ac.in or @vitap.ac.in).
         NOTE: Validating domain policy here does NOT prove mailbox ownership.
         All manual registrations remain is_verified=False until a verification flow occurs.
         """
         email_clean = value.strip().lower()
-        if not email_clean.endswith("@vitapstudent.ac.in"):
+        if not (email_clean.endswith("@vitapstudent.ac.in") or email_clean.endswith("@vitap.ac.in")):
             raise ValueError(
-                "Registration is restricted to official campus emails (@vitapstudent.ac.in)."
+                "Registration is restricted to official campus emails (@vitapstudent.ac.in, @vitap.ac.in)."
             )
         return email_clean
 

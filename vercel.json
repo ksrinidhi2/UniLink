@@ -20,7 +20,10 @@
     { "source": "/docs/:path*", "destination": "/api/index.py" },
     { "source": "/redoc", "destination": "/api/index.py" },
     { "source": "/openapi.json", "destination": "/api/index.py" },
-    { "source": "/", "destination": "/code.html" },
-    { "source": "/index.html", "destination": "/code.html" }
+    { "source": "/", "destination": "/api/index.py" },
+    { "source": "/code.html", "destination": "/api/index.py" },
+    { "source": "/index.html", "destination": "/api/index.py" },
+    { "source": "/tailwindcss.js", "destination": "/api/index.py" },
+    { "source": "/assets/:path*", "destination": "/api/index.py" }
   ]
 }
