@@ -138,6 +138,11 @@ def read_tailwind_js():
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 
+@app.get("/api/index.py", response_class=FileResponse)
+def read_api_index_py():
+    return read_root()
+
+
 # Health check endpoint: Used to monitor server health
 @app.get("/health")
 def health_check():
