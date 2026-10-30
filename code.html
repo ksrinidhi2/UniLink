@@ -1,4 +1,18 @@
-<!DOCTYPE html><html class="h-full" lang="en" style=""><head>
+<!DOCTYPE html><html class="h-full dark" lang="en" style=""><head>
+<script>
+  (function() {
+    try {
+      var savedTheme = localStorage.getItem("unilink_theme") || localStorage.getItem("theme");
+      if (savedTheme === "light") {
+        document.documentElement.classList.remove("dark");
+      } else {
+        document.documentElement.classList.add("dark");
+      }
+    } catch (e) {
+      document.documentElement.classList.add("dark");
+    }
+  })();
+</script>
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>UniLink — Campus Community Marketplace &amp; Utilities</title>
@@ -137,8 +151,8 @@
 <button class="px-4 py-1.5 text-slate-600 dark:text-slate-300 hover:text-brand-900 dark:hover:text-white" onclick="navigateTo('screen-9-borrow')">Borrow</button>
 </nav>
 <div class="flex items-center space-x-4">
-<button aria-label="Theme mode" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full" onclick="toggleDarkMode()">
-<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+<button aria-label="Theme mode" id="landing-theme-toggle" class="p-2 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-800 rounded-full transition" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode">
+<svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 </button>
 <button class="px-6 py-2 rounded-full font-semibold bg-brand-900 hover:bg-brand-800 text-white shadow transition-all hover:scale-105" onclick="navigateTo('screen-2-auth')">
             Login
@@ -218,8 +232,11 @@
 <!-- BEGIN: Screen 2 - Auth Screen -->
 <section class="screen-view hidden min-h-[calc(100vh-41px)] flex items-center justify-center p-4 bg-slate-100 dark:bg-slate-950" id="screen-2-auth">
 <div class="w-full max-w-md bg-white dark:bg-slate-900 rounded-3xl p-8 border border-slate-200 dark:border-slate-800 shadow-xl relative">
-<button class="absolute top-6 left-6 text-slate-400 hover:text-slate-700 dark:hover:text-white" onclick="navigateTo('screen-1-landing')">
+<button class="absolute top-6 left-6 text-slate-400 hover:text-slate-700 dark:hover:text-white" onclick="navigateTo('screen-1-landing')" aria-label="Back to home" title="Back to home">
 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M10 19l-7-7m0 0l7-7m-7 7h18" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+<button aria-label="Theme mode" id="auth-theme-toggle" class="absolute top-6 right-6 p-1.5 text-slate-400 hover:text-slate-700 dark:hover:text-white rounded-full hover:bg-slate-100 dark:hover:bg-slate-800 transition" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode">
+<svg class="w-5 h-5 dark:hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg><svg class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
 </button>
 <!-- Brand Icon -->
 <div class="text-center mt-2">
@@ -263,7 +280,7 @@
 <span class="">or</span>
 <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700"></div>
 </div>
-<button class="w-full py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 text-slate-700 dark:text-slate-200 text-sm font-medium flex items-center justify-center space-x-3 transition" id="google-signin-btn" onclick="handleGoogleLogin()">
+<button class="w-full py-3 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-sm font-medium flex items-center justify-center space-x-3 transition" id="google-signin-btn" onclick="handleGoogleLogin()">
 <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" fill="#FBBC05"></path><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" fill="#EA4335"></path></svg>
 <span id="google-signin-btn-text">Continue with Google</span>
 </button>
@@ -523,12 +540,12 @@
 <!-- Category Filter Pills -->
 <div class="flex items-center space-x-2 overflow-x-auto pb-2 custom-scrollbar max-w-full flex-1 min-w-0">
 <button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap" onclick="filterMarketplaceCategory('All', this)">All</button>
-<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Electronics', this)">Electronics</button>
-<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Books', this)">Books</button>
-<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Clothing', this)">Clothing</button>
-<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Accessories', this)">Accessories</button>
-<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Sports', this)">Sports</button>
-<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterMarketplaceCategory('Others', this)">Others</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700" onclick="filterMarketplaceCategory('Electronics', this)">Electronics</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700" onclick="filterMarketplaceCategory('Books', this)">Books</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700" onclick="filterMarketplaceCategory('Clothing', this)">Clothing</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700" onclick="filterMarketplaceCategory('Accessories', this)">Accessories</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700" onclick="filterMarketplaceCategory('Sports', this)">Sports</button>
+<button class="market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700" onclick="filterMarketplaceCategory('Others', this)">Others</button>
 </div>
 <!-- Sell Button -->
 <button class="shrink-0 px-4 sm:px-5 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs sm:text-sm flex items-center shadow-sm self-start sm:self-auto" onclick="navigateTo('screen-6-add-item')">
@@ -955,9 +972,9 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 <div class="flex flex-col md:flex-row md:items-center justify-between gap-3 sm:gap-4 mb-6">
 <div class="flex items-center space-x-2 overflow-x-auto pb-1.5 max-w-full custom-scrollbar">
 <button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap" onclick="toggleLostFoundFilter('all', this)">All</button>
-<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 whitespace-nowrap" onclick="toggleLostFoundFilter('lost', this)">Lost Items</button>
-<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 whitespace-nowrap" onclick="toggleLostFoundFilter('found', this)">Found Items</button>
-<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 whitespace-nowrap" onclick="toggleLostFoundFilter('my', this)">My Reports</button>
+<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 whitespace-nowrap" onclick="toggleLostFoundFilter('lost', this)">Lost Items</button>
+<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 whitespace-nowrap" onclick="toggleLostFoundFilter('found', this)">Found Items</button>
+<button class="lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700 whitespace-nowrap" onclick="toggleLostFoundFilter('my', this)">My Reports</button>
 </div>
 <div class="flex items-center gap-2 sm:gap-3 w-full md:w-auto">
 <div class="relative flex-1 sm:w-64 min-w-0">
@@ -1081,10 +1098,10 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
   <div class="flex flex-wrap items-center gap-3">
     <div class="flex items-center space-x-2 overflow-x-auto pb-1 max-w-full custom-scrollbar">
       <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap" onclick="filterBorrowCategory('All', this)">All</button>
-      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Books', this)">Books</button>
-      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Electronics', this)">Electronics</button>
-      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Sports', this)">Sports</button>
-      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100" onclick="filterBorrowCategory('Others', this)">Others</button>
+      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700" onclick="filterBorrowCategory('Books', this)">Books</button>
+      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700" onclick="filterBorrowCategory('Electronics', this)">Electronics</button>
+      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700" onclick="filterBorrowCategory('Sports', this)">Sports</button>
+      <button class="borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700" onclick="filterBorrowCategory('Others', this)">Others</button>
     </div>
     <button class="px-4 py-2 rounded-xl bg-brand-900 hover:bg-brand-800 text-white font-semibold text-xs flex items-center shadow-sm whitespace-nowrap" onclick="openBorrowModal()"><span class="mr-1 text-sm">+</span> List an Item to Borrow</button>
   </div>
@@ -1803,13 +1820,19 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
     // Toggle Dark Theme
     function toggleDarkMode() {
-      document.documentElement.classList.toggle('dark');
+      const isDark = document.documentElement.classList.toggle('dark');
+      try {
+        localStorage.setItem('unilink_theme', isDark ? 'dark' : 'light');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      } catch (e) {
+        console.warn('Unable to persist theme to localStorage', e);
+      }
       if (typeof applyUserAvatarEverywhere === 'function') applyUserAvatarEverywhere();
       const avatarModal = document.getElementById('avatar-modal');
       if (avatarModal && !avatarModal.classList.contains('hidden') && typeof renderAvatarGrid === 'function') {
         renderAvatarGrid();
       }
-      showToast(document.documentElement.classList.contains('dark') ? 'Dark theme enabled' : 'Light theme enabled');
+      showToast(isDark ? 'Dark theme enabled' : 'Light theme enabled');
     }
 
     // Toast message helper
@@ -2889,7 +2912,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       const resolvedImg = resolveItemImageUrl(item && item.image);
       if (resolvedImg) {
         const escapedTitle = escapeHTML(item.title || 'Item');
-        return `<img src="${resolvedImg}" alt="${escapedTitle}" class="${extraClasses}" onerror="this.onerror=null;const card=this.closest('.item-card-wrapper')||this.closest('.group');if(card&&card.parentElement&&(card.parentElement.id==='marketplace-cards-grid'||card.parentElement.id==='borrow-cards-grid'||card.parentElement.id==='home-recent-grid')){card.remove();}else{this.parentElement.innerHTML='<span class=\\'text-4xl\\'>${item.icon || '📦'}</span>';}" />`;
+        return `<img src="${resolvedImg}" alt="${escapedTitle}" class="${extraClasses}" loading="lazy" decoding="async" onerror="this.onerror=null;const card=this.closest('.item-card-wrapper')||this.closest('.group');if(card&&card.parentElement&&(card.parentElement.id==='marketplace-cards-grid'||card.parentElement.id==='borrow-cards-grid'||card.parentElement.id==='home-recent-grid')){card.remove();}else{this.parentElement.innerHTML='<span class=\\'text-4xl\\'>${item.icon || '📦'}</span>';}" />`;
       }
       return `<span class="text-4xl">${(item && item.icon) || '📦'}</span>`;
     }
@@ -2970,67 +2993,138 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     }
     window.hasUsablePhoto = hasUsablePhoto;
 
+    // In-memory cache & request deduplication for instant navigation responsiveness
+    const apiCache = {
+      marketplace: { timestamp: 0, key: '', inFlight: null },
+      borrow: { timestamp: 0, key: '', inFlight: null },
+      lostFound: { timestamp: 0, key: '', inFlight: null }
+    };
+    const CACHE_TTL_MS = 30000;
+
     // Fetch and sync active Marketplace listings from GET /listings
-    async function loadMarketplaceFromAPI(query, category, minPrice, maxPrice) {
-      const grid = document.getElementById('marketplace-cards-grid');
+    async function loadMarketplaceFromAPI(query, category, minPrice, maxPrice, force = false) {
+      const cacheKey = `${query || ''}_${category || 'all'}_${minPrice || ''}_${maxPrice || ''}`;
+      const now = Date.now();
+
+      // Immediate in-memory render for instant responsiveness
+      if (!query && (!category || category.toLowerCase() === 'all') && minPrice === undefined) {
+        if (appState.marketplaceItems && appState.marketplaceItems.length > 0) {
+          renderMarketplaceCards(appState.marketplaceItems);
+        }
+      }
+
+      // Reuse in-flight promise if identical request is already running
+      if (apiCache.marketplace.inFlight && apiCache.marketplace.key === cacheKey) {
+        return apiCache.marketplace.inFlight;
+      }
+
+      // Return cached results if within TTL and not forced
+      if (!force && apiCache.marketplace.key === cacheKey && (now - apiCache.marketplace.timestamp < CACHE_TTL_MS)) {
+        if (appState.marketplaceItems && appState.marketplaceItems.length > 0) {
+          renderMarketplaceCards(appState.marketplaceItems);
+          return;
+        }
+      }
+
       const params = new URLSearchParams();
       if (query && query.trim()) params.append('q', query.trim());
       if (category && category.toLowerCase() !== 'all') params.append('category', category.trim());
       if (minPrice !== undefined && minPrice !== null && minPrice !== '') params.append('min_price', minPrice);
       if (maxPrice !== undefined && maxPrice !== null && maxPrice !== '') params.append('max_price', maxPrice);
 
-      try {
-        const resp = await fetch(`${API_BASE_URL}/listings?${params.toString()}`, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' }
-        });
+      apiCache.marketplace.key = cacheKey;
+      const fetchPromise = (async () => {
+        try {
+          const resp = await fetch(`${API_BASE_URL}/listings?${params.toString()}`, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+          });
 
-        if (resp.ok) {
-          const data = await resp.json();
-          const mapped = data.map(mapBackendListingToFrontend).filter(Boolean).filter(hasUsablePhoto);
-          if (!query && (!category || category.toLowerCase() === 'all') && minPrice === undefined) {
-            appState.marketplaceItems = mapped;
+          if (resp.ok) {
+            const data = await resp.json();
+            const mapped = data.map(mapBackendListingToFrontend).filter(Boolean).filter(hasUsablePhoto);
+            if (!query && (!category || category.toLowerCase() === 'all') && minPrice === undefined) {
+              appState.marketplaceItems = mapped;
+            }
+            apiCache.marketplace.timestamp = Date.now();
+            renderMarketplaceCards(mapped);
+            renderHomeRecentListings();
+          } else {
+            console.warn('GET /listings returned status', resp.status);
+            renderMarketplaceCards((appState.marketplaceItems || []).filter(hasUsablePhoto));
           }
-          renderMarketplaceCards(mapped);
-          renderHomeRecentListings();
-        } else {
-          console.warn('GET /listings returned status', resp.status);
+        } catch (err) {
+          console.warn('Network error fetching listings, using fallback cache:', err);
           renderMarketplaceCards((appState.marketplaceItems || []).filter(hasUsablePhoto));
+        } finally {
+          apiCache.marketplace.inFlight = null;
         }
-      } catch (err) {
-        console.warn('Network error fetching listings, using fallback cache:', err);
-        renderMarketplaceCards((appState.marketplaceItems || []).filter(hasUsablePhoto));
-      }
+      })();
+
+      apiCache.marketplace.inFlight = fetchPromise;
+      return fetchPromise;
     }
     window.loadMarketplaceFromAPI = loadMarketplaceFromAPI;
 
     // Fetch and sync active Borrow listings from GET /borrow
-    async function loadBorrowFromAPI(query, category) {
+    async function loadBorrowFromAPI(query, category, force = false) {
+      const cacheKey = `${query || ''}_${category || 'all'}`;
+      const now = Date.now();
+
+      // Immediate in-memory render for instant responsiveness
+      if (!query && (!category || category.toLowerCase() === 'all')) {
+        if (appState.borrowItems && appState.borrowItems.length > 0) {
+          renderBorrowGrid(appState.borrowItems);
+        }
+      }
+
+      // Reuse in-flight promise if identical request is already running
+      if (apiCache.borrow.inFlight && apiCache.borrow.key === cacheKey) {
+        return apiCache.borrow.inFlight;
+      }
+
+      // Return cached results if within TTL and not forced
+      if (!force && apiCache.borrow.key === cacheKey && (now - apiCache.borrow.timestamp < CACHE_TTL_MS)) {
+        if (appState.borrowItems && appState.borrowItems.length > 0) {
+          renderBorrowGrid(appState.borrowItems);
+          return;
+        }
+      }
+
       const params = new URLSearchParams();
       if (query && query.trim()) params.append('q', query.trim());
       if (category && category.toLowerCase() !== 'all') params.append('category', category.trim());
 
-      try {
-        const resp = await fetch(`${API_BASE_URL}/borrow?${params.toString()}`, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' }
-        });
+      apiCache.borrow.key = cacheKey;
+      const fetchPromise = (async () => {
+        try {
+          const resp = await fetch(`${API_BASE_URL}/borrow?${params.toString()}`, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+          });
 
-        if (resp.ok) {
-          const data = await resp.json();
-          const mapped = data.map(mapBackendListingToFrontend).filter(Boolean).filter(hasUsablePhoto);
-          if (!query && (!category || category.toLowerCase() === 'all')) {
-            appState.borrowItems = mapped;
+          if (resp.ok) {
+            const data = await resp.json();
+            const mapped = data.map(mapBackendListingToFrontend).filter(Boolean).filter(hasUsablePhoto);
+            if (!query && (!category || category.toLowerCase() === 'all')) {
+              appState.borrowItems = mapped;
+            }
+            apiCache.borrow.timestamp = Date.now();
+            renderBorrowGrid(mapped);
+          } else {
+            console.warn('GET /borrow returned status', resp.status);
+            renderBorrowGrid((appState.borrowItems || []).filter(hasUsablePhoto));
           }
-          renderBorrowGrid(mapped);
-        } else {
-          console.warn('GET /borrow returned status', resp.status);
+        } catch (err) {
+          console.warn('Network error fetching borrow listings, using fallback cache:', err);
           renderBorrowGrid((appState.borrowItems || []).filter(hasUsablePhoto));
+        } finally {
+          apiCache.borrow.inFlight = null;
         }
-      } catch (err) {
-        console.warn('Network error fetching borrow listings, using fallback cache:', err);
-        renderBorrowGrid((appState.borrowItems || []).filter(hasUsablePhoto));
-      }
+      })();
+
+      apiCache.borrow.inFlight = fetchPromise;
+      return fetchPromise;
     }
     window.loadBorrowFromAPI = loadBorrowFromAPI;
 
@@ -3216,7 +3310,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     // Filter Marketplace by Category Pill
     function filterMarketplaceCategory(category, buttonEl) {
       document.querySelectorAll('.market-pill').forEach(btn => {
-        btn.className = 'market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100';
+        btn.className = 'market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700';
       });
       if (buttonEl) {
         buttonEl.className = 'market-pill px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap';
@@ -3471,6 +3565,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         e.target.reset();
         clearSelectedPhoto('new-item-photo-input', 'new-item-photo-preview', 'assets/items/macbook_charger.jpg', 'new-item-photo-remove-btn');
         showToast(`Success! "${title}" has been listed.`);
+        apiCache.marketplace.timestamp = 0;
         navigateTo('screen-4-marketplace');
       } catch (err) {
         showToast('Network error while posting item.');
@@ -4443,7 +4538,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     }
 
     // Fetch and sync Lost & Found items from GET /lost-found or GET /lost-found/me
-    async function loadLostFoundFromAPI(query, filterType) {
+    async function loadLostFoundFromAPI(query, filterType, force = false) {
       filterType = filterType || appState.activeLostFoundFilter || 'all';
       query = query !== undefined ? query : appState.activeLostFoundQuery;
       const grid = document.getElementById('lostfound-cards-grid');
@@ -4487,6 +4582,29 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       }
 
       // Public browse endpoint: GET /lost-found
+      const cacheKey = `${query || ''}_${filterType}`;
+      const now = Date.now();
+
+      // Immediate in-memory render for instant responsiveness
+      if (!query && filterType === 'all') {
+        if (appState.lostFoundItems && appState.lostFoundItems.length > 0) {
+          renderLostFoundCards(appState.lostFoundItems);
+        }
+      }
+
+      // Reuse in-flight promise if identical request is already running
+      if (apiCache.lostFound.inFlight && apiCache.lostFound.key === cacheKey) {
+        return apiCache.lostFound.inFlight;
+      }
+
+      // Return cached results if within TTL and not forced
+      if (!force && apiCache.lostFound.key === cacheKey && (now - apiCache.lostFound.timestamp < CACHE_TTL_MS)) {
+        if (appState.lostFoundItems && appState.lostFoundItems.length > 0) {
+          renderLostFoundCards(appState.lostFoundItems);
+          return;
+        }
+      }
+
       const params = new URLSearchParams();
       if (query && query.trim()) params.append('q', query.trim());
       if (filterType === 'lost' || filterType === 'found') {
@@ -4494,32 +4612,41 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       }
       params.append('status', 'all');
 
-      try {
-        const resp = await fetch(`${API_BASE_URL}/lost-found?${params.toString()}`, {
-          method: 'GET',
-          headers: { 'Accept': 'application/json' }
-        });
+      apiCache.lostFound.key = cacheKey;
+      const fetchPromise = (async () => {
+        try {
+          const resp = await fetch(`${API_BASE_URL}/lost-found?${params.toString()}`, {
+            method: 'GET',
+            headers: { 'Accept': 'application/json' }
+          });
 
-        if (resp.ok) {
-          const data = await resp.json();
-          const mapped = data.map(mapBackendLostFoundToFrontend).filter(Boolean);
-          if (!query && filterType === 'all') {
-            appState.lostFoundItems = mapped;
+          if (resp.ok) {
+            const data = await resp.json();
+            const mapped = data.map(mapBackendLostFoundToFrontend).filter(Boolean);
+            if (!query && filterType === 'all') {
+              appState.lostFoundItems = mapped;
+            }
+            apiCache.lostFound.timestamp = Date.now();
+            renderLostFoundCards(mapped);
+          } else {
+            renderLostFoundCards(appState.lostFoundItems);
           }
-          renderLostFoundCards(mapped);
-        } else {
+        } catch (err) {
           renderLostFoundCards(appState.lostFoundItems);
+        } finally {
+          apiCache.lostFound.inFlight = null;
         }
-      } catch (err) {
-        renderLostFoundCards(appState.lostFoundItems);
-      }
+      })();
+
+      apiCache.lostFound.inFlight = fetchPromise;
+      return fetchPromise;
     }
     window.loadLostFoundFromAPI = loadLostFoundFromAPI;
 
     // Filter pill toggles
     function toggleLostFoundFilter(type, btn) {
       document.querySelectorAll('.lf-filter-btn').forEach(b => {
-        b.className = 'lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100';
+        b.className = 'lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-700';
       });
       if (btn) {
         btn.className = 'lf-filter-btn px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white';
@@ -4647,7 +4774,8 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         e.target.reset();
         clearSelectedPhoto('report-photo-input', 'report-photo-preview', '', 'report-photo-remove-btn', 'report-photo-container');
         showToast(`Report for "${name}" published to campus feed!`);
-        loadLostFoundFromAPI();
+        apiCache.lostFound.timestamp = 0;
+        loadLostFoundFromAPI(null, null, true);
       } catch (err) {
         showToast('Network error submitting report.');
       } finally {
@@ -5139,7 +5267,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     // Filter Borrow by Category Pill
     function filterBorrowCategory(category, buttonEl) {
       document.querySelectorAll('.borrow-pill').forEach(btn => {
-        btn.className = 'borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100';
+        btn.className = 'borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 whitespace-nowrap hover:bg-slate-100 dark:hover:bg-slate-700';
       });
       if (buttonEl) {
         buttonEl.className = 'borrow-pill px-3.5 py-1.5 rounded-full text-xs font-semibold bg-brand-900 text-white whitespace-nowrap';
@@ -5600,6 +5728,7 @@ async function handleCreateBorrowSubmit(e) {
     e.target.reset();
     clearSelectedPhoto('borrow-photo-input', 'borrow-photo-preview', '', 'borrow-photo-remove-btn', 'borrow-photo-container');
     showToast(`Successfully listed "${title}" for campus borrowing!`);
+    apiCache.borrow.timestamp = 0;
     navigateTo('screen-9-borrow');
   } catch (err) {
     showToast('Network error while listing borrow item.');
