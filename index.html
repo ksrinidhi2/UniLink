@@ -1605,25 +1605,46 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       'screen-my-listings'
     ];
 
-    // Mapping for subviews (e.g. details pages) that should fall back to parent on reload
+    // Mapping for subviews (e.g. details pages) that can fall back to parent if target item is unavailable
     const SUBVIEW_PARENT_FALLBACKS = {
       'screen-5-details': 'screen-4-marketplace',
       'screen-10-borrow-request': 'screen-9-borrow'
     };
 
+    function resolveScreenFromHash(hash) {
+      if (!hash) return null;
+      const clean = hash.replace(/^#/, '').toLowerCase().trim();
+      const map = {
+        'landing': 'screen-1-landing',
+        'auth': 'screen-2-auth',
+        'login': 'screen-2-auth',
+        'signup': 'screen-2-auth',
+        'dashboard': 'screen-3-dashboard',
+        'home': 'screen-3-dashboard',
+        'marketplace': 'screen-4-marketplace',
+        'details': 'screen-5-details',
+        'add-item': 'screen-6-add-item',
+        'messages': 'screen-7-messages',
+        'chat': 'screen-7-messages',
+        'lostfound': 'screen-8-lostfound',
+        'lost-found': 'screen-8-lostfound',
+        'borrow': 'screen-9-borrow',
+        'borrow-request': 'screen-10-borrow-request',
+        'notifications': 'screen-11-notifications',
+        'profile': 'screen-12-profile',
+        'my-listings': 'screen-my-listings'
+      };
+      return map[clean] || null;
+    }
+    window.resolveScreenFromHash = resolveScreenFromHash;
+
     function resolveSafeScreenId(screenId) {
       if (!screenId || typeof screenId !== 'string') {
         return 'screen-3-dashboard';
       }
-      // If modal or item-details subview was saved, return parent screen
-      if (SUBVIEW_PARENT_FALLBACKS[screenId]) {
-        return SUBVIEW_PARENT_FALLBACKS[screenId];
+      if (screenId === 'screen-2-auth' || screenId === 'screen-1-landing') {
+        return isAuthenticated() ? 'screen-3-dashboard' : screenId;
       }
-      // For authenticated restoration, avoid restoring raw auth screen
-      if (screenId === 'screen-2-auth') {
-        return 'screen-3-dashboard';
-      }
-      // Validate against registered screens
       if (VALID_SCREENS.includes(screenId)) {
         return screenId;
       }
@@ -1631,8 +1652,39 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     }
     window.resolveSafeScreenId = resolveSafeScreenId;
 
+    // Scoped Navigation State Persistence (SessionStorage)
+    function saveNavigationState() {
+      if (!isAuthenticated()) {
+        sessionStorage.removeItem('unilink_nav_state');
+        return;
+      }
+      const state = {
+        screen: appState.currentScreen || 'screen-3-dashboard',
+        myListingsTab: appState.activeMyListingsTab || 'listings',
+        profileTab: appState.activeProfileTab || 'info',
+        activeChatPartnerId: appState.activeChatPartnerId || null,
+        activeChatListingId: appState.activeChatListingId || null,
+        activeChatPartnerName: appState.activeChatPartnerName || null,
+        activeChatItemTitle: appState.activeChatListingTitle || null,
+        marketplaceFilter: appState.activeMarketCategory || 'All',
+        marketplaceQuery: appState.activeSearchQuery || '',
+        lostFoundFilter: appState.activeLostFoundFilter || 'all',
+        lostFoundQuery: appState.activeLostFoundQuery || '',
+        borrowCategory: appState.activeBorrowCategory || 'All',
+        selectedItemId: (appState.selectedItem && appState.selectedItem.id) ? appState.selectedItem.id : null,
+        selectedBorrowItemId: (appState.selectedBorrowItem && appState.selectedBorrowItem.id) ? appState.selectedBorrowItem.id : null,
+        itemDetailsOrigin: appState.itemDetailsOrigin || null,
+        borrowDetailsOrigin: appState.borrowDetailsOrigin || null
+      };
+      try {
+        sessionStorage.setItem('unilink_nav_state', JSON.stringify(state));
+        sessionStorage.setItem('unilink_last_screen', state.screen);
+      } catch (e) {}
+    }
+    window.saveNavigationState = saveNavigationState;
+
     // --- Master Navigation Controller ---
-    function navigateTo(targetScreenId) {
+    function navigateTo(targetScreenId, options = {}) {
       // Authentication Guard: Screens other than landing (1) and auth (2) require a valid login session
       const publicScreens = ['screen-1-landing', 'screen-2-auth'];
       if (!publicScreens.includes(targetScreenId) && !isAuthenticated()) {
@@ -1689,12 +1741,19 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       appState.currentScreen = targetScreenId;
 
-      // Save last visited screen for authenticated sessions
-      if (isAuthenticated()) {
-        const screenToSave = SUBVIEW_PARENT_FALLBACKS[targetScreenId] || targetScreenId;
-        if (screenToSave !== 'screen-2-auth') {
-          sessionStorage.setItem('unilink_last_screen', screenToSave);
+      // Synchronize clean browser URL hash for browser back/forward support (without sensitive data)
+      if (!options.fromPopState && typeof history !== 'undefined' && history.pushState) {
+        const cleanHash = '#' + targetScreenId.replace(/^screen-/, '').replace(/^view-/, '');
+        if (window.location.hash !== cleanHash) {
+          try {
+            history.pushState({ screen: targetScreenId }, '', cleanHash);
+          } catch (e) {}
         }
+      }
+
+      // Save last visited screen and navigation state for authenticated sessions
+      if (isAuthenticated()) {
+        saveNavigationState();
       }
 
       if (targetScreenId === 'screen-my-listings') {
@@ -1718,6 +1777,18 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
     window.navigateTo = navigateTo;
+    // Support browser back/forward button navigation
+    window.addEventListener('popstate', (e) => {
+      if (e.state && e.state.screen) {
+        navigateTo(e.state.screen, { fromPopState: true });
+      } else if (window.location.hash) {
+        const screenFromHash = resolveScreenFromHash(window.location.hash);
+        if (screenFromHash) {
+          navigateTo(screenFromHash, { fromPopState: true });
+        }
+      }
+    });
+
 
     // Toggle Mobile Sidebar Drawer
     function toggleMobileSidebar(open) {
@@ -2614,11 +2685,20 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     window.handleDemoAccountAccess = handleDemoAccountAccess;
 
     function logoutToLanding() {
-      // Clear stored JWT token and last screen from sessionStorage
+      // Clear stored JWT token and scoped navigation state from sessionStorage
       sessionStorage.removeItem('unilink_access_token');
       sessionStorage.removeItem('unilink_demo_session');
       sessionStorage.removeItem('unilink_last_screen');
+      sessionStorage.removeItem('unilink_nav_state');
       window.chatHistoryCache = {};
+      appState.activeChatPartnerId = null;
+      appState.activeChatListingId = null;
+      appState.activeChatPartnerName = null;
+      appState.activeChatListingTitle = null;
+      appState.conversations = [];
+      appState.selectedItem = null;
+      appState.selectedBorrowItem = null;
+      appState.savedItems = [];
       if (typeof apiCache !== 'undefined') {
         apiCache.marketplace.timestamp = 0;
         apiCache.borrow.timestamp = 0;
@@ -2626,16 +2706,94 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       }
       appState.currentUser.isLoggedIn = false;
       showToast('Logged out of UniLink');
-      navigateTo('screen-1-landing');
+      navigateTo('screen-1-landing', { fromRestore: true });
     }
     window.logoutToLanding = logoutToLanding;
 
+    // Restore active navigation state after authentication verification
+    async function restoreNavigationState() {
+      let navState = null;
+      try {
+        const raw = sessionStorage.getItem('unilink_nav_state');
+        if (raw) navState = JSON.parse(raw);
+      } catch (err) {}
+
+      const savedScreen = (navState && navState.screen)
+        ? navState.screen
+        : (sessionStorage.getItem('unilink_last_screen') || (window.location.hash ? resolveScreenFromHash(window.location.hash) : 'screen-3-dashboard'));
+
+      const targetScreen = resolveSafeScreenId(savedScreen);
+
+      // Navigate to target screen
+      navigateTo(targetScreen, { fromRestore: true });
+
+      if (navState) {
+        // Restore My Listings subtab
+        if (navState.myListingsTab && (targetScreen === 'screen-my-listings' || navState.myListingsTab !== 'listings')) {
+          appState.activeMyListingsTab = navState.myListingsTab;
+          const tabBtn = document.querySelector(`.my-listings-subtab[onclick*="'${navState.myListingsTab}'"]`);
+          if (typeof switchMyListingsSubTab === 'function') {
+            switchMyListingsSubTab(navState.myListingsTab, tabBtn);
+          }
+        }
+
+        // Restore Profile subtab
+        if (navState.profileTab && (targetScreen === 'screen-12-profile' || navState.profileTab !== 'info')) {
+          appState.activeProfileTab = navState.profileTab;
+          const profBtn = document.getElementById(navState.profileTab === 'saved' ? 'tab-btn-saved-items' : 'tab-btn-student-info');
+          if (typeof window.switchProfileSection === 'function') {
+            window.switchProfileSection(navState.profileTab, profBtn);
+          }
+        }
+
+        // Restore Marketplace filters
+        if (navState.marketplaceFilter && navState.marketplaceFilter !== 'All') {
+          appState.activeMarketCategory = navState.marketplaceFilter;
+          if (typeof filterMarketplaceCategory === 'function') {
+            filterMarketplaceCategory(navState.marketplaceFilter);
+          }
+        }
+
+        // Restore Lost & Found filter
+        if (navState.lostFoundFilter && navState.lostFoundFilter !== 'all') {
+          appState.activeLostFoundFilter = navState.lostFoundFilter;
+          if (typeof filterLostFound === 'function') {
+            filterLostFound(navState.lostFoundFilter);
+          }
+        }
+
+        // Restore Details screens
+        if (targetScreen === 'screen-5-details' && navState.selectedItemId) {
+          if (typeof fetchMarketplaceDetailsAndShow === 'function') {
+            fetchMarketplaceDetailsAndShow(navState.selectedItemId, null, navState.itemDetailsOrigin || 'screen-4-marketplace');
+          }
+        } else if (targetScreen === 'screen-10-borrow-request' && navState.selectedBorrowItemId) {
+          if (typeof fetchBorrowDetailsAndShow === 'function') {
+            fetchBorrowDetailsAndShow(navState.selectedBorrowItemId, null, navState.borrowDetailsOrigin || 'screen-9-borrow');
+          }
+        }
+
+        // Restore active conversation in Messages
+        if (targetScreen === 'screen-7-messages' && navState.activeChatPartnerId) {
+          appState.activeChatPartnerId = navState.activeChatPartnerId;
+          appState.activeChatListingId = navState.activeChatListingId;
+          appState.activeChatPartnerName = navState.activeChatPartnerName || 'Active Chat';
+          appState.activeChatListingTitle = navState.activeChatItemTitle || 'Campus Item';
+          if (typeof selectConversation === 'function') {
+            selectConversation(appState.activeChatPartnerName, appState.activeChatListingTitle, 'Active Chat', navState.activeChatPartnerId, navState.activeChatListingId);
+          }
+        }
+      }
+    }
+    window.restoreNavigationState = restoreNavigationState;
+
     // Check existing authentication session on startup and restore last visited screen
     async function checkExistingAuthSession() {
-      sessionStorage.removeItem('unilink_demo_session');
+      const isDemoSession = !!sessionStorage.getItem('unilink_demo_session');
       const token = sessionStorage.getItem('unilink_access_token');
       if (!token) {
         sessionStorage.removeItem('unilink_last_screen');
+        sessionStorage.removeItem('unilink_nav_state');
         return;
       }
       try {
@@ -2643,14 +2801,13 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         updateUserDisplayProfile(student);
 
         // Restore previously visited screen after authentication and profile verification
-        const savedScreen = sessionStorage.getItem('unilink_last_screen');
-        const targetScreen = resolveSafeScreenId(savedScreen);
-        navigateTo(targetScreen);
+        await restoreNavigationState();
       } catch (e) {
         sessionStorage.removeItem('unilink_access_token');
         sessionStorage.removeItem('unilink_last_screen');
+        sessionStorage.removeItem('unilink_nav_state');
         appState.currentUser.isLoggedIn = false;
-        navigateTo('screen-1-landing');
+        navigateTo('screen-1-landing', { fromRestore: true });
       }
     }
 
@@ -2667,6 +2824,35 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
   </script>
 <script data-purpose="marketplace-and-items-rendering">
     // Master Item Details Context Controller
+    // Fetch single marketplace listing detail and navigate
+    async function fetchMarketplaceDetailsAndShow(itemId, fallbackItem, origin) {
+      origin = origin || 'screen-4-marketplace';
+      if (fallbackItem && typeof showItemDetails === 'function') {
+        showItemDetails(fallbackItem, origin);
+      }
+      if (!itemId) return;
+
+      try {
+        const resp = await fetch(`${API_BASE_URL}/listings/${itemId}`, {
+          headers: { 'Accept': 'application/json' }
+        });
+        if (resp.ok) {
+          const freshData = await resp.json();
+          const mapped = mapBackendListingToFrontend(freshData);
+          if (typeof showItemDetails === 'function') {
+            showItemDetails(mapped, origin);
+          }
+        } else if (!fallbackItem) {
+          navigateTo(origin);
+        }
+      } catch (e) {
+        if (!fallbackItem) {
+          navigateTo(origin);
+        }
+      }
+    }
+    window.fetchMarketplaceDetailsAndShow = fetchMarketplaceDetailsAndShow;
+
     function showItemDetails(item, origin = 'screen-4-marketplace') {
       if (!item) return;
       appState.selectedItem = item;
@@ -2978,24 +3164,133 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
     window.getItemPhotoHTML = getItemPhotoHTML;
 
     // Render Recently Listed on Screen 3
+    // Render Recently Listed on Screen 3 Dashboard across Marketplace, Borrow, and Lost & Found
     function renderHomeRecentListings() {
       const container = document.getElementById('home-recent-grid');
       if (!container) return;
       container.innerHTML = '';
 
-      appState.marketplaceItems.slice(0, 5).forEach(item => {
+      // Normalize items from all three campus pillars
+      const combined = [];
+
+      (appState.marketplaceItems || []).forEach(item => {
+        if (item && item.id !== undefined) {
+          combined.push({
+            ...item,
+            _sourceType: 'marketplace',
+            _uniqueKey: 'marketplace-' + item.id
+          });
+        }
+      });
+
+      (appState.borrowItems || []).forEach(item => {
+        if (item && item.id !== undefined) {
+          combined.push({
+            ...item,
+            _sourceType: 'borrow',
+            _uniqueKey: 'borrow-' + item.id
+          });
+        }
+      });
+
+      (appState.lostFoundItems || []).forEach(item => {
+        if (item && item.id !== undefined) {
+          combined.push({
+            ...item,
+            _sourceType: 'lost_found',
+            _uniqueKey: 'lost_found-' + item.id
+          });
+        }
+      });
+
+      // Sort by created_at descending if available, else preserve natural recency order
+      combined.sort((a, b) => {
+        const timeA = a.created_at ? new Date(a.created_at).getTime() : 0;
+        const timeB = b.created_at ? new Date(b.created_at).getTime() : 0;
+        if (timeA && timeB) return timeB - timeA;
+        if (timeA && !timeB) return -1;
+        if (!timeA && timeB) return 1;
+        return 0;
+      });
+
+      const recentItems = combined.slice(0, 5);
+
+      if (recentItems.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-full py-8 text-center text-slate-400 text-xs">
+            No recently listed items yet.
+          </div>
+        `;
+        return;
+      }
+
+      recentItems.forEach(item => {
         const card = document.createElement('div');
-        card.className = 'bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 cursor-pointer transition group';
-        card.onclick = () => showItemDetails(item, 'screen-3-dashboard');
+        card.className = 'bg-white dark:bg-slate-900 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 cursor-pointer transition group flex flex-col justify-between';
+
+        let badgeHTML = '';
+        let priceStatusHTML = '';
+        let locationHTML = '';
+        const titleSafe = escapeHTML(item.title || 'Campus Item');
+
+        if (item._sourceType === 'borrow' || item.listing_type === 'borrow') {
+          // Borrow item
+          badgeHTML = '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">Borrow</span>';
+          priceStatusHTML = '<span class="block font-black text-xs sm:text-sm text-blue-600 dark:text-blue-400 mt-1">Free to Borrow</span>';
+          locationHTML = `<span class="block text-[11px] text-slate-400 mt-0.5 truncate">📍 ${escapeHTML(item.location || 'Campus')}</span>`;
+
+          card.onclick = () => {
+            if (typeof fetchBorrowDetailsAndShow === 'function') {
+              fetchBorrowDetailsAndShow(item.id, item, 'screen-3-dashboard');
+            } else if (typeof showBorrowDetails === 'function') {
+              showBorrowDetails(item, 'screen-3-dashboard');
+            }
+          };
+        } else if (item._sourceType === 'lost_found' || item.listing_type === 'lost_found' || item.type === 'Lost' || item.type === 'Found') {
+          // Lost & Found item
+          const isLost = (item.type || '').toLowerCase() === 'lost';
+          badgeHTML = isLost
+            ? '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-red-100 text-red-700 dark:bg-red-950 dark:text-red-300">Lost</span>'
+            : '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-950 dark:text-amber-300">Found</span>';
+          priceStatusHTML = `<span class="block font-black text-xs ${isLost ? 'text-red-500 dark:text-red-400' : 'text-amber-600 dark:text-amber-400'} mt-1 truncate">${escapeHTML(item.when || (isLost ? 'Reported Lost' : 'Reported Found'))}</span>`;
+          locationHTML = `<span class="block text-[11px] text-slate-400 mt-0.5 truncate">📍 ${escapeHTML(item.place || item.location || 'Campus')}</span>`;
+
+          card.onclick = () => {
+            if (typeof fetchLostFoundDetailsAndShow === 'function') {
+              fetchLostFoundDetailsAndShow(item.id, item, 'screen-3-dashboard');
+            } else {
+              showItemDetails(item, 'screen-3-dashboard');
+            }
+          };
+        } else {
+          // Marketplace item
+          badgeHTML = '<span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 dark:bg-emerald-950 dark:text-emerald-300">Marketplace</span>';
+          priceStatusHTML = `<span class="block font-black text-xs sm:text-sm text-brand-900 dark:text-emerald-400 mt-1">${escapeHTML(item.price || '₹0')}</span>`;
+          locationHTML = `<span class="block text-[11px] text-slate-400 mt-0.5 truncate">📍 ${escapeHTML(item.location || 'Campus')}</span>`;
+
+          card.onclick = () => {
+            if (typeof fetchMarketplaceDetailsAndShow === 'function') {
+              fetchMarketplaceDetailsAndShow(item.id, item, 'screen-3-dashboard');
+            } else {
+              showItemDetails(item, 'screen-3-dashboard');
+            }
+          };
+        }
+
         card.innerHTML = `
-          <div class="aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl mb-3 shadow-inner overflow-hidden flex items-center justify-center">
-            ${getItemPhotoHTML(item, 'w-full h-full object-cover group-hover:scale-105 transition-transform')}
+          <div>
+            <div class="relative aspect-square bg-slate-100 dark:bg-slate-800 rounded-xl mb-3 shadow-inner overflow-hidden flex items-center justify-center">
+              <div class="absolute top-2 left-2 z-10 pointer-events-none">
+                ${badgeHTML}
+              </div>
+              ${getItemPhotoHTML(item, 'w-full h-full object-cover group-hover:scale-105 transition-transform')}
+            </div>
+            <div class="flex items-center justify-between">
+              <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate" title="${titleSafe}">${titleSafe}</h4>
+            </div>
+            ${priceStatusHTML}
+            ${locationHTML}
           </div>
-          <div class="flex items-center justify-between">
-            <h4 class="font-bold text-xs sm:text-sm text-slate-900 dark:text-white truncate">${item.title}</h4>
-          </div>
-          <span class="block font-black text-sm text-brand-900 dark:text-emerald-400 mt-1">${item.price}</span>
-          <span class="block text-[11px] text-slate-400 mt-0.5">${item.location}</span>
         `;
         container.appendChild(card);
       });
@@ -3167,6 +3462,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
             const mapped = data.map(mapBackendListingToFrontend).filter(Boolean).filter(hasUsablePhoto);
             if (!query && (!category || category.toLowerCase() === 'all')) {
               appState.borrowItems = mapped;
+              if (typeof renderHomeRecentListings === 'function') renderHomeRecentListings();
             }
             apiCache.borrow.timestamp = Date.now();
             renderBorrowGrid(mapped);
@@ -3720,6 +4016,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           renderHomeRecentListings();
         }
         showToast(`Listing "${title}" deleted successfully`);
+        if (typeof renderHomeRecentListings === 'function') renderHomeRecentListings();
         if (typeof loadMyListingsFromAPI === 'function') {
           loadMyListingsFromAPI();
         }
@@ -4267,6 +4564,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       appState.activeChatListingPrice = itemPrice || 'UniLink';
       if (partnerId) appState.activeChatPartnerId = partnerId;
       if (listingId !== undefined) appState.activeChatListingId = listingId;
+      if (typeof saveNavigationState === 'function') saveNavigationState();
 
       // Update Chat Header Elements
       const activeNameEl = document.getElementById('chat-active-name');
@@ -4795,6 +5093,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
             const mapped = data.map(mapBackendLostFoundToFrontend).filter(Boolean);
             if (!query && filterType === 'all') {
               appState.lostFoundItems = mapped;
+              if (typeof renderHomeRecentListings === 'function') renderHomeRecentListings();
             }
             apiCache.lostFound.timestamp = Date.now();
             renderLostFoundCards(mapped);
@@ -5362,6 +5661,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
         showToast(`Report "${title}" deleted.`);
         appState.lostFoundItems = (appState.lostFoundItems || []).filter(i => i.id !== reportId);
+        if (typeof renderHomeRecentListings === 'function') renderHomeRecentListings();
         loadLostFoundFromAPI();
       } catch (err) {
         showToast('Network error deleting report.');
@@ -5773,11 +6073,19 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       renderLostFoundCards();
       renderBorrowGrid();
       applyUserAvatarEverywhere();
-      navigateTo('screen-1-landing');
+      const hasToken = !!sessionStorage.getItem('unilink_access_token');
+      if (!hasToken) {
+        const hash = window.location.hash || '';
+        if (hash === '#auth' || hash === '#login') {
+          navigateTo('screen-2-auth');
+        } else {
+          navigateTo('screen-1-landing');
+        }
+      }
       if (typeof loadMarketplaceFromAPI === 'function') loadMarketplaceFromAPI();
       if (typeof loadBorrowFromAPI === 'function') loadBorrowFromAPI();
       if (typeof loadLostFoundFromAPI === 'function') loadLostFoundFromAPI();
-      if (sessionStorage.getItem('unilink_access_token')) {
+      if (hasToken) {
         if (typeof loadMyListingsFromAPI === 'function') loadMyListingsFromAPI();
         if (typeof loadSavedItemsFromAPI === 'function') loadSavedItemsFromAPI();
         if (typeof loadIncomingBorrowRequestsFromAPI === 'function') loadIncomingBorrowRequestsFromAPI();
@@ -6665,11 +6973,15 @@ if (window.appState) {
     document.querySelectorAll('.my-listings-subtab').forEach(b => {
       b.className = inactiveClass;
     });
-    if (btn) btn.className = activeClass;
+    const targetBtn = btn || document.querySelector(`.my-listings-subtab[onclick*="'${tab}'"]`);
+    if (targetBtn) targetBtn.className = activeClass;
 
     const listContainer = document.getElementById('manage-listings-container');
     const inContainer = document.getElementById('incoming-borrow-requests-container');
     const outContainer = document.getElementById('outgoing-borrow-requests-container');
+
+    appState.activeMyListingsTab = tab;
+    if (typeof saveNavigationState === 'function') saveNavigationState();
 
     if (tab === 'listings') {
       if (listContainer) listContainer.classList.remove('hidden');
@@ -6720,64 +7032,66 @@ if (window.appState) {
     var yearVal = sYear ? sYear.value : '2nd Year';
     var progVal = sProg ? sProg.value : 'B.Tech';
 
+    if (!nameVal) {
+      if (typeof showToast === 'function') showToast('Please enter your full name.');
+      return;
+    }
+
     var submitBtn = e && e.target ? e.target.querySelector('button[type="submit"]') : document.querySelector('#edit-profile-modal button[type="submit"]');
     if (typeof setButtonLoading === 'function') setButtonLoading(submitBtn, true, 'Saving...', 'Save Changes');
 
     try {
       var token = sessionStorage.getItem('unilink_access_token');
-    if (token) {
-      try {
-        var resp = await fetch(API_BASE_URL + '/auth/me', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token,
-            'Accept': 'application/json'
-          },
-          body: JSON.stringify({
-            full_name: nameVal || undefined,
-            reg_no: regVal || undefined,
-            year_of_study: yearVal || undefined,
-            program: progVal || undefined
-          })
-        });
-
-        if (resp.ok) {
-          var updatedProfile = await resp.json();
-          updateUserDisplayProfile(updatedProfile);
-          closeEditProfileModal();
-          if (typeof showToast === 'function') showToast('Student profile saved successfully!');
-          return;
-        }
-      } catch (err) {
-        console.warn('Network error updating profile:', err);
+      if (!token) {
+        if (typeof showToast === 'function') showToast('Please log in with your campus account to edit your profile.');
+        closeEditProfileModal();
+        navigateTo('screen-2-auth');
+        return;
       }
-    }
 
-    if (nameVal) {
-      appState.currentUser.name = nameVal;
-      ['user-display-name', 'dashboard-name', 'profile-card-name', 'profile-info-name'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.textContent = nameVal;
+      var resp = await fetch(API_BASE_URL + '/auth/me', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer ' + token,
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          full_name: nameVal || undefined,
+          reg_no: regVal || undefined,
+          year_of_study: yearVal || undefined,
+          program: progVal || undefined
+        })
       });
-    }
-    if (regVal) {
-      appState.currentUser.regNo = regVal;
-      var elReg = document.getElementById('profile-info-reg');
-      if (elReg) elReg.textContent = regVal;
-    }
-    if (yearVal) {
-      appState.currentUser.year = yearVal;
-      var elYr = document.getElementById('profile-info-year');
-      if (elYr) elYr.textContent = yearVal;
-    }
-    if (progVal) {
-      appState.currentUser.program = progVal;
-      var elProg = document.getElementById('profile-info-prog');
-      if (elProg) elProg.textContent = progVal;
-    }
-    closeEditProfileModal();
-    if (typeof showToast === 'function') showToast('Student profile updated successfully!');
+
+      if (resp.status === 403) {
+        var err403 = await resp.json().catch(function() { return {}; });
+        if (typeof showToast === 'function') showToast(err403.detail || 'Demo presentation account is read-only. Profile modifications are protected.');
+        closeEditProfileModal();
+        return;
+      }
+
+      if (resp.status === 401) {
+        sessionStorage.removeItem('unilink_access_token');
+        if (typeof showToast === 'function') showToast('Session expired. Please log in again.');
+        closeEditProfileModal();
+        navigateTo('screen-2-auth');
+        return;
+      }
+
+      if (!resp.ok) {
+        var errData = await resp.json().catch(function() { return {}; });
+        if (typeof showToast === 'function') showToast(errData.detail || 'Failed to update profile.');
+        return;
+      }
+
+      var updatedProfile = await resp.json();
+      updateUserDisplayProfile(updatedProfile);
+      closeEditProfileModal();
+      if (typeof showToast === 'function') showToast('Student profile saved successfully!');
+    } catch (err) {
+      console.warn('Network error updating profile:', err);
+      if (typeof showToast === 'function') showToast('Network error while saving profile.');
     } finally {
       if (typeof setButtonLoading === 'function') setButtonLoading(submitBtn, false, '', 'Save Changes');
     }
@@ -6791,7 +7105,7 @@ if (window.appState) {
 
     var backLabel = document.getElementById('borrow-back-label');
     if (backLabel) {
-      backLabel.textContent = origin === 'screen-12-profile' ? 'Back to Saved Items' : (origin === 'screen-my-listings' ? 'Back to My Listings' : 'Back to Borrow');
+      backLabel.textContent = origin === 'screen-12-profile' ? 'Back to Saved Items' : (origin === 'screen-my-listings' ? 'Back to My Listings' : (origin === 'screen-3-dashboard' ? 'Back to Home' : 'Back to Borrow'));
     }
 
     var bImgEl = document.getElementById('borrow-details-img');
@@ -6953,6 +7267,8 @@ if (window.appState) {
     var savedSec = document.getElementById('profile-saved-section');
     var inactiveClass = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200';
     var activeClass = 'px-4 py-2 rounded-xl text-xs font-bold transition bg-brand-900 text-white';
+    appState.activeProfileTab = section;
+    if (typeof saveNavigationState === 'function') saveNavigationState();
     if (section === 'saved') {
       if (infoBtn) infoBtn.className = inactiveClass;
       if (savedBtn) savedBtn.className = activeClass;
