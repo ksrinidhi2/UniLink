@@ -85,6 +85,14 @@
       background-color: #10B981 !important;
       color: #042f2e !important;
     }
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
   </style>
 <style data-purpose="chat-speech-bubbles">
     .chat-bubble-out {
@@ -1825,6 +1833,45 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       showToast(isDark ? 'Dark theme enabled' : 'Light theme enabled');
     }
 
+    // HTML Escape Helper
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str).replace(/[&<>'"]/g, tag => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        "'": '&#39;',
+        '"': '&quot;'
+      }[tag] || tag));
+    }
+    window.escapeHTML = escapeHTML;
+
+    // Universal button loading state manager with animated spinner, duplicate prevention, and accessibility
+    function setButtonLoading(btn, isLoading, loadingText, fallbackOrigText) {
+      if (!btn) return;
+      if (isLoading) {
+        if (!btn.dataset.origHtml) {
+          btn.dataset.origHtml = btn.innerHTML;
+        }
+        btn.disabled = true;
+        btn.setAttribute('aria-busy', 'true');
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+        const text = loadingText || 'Processing...';
+        btn.innerHTML = `<span class="inline-flex items-center justify-center space-x-2" role="status" aria-live="polite"><svg class="animate-spin -ml-1 mr-2 h-4 w-4 shrink-0 text-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg><span>${escapeHTML(text)}</span></span>`;
+      } else {
+        btn.disabled = false;
+        btn.removeAttribute('aria-busy');
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+        if (btn.dataset.origHtml) {
+          btn.innerHTML = btn.dataset.origHtml;
+          delete btn.dataset.origHtml;
+        } else if (fallbackOrigText) {
+          btn.textContent = fallbackOrigText;
+        }
+      }
+    }
+    window.setButtonLoading = setButtonLoading;
+
     // Toast message helper
     function showToast(message) {
       const toast = document.getElementById('toast-notification');
@@ -2138,23 +2185,27 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       const errorBanner = document.getElementById('auth-error-msg');
       if (errorBanner) {
         errorBanner.classList.add('hidden');
-        errorBanner.textContent = '';
+        errorBanner.innerHTML = '';
       }
     }
     window.clearAuthError = clearAuthError;
 
-    // Helper: Display authentication error banner and toast
-    function setAuthError(msg) {
+    // Helper: Display authentication error banner with actionable Retry button and toast
+    function setAuthError(msg, isRetryable = true) {
       const errorBanner = document.getElementById('auth-error-msg');
       if (errorBanner) {
-        errorBanner.textContent = msg;
+        if (isRetryable) {
+          errorBanner.innerHTML = `<div class="flex items-center justify-between gap-2"><span>${escapeHTML(msg)}</span><button type="button" onclick="document.getElementById('auth-submit-btn')?.click()" class="shrink-0 underline font-semibold text-red-700 dark:text-red-300 hover:text-red-900 dark:hover:text-white transition-colors ml-2 focus:outline-none">Retry</button></div>`;
+        } else {
+          errorBanner.textContent = msg;
+        }
         errorBanner.classList.remove('hidden');
       }
       showToast(msg);
     }
     window.setAuthError = setAuthError;
 
-    // Submit handler for login / signup
+    // Submit handler for login / signup with stage feedback, animated spinner, and duplicate prevention
     async function handleAuthSubmit(e) {
       e.preventDefault();
       clearAuthError();
@@ -2171,31 +2222,33 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       // Pre-validation for Sign Up
       if (!email || !email.includes('@')) {
-        setAuthError('Please enter a valid email address.');
+        setAuthError('Please enter a valid email address.', false);
         return;
       }
 
       if (!email.endsWith('@vitapstudent.ac.in') && !email.endsWith('@vitap.ac.in')) {
-        setAuthError('Access is restricted to official campus emails (@vitapstudent.ac.in, @vitap.ac.in).');
+        setAuthError('Access is restricted to official campus emails (@vitapstudent.ac.in, @vitap.ac.in).', false);
         return;
       }
 
       if (!password || password.length < 8) {
-        setAuthError('Password must be at least 8 characters long.');
+        setAuthError('Password must be at least 8 characters long.', false);
         return;
       }
 
       const encoder = new TextEncoder();
       if (encoder.encode(password).length > 72) {
-        setAuthError('Password cannot exceed 72 bytes.');
+        setAuthError('Password cannot exceed 72 bytes.', false);
         return;
       }
 
-      // Prevent duplicate submissions while in progress
+      // Prevent duplicate submissions and display animated stage spinner
       const originalBtnText = isSignup ? 'Create Account' : 'Login';
-      submitBtn.disabled = true;
-      submitBtn.classList.add('opacity-70', 'cursor-not-allowed');
-      submitBtn.textContent = isSignup ? 'Creating account...' : 'Logging in...';
+      const updateAuthStage = (stageText) => {
+        setButtonLoading(submitBtn, true, stageText, originalBtnText);
+      };
+
+      updateAuthStage('Connecting to UniLink...');
 
       // Set up a 15-second abort controller to prevent hanging if backend port is unresponsive
       const abortController = typeof AbortController !== 'undefined' ? new AbortController() : null;
@@ -2204,6 +2257,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       try {
         if (isSignup) {
           // 1. REGISTRATION
+          updateAuthStage('Creating your account...');
           let fullName = nameInput ? nameInput.value.trim() : '';
           if (!fullName) {
             const prefix = email.split('@')[0].split('.')[0];
@@ -2248,6 +2302,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           }
 
           showToast('Account created successfully! Logging you in...');
+          updateAuthStage('Verifying your account...');
 
           // Automatic login to obtain token
           const loginResp = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -2266,6 +2321,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           sessionStorage.setItem('unilink_access_token', loginData.access_token);
 
           // Load profile via GET /auth/me
+          updateAuthStage('Loading your profile...');
           const meProfile = await fetchCurrentStudentProfile(loginData.access_token);
           updateUserDisplayProfile(meProfile);
 
@@ -2274,6 +2330,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
         } else {
           // 2. LOGIN
+          updateAuthStage('Verifying your account...');
           let loginData;
           const isDemoPresentationSubmit = (
             email === 'varshitha.25bca1234@vitapstudent.ac.in' &&
@@ -2313,6 +2370,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           sessionStorage.setItem('unilink_access_token', loginData.access_token);
 
           // Load profile via GET /auth/me
+          updateAuthStage('Loading your profile...');
           const meProfile = await fetchCurrentStudentProfile(loginData.access_token);
           updateUserDisplayProfile(meProfile);
 
@@ -2320,19 +2378,20 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
           navigateTo('screen-3-dashboard');
         }
       } catch (err) {
+        const isDevHost = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
         if (err.name === 'AbortError' || err.name === 'TimeoutError') {
-          setAuthError('Connection timed out. Backend server is not responding at ' + (API_BASE_URL || window.location.origin) + '. Please check that the server is running on port 8001.');
+          const timeoutDetail = isDevHost ? ' Please check that the local server is running on port 8001.' : ' Please check your connection and retry.';
+          setAuthError('Connection timed out connecting to UniLink (' + (API_BASE_URL || window.location.origin) + ').' + timeoutDetail, true);
         } else if (err.name === 'TypeError' && err.message.toLowerCase().includes('fetch')) {
-          setAuthError('Cannot connect to backend server. Make sure the FastAPI server is running at ' + (API_BASE_URL || window.location.origin) + '.');
+          const networkDetail = isDevHost ? ' Make sure the FastAPI server is running on port 8001.' : ' Please check your connection and retry.';
+          setAuthError('Cannot connect to backend server.' + networkDetail, true);
         } else {
-          setAuthError(err.message || 'An unexpected authentication error occurred.');
+          setAuthError(err.message || 'An unexpected authentication error occurred.', true);
         }
       } finally {
         if (timeoutId) clearTimeout(timeoutId);
         if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.classList.remove('opacity-70', 'cursor-not-allowed');
-          submitBtn.textContent = originalBtnText;
+          setButtonLoading(submitBtn, false, '', originalBtnText);
         }
       }
     }
@@ -3506,8 +3565,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       const submitBtn = e.target.querySelector('button[type="submit"]');
       if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Uploading & posting...';
+        setButtonLoading(submitBtn, true, 'Uploading & posting...', 'Post Item');
       }
 
       try {
@@ -3571,8 +3629,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         showToast('Network error while posting item.');
       } finally {
         if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Post Item';
+          setButtonLoading(submitBtn, false, '', 'Post Item');
         }
       }
     }
@@ -3689,8 +3746,29 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       }
 
       container.innerHTML = `
-        <div class="py-8 text-center text-slate-400 text-xs">
-          Loading your listings...
+        <div class="space-y-4" role="status" aria-busy="true" aria-label="Loading your listings">
+          <div class="flex items-center justify-center space-x-2 text-xs text-slate-500 dark:text-slate-400 py-1">
+            <svg class="animate-spin h-4 w-4 text-brand-900 dark:text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+            <span>Loading your listings...</span>
+          </div>
+          ${[1, 2, 3].map(() => `
+            <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-pulse">
+              <div class="flex items-center space-x-4 min-w-0 flex-1">
+                <div class="w-14 h-14 rounded-xl bg-slate-200 dark:bg-slate-700 shrink-0"></div>
+                <div class="min-w-0 flex-1 space-y-2">
+                  <div class="h-4 bg-slate-300 dark:bg-slate-700 rounded w-2/5"></div>
+                  <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/4"></div>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 shrink-0">
+                <div class="h-8 w-14 rounded-lg bg-slate-200 dark:bg-slate-700"></div>
+                <div class="h-8 w-16 rounded-lg bg-slate-200 dark:bg-slate-700"></div>
+              </div>
+            </div>
+          `).join('')}
         </div>
       `;
 
@@ -3774,8 +3852,12 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         });
       } catch (err) {
         container.innerHTML = `
-          <div class="py-8 text-center text-red-400 text-xs">
-            Failed to load listings from server.
+          <div class="py-8 text-center text-xs space-y-2" role="alert">
+            <p class="text-red-500 dark:text-red-400 font-medium">Failed to load listings from server.</p>
+            <button onclick="loadMyListingsFromAPI()" class="inline-flex items-center px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-brand-50 hover:bg-brand-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-brand-900 dark:text-emerald-400 border border-brand-200 dark:border-slate-600 transition-colors">
+              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              Retry
+            </button>
           </div>
         `;
       }
@@ -3879,8 +3961,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       const isBorrow = currentEditingItem.listing_type === 'borrow';
       const submitBtn = document.getElementById('edit-listing-submit-btn');
       if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Saving...';
+        setButtonLoading(submitBtn, true, 'Saving...', 'Save Changes');
       }
 
       const titleVal = document.getElementById('edit-listing-title-input').value.trim();
@@ -3970,8 +4051,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         showToast('Network error while saving changes.');
       } finally {
         if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Save Changes';
+          setButtonLoading(submitBtn, false, '', 'Save Changes');
         }
       }
     }
@@ -4032,6 +4112,29 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         return;
       }
 
+      if ((!appState.conversations || appState.conversations.length === 0) && listContainer) {
+        listContainer.innerHTML = `
+          <div class="p-3 space-y-3" role="status" aria-busy="true" aria-label="Loading conversations">
+            <div class="flex items-center justify-center space-x-2 text-xs text-slate-500 dark:text-slate-400 py-1">
+              <svg class="animate-spin h-3.5 w-3.5 text-brand-900 dark:text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Loading conversations...</span>
+            </div>
+            ${[1, 2, 3].map(() => `
+              <div class="p-3 rounded-2xl border border-slate-200/60 dark:border-slate-800/60 flex items-center space-x-3 animate-pulse">
+                <div class="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 shrink-0"></div>
+                <div class="flex-1 space-y-2">
+                  <div class="h-3 bg-slate-300 dark:bg-slate-700 rounded w-2/5"></div>
+                  <div class="h-2.5 bg-slate-200 dark:bg-slate-800 rounded w-4/5"></div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
       try {
         const resp = await fetch(`${API_BASE_URL}/messages/conversations`, {
           headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
@@ -4066,6 +4169,17 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         }
       } catch (err) {
         console.warn('Network error loading conversations:', err);
+        if (listContainer && (!appState.conversations || appState.conversations.length === 0)) {
+          listContainer.innerHTML = `
+            <div class="p-6 text-center text-xs space-y-2" role="alert">
+              <p class="text-red-500 dark:text-red-400 font-medium">Failed to load conversations.</p>
+              <button onclick="loadConversationsFromAPI()" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-50 hover:bg-brand-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-brand-900 dark:text-emerald-400 border border-brand-200 dark:border-slate-600 transition-colors">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Retry
+              </button>
+            </div>
+          `;
+        }
       }
     }
     window.loadConversationsFromAPI = loadConversationsFromAPI;
@@ -4197,7 +4311,40 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       const hasCached = !!(window.chatHistoryCache && window.chatHistoryCache[partnerId]);
       if (!hasCached) {
-        container.innerHTML = '<div class="py-8 text-center text-slate-400 text-xs">Loading chat history...</div>';
+        container.innerHTML = `
+          <div class="py-4 space-y-4" role="status" aria-busy="true" aria-label="Loading your conversation">
+            <div class="flex items-center justify-center space-x-2 text-xs text-slate-500 dark:text-slate-400 py-1">
+              <svg class="animate-spin h-4 w-4 text-brand-900 dark:text-emerald-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              <span>Loading your conversation...</span>
+            </div>
+            <div class="flex justify-start animate-pulse">
+              <div class="w-3/5 max-w-xs space-y-2 p-3.5 bg-slate-200/80 dark:bg-slate-800/80 rounded-2xl rounded-tl-sm border border-slate-200 dark:border-slate-700/60">
+                <div class="h-3 bg-slate-300 dark:bg-slate-700 rounded w-3/4"></div>
+                <div class="h-3 bg-slate-300 dark:bg-slate-700 rounded w-1/2"></div>
+              </div>
+            </div>
+            <div class="flex justify-end animate-pulse">
+              <div class="w-1/2 max-w-xs space-y-2 p-3.5 bg-brand-100/70 dark:bg-emerald-950/40 rounded-2xl rounded-tr-sm border border-brand-200/50 dark:border-emerald-800/40">
+                <div class="h-3 bg-brand-200 dark:bg-emerald-800 rounded w-4/5 ml-auto"></div>
+              </div>
+            </div>
+            <div class="flex justify-start animate-pulse">
+              <div class="w-2/3 max-w-xs space-y-2 p-3.5 bg-slate-200/80 dark:bg-slate-800/80 rounded-2xl rounded-tl-sm border border-slate-200 dark:border-slate-700/60">
+                <div class="h-3 bg-slate-300 dark:bg-slate-700 rounded w-5/6"></div>
+                <div class="h-3 bg-slate-300 dark:bg-slate-700 rounded w-2/3"></div>
+              </div>
+            </div>
+            <div class="flex justify-end animate-pulse">
+              <div class="w-3/5 max-w-xs space-y-2 p-3.5 bg-brand-100/70 dark:bg-emerald-950/40 rounded-2xl rounded-tr-sm border border-brand-200/50 dark:border-emerald-800/40">
+                <div class="h-3 bg-brand-200 dark:bg-emerald-800 rounded w-3/4 ml-auto"></div>
+                <div class="h-3 bg-brand-200 dark:bg-emerald-800 rounded w-1/2 ml-auto"></div>
+              </div>
+            </div>
+          </div>
+        `;
       }
 
       try {
@@ -4217,7 +4364,15 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         renderChatHistory(messages);
       } catch (err) {
         if (!hasCached) {
-          container.innerHTML = '<div class="py-8 text-center text-red-400 text-xs">Failed to load message history. <button onclick="loadMessageHistory(' + partnerId + ')" class="underline ml-1 font-semibold text-brand-900 dark:text-emerald-400">Retry</button></div>';
+          container.innerHTML = `
+            <div class="py-8 text-center text-xs space-y-2" role="alert">
+              <p class="text-red-500 dark:text-red-400 font-medium">Failed to load message history.</p>
+              <button onclick="loadMessageHistory(${partnerId})" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-50 hover:bg-brand-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-brand-900 dark:text-emerald-400 border border-brand-200 dark:border-slate-600 transition-colors">
+                <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                Retry
+              </button>
+            </div>
+          `;
         }
       }
     }
@@ -4736,8 +4891,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       const submitBtn = e.target.querySelector('button[type="submit"]');
       if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Uploading & submitting...';
+        setButtonLoading(submitBtn, true, 'Uploading & submitting...', 'Submit Report');
       }
 
       try {
@@ -4795,8 +4949,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         showToast('Network error submitting report.');
       } finally {
         if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit Report';
+          setButtonLoading(submitBtn, false, '', 'Submit Report');
         }
       }
     }
@@ -4874,8 +5027,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       const submitBtn = document.getElementById('claim-submit-btn');
       if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Submitting claim...';
+        setButtonLoading(submitBtn, true, 'Submitting claim...', 'Submit Claim');
       }
 
       try {
@@ -4921,8 +5073,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         showToast('Network error submitting claim.');
       } finally {
         if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Submit Claim';
+          setButtonLoading(submitBtn, false, '', 'Submit Claim');
         }
       }
     }
@@ -5124,8 +5275,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
 
       const submitBtn = document.getElementById('edit-lf-submit-btn');
       if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.textContent = 'Saving...';
+        setButtonLoading(submitBtn, true, 'Saving...', 'Save Changes');
       }
 
       try {
@@ -5172,8 +5322,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         showToast('Network error while updating report.');
       } finally {
         if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.textContent = 'Save Changes';
+          setButtonLoading(submitBtn, false, '', 'Save Changes');
         }
       }
     }
@@ -5325,9 +5474,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
       const origText = targetBtn ? targetBtn.textContent : 'Request to Borrow';
       if (targetBtn) {
         if (targetBtn.disabled) return;
-        targetBtn.disabled = true;
-        targetBtn.classList.add('opacity-75', 'cursor-not-allowed');
-        targetBtn.textContent = 'Requesting...';
+        setButtonLoading(targetBtn, true, 'Requesting...', origText);
       }
 
       let isSuccessOrConflict = false;
@@ -5384,9 +5531,7 @@ Casio scientific calculator in good condition. Barely used. Perfect for first ye
         showToast('Network error while submitting borrow request.');
       } finally {
         if (!isSuccessOrConflict && targetBtn) {
-          targetBtn.disabled = false;
-          targetBtn.classList.remove('opacity-75', 'cursor-not-allowed');
-          targetBtn.textContent = origText;
+          setButtonLoading(targetBtn, false, '', origText);
         }
       }
     }
@@ -5684,8 +5829,7 @@ async function handleCreateBorrowSubmit(e) {
 
   const submitBtn = e.target.querySelector('button[type="submit"]');
   if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Uploading & listing...';
+    setButtonLoading(submitBtn, true, 'Uploading & listing...', 'List for Borrowing');
   }
 
   try {
@@ -5749,8 +5893,7 @@ async function handleCreateBorrowSubmit(e) {
     showToast('Network error while listing borrow item.');
   } finally {
     if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'List for Borrowing';
+      setButtonLoading(submitBtn, false, '', 'List for Borrowing');
     }
   }
 }
@@ -5802,8 +5945,7 @@ async function saveProfileChanges(e) {
 
   const submitBtn = e.target.querySelector('button[type="submit"]');
   if (submitBtn) {
-    submitBtn.disabled = true;
-    submitBtn.textContent = 'Saving...';
+    setButtonLoading(submitBtn, true, 'Saving...', 'Save Changes');
   }
 
   try {
@@ -5850,8 +5992,7 @@ async function saveProfileChanges(e) {
     showToast('Network error while saving profile.');
   } finally {
     if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.textContent = 'Save Changes';
+      setButtonLoading(submitBtn, false, '', 'Save Changes');
     }
   }
 }
@@ -6175,6 +6316,28 @@ if (window.appState) {
       return;
     }
 
+    if (container && (!appState.incomingBorrowRequests || appState.incomingBorrowRequests.length === 0)) {
+      container.innerHTML = `
+        <div class="space-y-3" role="status" aria-busy="true" aria-label="Loading incoming borrow requests">
+          ${[1, 2].map(() => `
+            <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-pulse">
+              <div class="flex items-start space-x-3.5 min-w-0 flex-1">
+                <div class="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-700 shrink-0"></div>
+                <div class="min-w-0 flex-1 space-y-2">
+                  <div class="h-3.5 bg-slate-300 dark:bg-slate-700 rounded w-1/3"></div>
+                  <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/2"></div>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 shrink-0">
+                <div class="h-8 w-16 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
+                <div class="h-8 w-16 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
+    }
+
     try {
       const resp = await fetch(`${API_BASE_URL}/borrow/requests/received`, {
         headers: { 'Authorization': `Bearer ${token}`, 'Accept': 'application/json' }
@@ -6272,6 +6435,17 @@ if (window.appState) {
       });
     } catch (err) {
       console.warn('Network error loading incoming borrow requests:', err);
+      if (container && (!appState.incomingBorrowRequests || appState.incomingBorrowRequests.length === 0)) {
+        container.innerHTML = `
+          <div class="py-8 text-center text-xs space-y-2" role="alert">
+            <p class="text-red-500 dark:text-red-400 font-medium">Failed to load incoming requests.</p>
+            <button onclick="loadIncomingBorrowRequestsFromAPI()" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-50 hover:bg-brand-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-brand-900 dark:text-emerald-400 border border-brand-200 dark:border-slate-600 transition-colors">
+              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              Retry
+            </button>
+          </div>
+        `;
+      }
     }
   }
   window.loadIncomingBorrowRequestsFromAPI = loadIncomingBorrowRequestsFromAPI;
@@ -6293,6 +6467,27 @@ if (window.appState) {
         `;
       }
       return;
+    }
+
+    if (container && (!appState.sentBorrowRequests || appState.sentBorrowRequests.length === 0)) {
+      container.innerHTML = `
+        <div class="space-y-3" role="status" aria-busy="true" aria-label="Loading sent borrow requests">
+          ${[1, 2].map(() => `
+            <div class="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-pulse">
+              <div class="flex items-start space-x-3.5 min-w-0 flex-1">
+                <div class="w-12 h-12 rounded-xl bg-slate-200 dark:bg-slate-700 shrink-0"></div>
+                <div class="min-w-0 flex-1 space-y-2">
+                  <div class="h-3.5 bg-slate-300 dark:bg-slate-700 rounded w-1/3"></div>
+                  <div class="h-3 bg-slate-200 dark:bg-slate-800 rounded w-1/2"></div>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 shrink-0">
+                <div class="h-8 w-20 rounded-xl bg-slate-200 dark:bg-slate-700"></div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      `;
     }
 
     try {
@@ -6389,6 +6584,17 @@ if (window.appState) {
       });
     } catch (err) {
       console.warn('Network error loading sent borrow requests:', err);
+      if (container && (!appState.sentBorrowRequests || appState.sentBorrowRequests.length === 0)) {
+        container.innerHTML = `
+          <div class="py-8 text-center text-xs space-y-2" role="alert">
+            <p class="text-red-500 dark:text-red-400 font-medium">Failed to load sent requests.</p>
+            <button onclick="loadSentBorrowRequestsFromAPI()" class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-50 hover:bg-brand-100 dark:bg-slate-800 dark:hover:bg-slate-700 text-brand-900 dark:text-emerald-400 border border-brand-200 dark:border-slate-600 transition-colors">
+              <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+              Retry
+            </button>
+          </div>
+        `;
+      }
     }
   }
   window.loadSentBorrowRequestsFromAPI = loadSentBorrowRequestsFromAPI;
@@ -6401,9 +6607,7 @@ if (window.appState) {
     const originalText = btn ? btn.textContent : '';
     if (btn) {
       if (btn.disabled) return;
-      btn.disabled = true;
-      btn.classList.add('opacity-70', 'cursor-not-allowed');
-      btn.textContent = 'Updating...';
+      setButtonLoading(btn, true, 'Updating...', originalText);
     }
 
     try {
@@ -6447,9 +6651,7 @@ if (window.appState) {
       showToast('Network error while updating borrow request.');
     } finally {
       if (btn) {
-        btn.disabled = false;
-        btn.classList.remove('opacity-70', 'cursor-not-allowed');
-        btn.textContent = originalText;
+        setButtonLoading(btn, false, '', originalText);
       }
     }
   }
@@ -6518,7 +6720,11 @@ if (window.appState) {
     var yearVal = sYear ? sYear.value : '2nd Year';
     var progVal = sProg ? sProg.value : 'B.Tech';
 
-    var token = sessionStorage.getItem('unilink_access_token');
+    var submitBtn = e && e.target ? e.target.querySelector('button[type="submit"]') : document.querySelector('#edit-profile-modal button[type="submit"]');
+    if (typeof setButtonLoading === 'function') setButtonLoading(submitBtn, true, 'Saving...', 'Save Changes');
+
+    try {
+      var token = sessionStorage.getItem('unilink_access_token');
     if (token) {
       try {
         var resp = await fetch(API_BASE_URL + '/auth/me', {
@@ -6572,6 +6778,9 @@ if (window.appState) {
     }
     closeEditProfileModal();
     if (typeof showToast === 'function') showToast('Student profile updated successfully!');
+    } finally {
+      if (typeof setButtonLoading === 'function') setButtonLoading(submitBtn, false, '', 'Save Changes');
+    }
   };
 
   window.showBorrowDetails = function(item, origin) {
